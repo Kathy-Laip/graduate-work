@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { App } from './components/App';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 
@@ -9,7 +10,7 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <>
-    hello Katya!!! it`s your first diploma
+      <App/>
     </>
   </React.StrictMode>
 );
