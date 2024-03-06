@@ -1,13 +1,23 @@
-import React from "react";
-import { BrowserRouter, Router, Route } from 'react-router-dom';
-import { Exit } from "./Exit";
+import React, {useState} from "react";
+import {BrowserRouter, Routes, Route} from 'react-router-dom';
+import { Exit } from "../pages/Exit";
 
-export class App extends React.Component{
-    render(): React.ReactNode {
-        return (
-            <>
-              <Exit/>
-            </>
-        )
+
+export const App: React.FC = () => {
+    const [state, setState] = useState({
+        flagEntrance: false
+    })
+
+    const changeFlagExitOrSignUp = () => {
+        setState(prev =>({
+            ...prev, 
+            flagEntrance: !prev.flagEntrance
+        }))
     }
+    
+    return (
+        <>
+          <Exit flag={state.flagEntrance} change={changeFlagExitOrSignUp}/>
+        </>
+    )
 }

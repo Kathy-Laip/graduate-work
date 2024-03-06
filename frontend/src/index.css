@@ -50,12 +50,20 @@ input::placeholder{
 }
 
 .btn1{
-  width: 40%;
+  display: flex;
   background-color: var(--main-dark-green);
 
   border: none;
 
   padding: 0.5rem 1rem;
+}
+
+.btn1 h1{
+  display: block;
+
+  text-align: center;
+
+  margin: 0 4rem;
 }
 
 .shadowGreen{
@@ -71,6 +79,14 @@ input::placeholder{
   margin-bottom: 1rem;
 }
 
+.thinkPassowrd{
+  display: block;
+  width: 100%;
+
+  text-align: start;
+  margin-bottom: 1rem;
+}
+
 .mainScreen{
   display: flex;
   width: 100vw;
@@ -81,6 +97,9 @@ input::placeholder{
   display: flex;
   flex-direction: column;
   flex-wrap: wrap;
+
+  position: relative;
+
 
   align-items: center;
 
@@ -104,6 +123,12 @@ input::placeholder{
   margin-bottom: 2.5rem;
 }
 
+.divExitOrSignUp span:hover{
+  color: var(--main-blue);
+}
+
 .circle{
+  position: absolute;
+
   border-radius: 50%;
 }
