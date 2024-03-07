@@ -1,11 +1,12 @@
 import React, {useState} from "react";
-import {BrowserRouter, Routes, Route} from 'react-router-dom';
+import {BrowserRouter, Routes, Route, Router, Link} from 'react-router-dom';
 import { Exit } from "../pages/Exit";
+import { WorkPlace } from "../pages/WorkPlace";
 
 
 export const App: React.FC = () => {
     const [state, setState] = useState({
-        flagEntrance: false
+        flagEntrance: true
     })
 
     const changeFlagExitOrSignUp = () => {
@@ -17,7 +18,12 @@ export const App: React.FC = () => {
     
     return (
         <>
-          <Exit flag={state.flagEntrance} change={changeFlagExitOrSignUp}/>
+            <BrowserRouter>
+                <Routes>
+                    <Route index element={<Exit flag={state.flagEntrance} change={changeFlagExitOrSignUp}/>} path='/'></Route>
+                    <Route element={<WorkPlace/>} path='/workBook'></Route>
+                </Routes>
+            </BrowserRouter>
         </>
     )
 }

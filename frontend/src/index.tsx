@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client';
 import { App } from './components/App';
 import { AppText } from './components/AppText';
 import './index.css';
-import './indexTest.css';
+// import './indexTest.css';
 import reportWebVitals from './reportWebVitals';
 
 const root = ReactDOM.createRoot(
@@ -12,8 +12,8 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <>
-      {/* <App/> */}
-      <AppText/>
+      <App/>
+      {/* <AppText/> */}
     </>
   </React.StrictMode>
 );
