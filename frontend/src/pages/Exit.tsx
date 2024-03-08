@@ -22,7 +22,7 @@ export const Exit: React.FC<Exits> = (props) => {
                             <h1 className="h1">Вход</h1>
                             <input type='login' placeholder="Логин"/>
                             <input type='password' placeholder="Пароль"/>
-                            <span className="underSpan" onClick={() => props.change()}>Регистрация</span>
+                            <div className="exitSignUnderLine"><span className="underSpan" onClick={() => props.change()}>Регистрация</span></div>
                             <button className="btn1 btnGreen bdR10"><Link to='/workBook'><h1 className="h1">Войти</h1></Link></button>
             
                         </div>
@@ -38,7 +38,7 @@ export const Exit: React.FC<Exits> = (props) => {
                 <span className="thinkPassowrd">Придумайте пароль:</span>
                 <input type='password' placeholder="Пароль"/>
                 <input type='password' placeholder="Повторите пароль"/>
-                <span className="underSpan"  onClick={() => props.change()}>Войти</span>
+                <div className="exitSignUnderLine"><span className="underSpan"  onClick={() => props.change()}>Войти</span></div>
                 <button className="btn1 btnGreen bdR10"><h1 className="h1">Зарегистрироваться</h1></button>
             </div>
             )}

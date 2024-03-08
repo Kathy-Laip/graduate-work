@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { CreateNewProject } from "../components/CreateNewProject";
 import acc from '../pictures/Vector.svg'
 
 export const WorkPlace: React.FC = () => {
@@ -27,7 +28,57 @@ export const WorkPlace: React.FC = () => {
                     <Link to='/'><h1 className="underSpan h1">Выйти</h1></Link>
                 </div>
             </div>
+            <div className="workBodyShedules">
+                <div className="workPlaceSchedules bdR10">
+                    <div className="scheduleBlock bdR5">
+                        <span>Тема: Расписание 1 семестр 2023-2024, ИВМиИТ КФУ</span>
+                        <span>Создано: 21.09.2023</span>
+                        <span>Тип учреждения: университет</span>
+                        <div className="buttonSchedule">
+                            <button className="edit btn1 btnYellow bdR5">Редактировать</button>
+                            <button className="come btn1 btnGreen bdR5">Перейти</button>
+                        </div>
+                    </div>
+                    <div className="scheduleBlock bdR5">
+                        <span>Тема: Расписание 1 семестр 2023-2024, ИВМиИТ КФУ</span>
+                        <span>Создано: 21.09.2023</span>
+                        <span>Тип учреждения: университет</span>
+                        <div className="buttonSchedule">
+                            <button className="edit btn1 btnYellow bdR5">Редактировать</button>
+                            <button className="come btn1 btnGreen bdR5">Перейти</button>
+                        </div>
+                    </div>
+                    <div className="scheduleBlock bdR5">
+                        <span>Тема: Расписание 1 семестр 2023-2024, ИВМиИТ КФУ</span>
+                        <span>Создано: 21.09.2023</span>
+                        <span>Тип учреждения: университет</span>
+                        <div className="buttonSchedule">
+                            <button className="edit btn1 btnYellow bdR5">Редактировать</button>
+                            <button className="come btn1 btnGreen bdR5">Перейти</button>
+                        </div>
+                    </div>
+                    <div className="scheduleBlock bdR5">
+                        <span>Тема: Расписание 1 семестр 2023-2024, ИВМиИТ КФУ</span>
+                        <span>Создано: 21.09.2023</span>
+                        <span>Тип учреждения: университет</span>
+                        <div className="buttonSchedule">
+                            <button className="edit btn1 btnYellow bdR5">Редактировать</button>
+                            <button className="come btn1 btnGreen bdR5">Перейти</button>
+                        </div>
+                    </div>
+                    <div className="scheduleBlock bdR5">
+                        <span>Тема: Расписание 1 семестр 2023-2024, ИВМиИТ КФУ</span>
+                        <span>Создано: 21.09.2023</span>
+                        <span>Тип учреждения: университет</span>
+                        <div className="buttonSchedule">
+                            <button className="edit btn1 btnYellow bdR5">Редактировать</button>
+                            <button className="come btn1 btnGreen bdR5">Перейти</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
+        <CreateNewProject/>
        </div>
     )
 }
