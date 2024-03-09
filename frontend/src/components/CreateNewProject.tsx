@@ -1,19 +1,23 @@
 import React from "react";
+import close from '../pictures/Close.svg'
 
 export const CreateNewProject: React.FC = () => {
     return(
-        <div className="createProject">
+        <div id="createProject">
             <div className="blockQuestions">
-                <h1 className="h1">Создание нового проекта</h1>
+                <div className='closeCreate'>
+                    <h1 className="h1">Создание нового проекта</h1>
+                    <img src={close} id='close' onClick={() => {document.getElementById('createProject')!.style.display = 'none'}}/>
+                </div>
                 <span className="mrTB1">Тема проекта:</span>
-                <input id='themeProject' className="shadowBlack"></input>
+                <input id='themeProject' ></input>
                 <span className="mrTB1">Тип учебного заведения</span>
-                <select>
-                    <option value={''}>Выберите тип учебного завдения</option>
+                <select className="shadowBlack">
+                    <option value={''}>Выберите тип учебного заведения</option>
                     <option value={'univ'}>Университет</option>
                     <option value={'school'}>Школа</option>
                 </select>
-                <button className="btn1 btnLightGreen">Создать</button>
+                <button className="btn1 btnLightGreen"><span>Создать</span></button>
             </div>
         </div>
     )

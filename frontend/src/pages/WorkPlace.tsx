@@ -22,7 +22,7 @@ export const WorkPlace: React.FC = () => {
             <div className="nav">
                 <div className="leftNav">
                     <div className="nameBlock bdR10"><h1 className="h1">Рабочий каталог</h1></div>
-                    <button className="bdR5 btn1 btnLightGreen"><span>Новый проект</span></button>
+                    <button className="bdR5 btn1 btnLightGreen" onClick={() => {document.getElementById('createProject')!.style.display = 'flex'}}><span>Новый проект</span></button>
                 </div>
                 <div className="rightNav">
                     <Link to='/'><h1 className="underSpan h1">Выйти</h1></Link>
