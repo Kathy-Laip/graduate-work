@@ -92,6 +92,10 @@ input::placeholder{
   background-color: var(--main-yellow);
 }
 
+.btnPink{
+  background-color: var(--main-pink);
+}
+
 
 .btn1:hover{
   background-color: var(--main-blue);
@@ -164,8 +168,10 @@ input::placeholder{
 }
 
 .divExitOrSignUp input,
-.blockQuestions input,
-.blockQuestions select{
+#addProject input,
+#addProject select,
+#editProject input,
+#editProject select{
   width: 100%;
 
   padding: 0.5rem 1rem;
@@ -334,8 +340,8 @@ input::placeholder{
   margin-top: 0.5rem;
 }
 
-#createProject{
-  display: flex;
+#blockWithClose{
+  display: none;
 
   width: 100vw;
   height: 100vh;
@@ -347,12 +353,13 @@ input::placeholder{
   left: 0;
 }
 
-.blockQuestions{
+#addProject,
+#editProject{
   margin: auto;  
 
   width: 50%;
 
-  display: flex;
+  display: none;
   flex-direction: column;
   
 
@@ -361,12 +368,14 @@ input::placeholder{
   background-color: white;
 }
 
-.blockQuestions #close{
+#addProject #close,
+#editProject #close{
   width: 1rem;
   height: 1rem;
 }
 
-.blockQuestions #close:hover{
+#addProject #close:hover,
+#editProject #close:hover{
   color: var(--main-pink);
 }
 
@@ -376,19 +385,29 @@ input::placeholder{
   flex-wrap: wrap;
 }
 
-.blockQuestions input,
-.blockQuestions select{
+#addProject input,
+#addProject select,
+#editProject input,
+#editProject select{
   border: 0px solid #ccc;
   box-shadow: 0px 2px 10px  rgba(0, 0, 0, .2);
 }
 
-.blockQuestions button{
+#addProject button,
+#editProject button{
   margin-top: 2rem;
   margin-left: auto;
   width: 40%;
   
 }
 
-.blockQuestions button span{
+#addProject button span,
+#editProject button span{
   margin: auto;
+}
+
+.twobtnInBlock{
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
 }

@@ -4,6 +4,16 @@ import { CreateNewProject } from "../components/CreateNewProject";
 import acc from '../pictures/Vector.svg'
 
 export const WorkPlace: React.FC = () => {
+    const switchBlock = (type:string) => {
+        if(type === 'newProject'){
+            document.getElementById('blockWithClose')!.style.display = 'flex'
+            document.getElementById('addProject')!.style.display = 'flex'
+        }
+        else if(type === 'editProject'){
+            document.getElementById('blockWithClose')!.style.display = 'flex'
+            document.getElementById('editProject')!.style.display = 'flex'
+        }
+    }
     return (
        <div className="workMain">
         <div className="sideBar">
@@ -22,7 +32,7 @@ export const WorkPlace: React.FC = () => {
             <div className="nav">
                 <div className="leftNav">
                     <div className="nameBlock bdR10"><h1 className="h1">Рабочий каталог</h1></div>
-                    <button className="bdR5 btn1 btnLightGreen" onClick={() => {document.getElementById('createProject')!.style.display = 'flex'}}><span>Новый проект</span></button>
+                    <button className="bdR5 btn1 btnLightGreen" onClick={() => switchBlock('newProject')}><span>Новый проект</span></button>
                 </div>
                 <div className="rightNav">
                     <Link to='/'><h1 className="underSpan h1">Выйти</h1></Link>
@@ -35,7 +45,7 @@ export const WorkPlace: React.FC = () => {
                         <span>Создано: 21.09.2023</span>
                         <span>Тип учреждения: университет</span>
                         <div className="buttonSchedule">
-                            <button className="edit btn1 btnYellow bdR5">Редактировать</button>
+                            <button className="edit btn1 btnYellow bdR5" onClick={() => switchBlock('editProject')}>Редактировать</button>
                             <button className="come btn1 btnGreen bdR5">Перейти</button>
                         </div>
                     </div>
@@ -44,7 +54,7 @@ export const WorkPlace: React.FC = () => {
                         <span>Создано: 21.09.2023</span>
                         <span>Тип учреждения: университет</span>
                         <div className="buttonSchedule">
-                            <button className="edit btn1 btnYellow bdR5">Редактировать</button>
+                            <button className="edit btn1 btnYellow bdR5" onClick={() => switchBlock('editProject')}>Редактировать</button>
                             <button className="come btn1 btnGreen bdR5">Перейти</button>
                         </div>
                     </div>
@@ -53,7 +63,7 @@ export const WorkPlace: React.FC = () => {
                         <span>Создано: 21.09.2023</span>
                         <span>Тип учреждения: университет</span>
                         <div className="buttonSchedule">
-                            <button className="edit btn1 btnYellow bdR5">Редактировать</button>
+                            <button className="edit btn1 btnYellow bdR5" onClick={() => switchBlock('editProject')}>Редактировать</button>
                             <button className="come btn1 btnGreen bdR5">Перейти</button>
                         </div>
                     </div>
@@ -62,7 +72,7 @@ export const WorkPlace: React.FC = () => {
                         <span>Создано: 21.09.2023</span>
                         <span>Тип учреждения: университет</span>
                         <div className="buttonSchedule">
-                            <button className="edit btn1 btnYellow bdR5">Редактировать</button>
+                            <button className="edit btn1 btnYellow bdR5" onClick={() => switchBlock('editProject')}>Редактировать</button>
                             <button className="come btn1 btnGreen bdR5">Перейти</button>
                         </div>
                     </div>
@@ -71,7 +81,7 @@ export const WorkPlace: React.FC = () => {
                         <span>Создано: 21.09.2023</span>
                         <span>Тип учреждения: университет</span>
                         <div className="buttonSchedule">
-                            <button className="edit btn1 btnYellow bdR5">Редактировать</button>
+                            <button className="edit btn1 btnYellow bdR5" onClick={() => switchBlock('editProject')}>Редактировать</button>
                             <button className="come btn1 btnGreen bdR5">Перейти</button>
                         </div>
                     </div>
