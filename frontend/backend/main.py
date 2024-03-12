@@ -1,9 +1,20 @@
+import sqlalchemy
+from connection import Connection
+from config import Config
 from flask import Flask, request
+import pymysql
+import sqlite3
 import json
-from application import Application
+import re
 
 app = Flask(__name__)
 # app = Flask(__name__.split('.')[0])
+
+
+# table_group = connection.get_data_from_table('select * from id_groups')
+# connection.execute_query('insert into timetable.feedback(feedback) values("{}")'.format(report))
+
+
 
 @app.route("/", methods=["POST"])
 def signInUser():
