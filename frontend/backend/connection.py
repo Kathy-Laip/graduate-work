@@ -10,4 +10,8 @@ class Connection:
 
     def execute_query(self, query):
         connection = self.db.connect()
-        connection.execute(query)
+        try:
+            connection.execute(query)
+            return True
+        except:
+            return False
