@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { CreateNewProject } from "../components/CreateNewProject";
-import acc from '../pictures/Vector.svg'
+import { CreateNewBlock } from "../components/CreateNewBlock";
+import { SideBar } from "../components/SideBar";
 
 export const WorkPlace: React.FC = () => {
     const switchBlock = (type:string) => {
@@ -16,18 +16,7 @@ export const WorkPlace: React.FC = () => {
     }
     return (
        <div className="workMain">
-        <div className="sideBar">
-            <img src={acc}/>
-            <span>yekaterina.shlyapnikova@yadex.ru</span>
-            <div className="openWorks bdR5">
-                <h3 className="h3">Рабочие вкладки:</h3>
-                <div className="openWorksBlock">
-                    <div className="theme">
-                        <span>Расписание 1 семестр 2023-2024, ИВМиИТ КФУ</span>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <SideBar/>
         <div className="bodyWork">
             <div className="nav">
                 <div className="leftNav">
@@ -46,7 +35,7 @@ export const WorkPlace: React.FC = () => {
                         <span>Тип учреждения: университет</span>
                         <div className="buttonSchedule">
                             <button className="edit btn1 btnYellow bdR5" onClick={() => switchBlock('editProject')}>Редактировать</button>
-                            <button className="come btn1 btnGreen bdR5">Перейти</button>
+                            <button className="come btn1 btnGreen bdR5"><Link to='/workBook/workSchedule'>Перейти</Link></button>
                         </div>
                     </div>
                     <div className="scheduleBlock bdR5">
@@ -88,7 +77,7 @@ export const WorkPlace: React.FC = () => {
                 </div>
             </div>
         </div>
-        <CreateNewProject/>
+        <CreateNewBlock/>
        </div>
     )
 }

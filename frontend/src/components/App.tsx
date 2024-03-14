@@ -2,6 +2,7 @@ import React, {useState} from "react";
 import {BrowserRouter, Routes, Route, Router, Link} from 'react-router-dom';
 import { Exit } from "../pages/Exit";
 import { WorkPlace } from "../pages/WorkPlace";
+import { WorkSchedule } from "../pages/WorkSchedule";
 
 
 export const App: React.FC = () => {
@@ -22,6 +23,7 @@ export const App: React.FC = () => {
                 <Routes>
                     <Route index element={<Exit flag={state.flagEntrance} change={changeFlagExitOrSignUp}/>} path='/'></Route>
                     <Route element={<WorkPlace/>} path='/workBook'></Route>
+                    <Route element={<WorkSchedule/>} path='/workBook/workSchedule'></Route>
                 </Routes>
             </BrowserRouter>
         </>

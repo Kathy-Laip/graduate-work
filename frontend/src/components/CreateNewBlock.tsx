@@ -1,7 +1,7 @@
 import React from "react";
 import close from '../pictures/Close.svg'
 
-export const CreateNewProject: React.FC = () => {
+export const CreateNewBlock: React.FC = () => {
     return(
         <div id="blockWithClose">
             <div id="addProject">
@@ -20,7 +20,9 @@ export const CreateNewProject: React.FC = () => {
                     <option value={'univ'}>Университет</option>
                     <option value={'school'}>Школа</option>
                 </select>
-                <button className="btn1 btnLightGreen"><span>Создать</span></button>
+                <div className="onebtn">
+                    <button className="btn1 btnLightGreen"><span>Создать</span></button>
+                </div>
             </div>
             <div id="editProject">
                 <div className='closeCreate'>
