@@ -1,5 +1,3 @@
-import sqlalchemy
-from connection import Connection
 from config import Config
 from flask import Flask, request
 from db_requests import *
@@ -7,7 +5,6 @@ import json
 
 app = Flask(__name__)
 app.config.from_object(Config)
-
 
 @app.route("/", methods=["POST"])
 def signInUser():
@@ -23,7 +20,7 @@ if __name__ == '__main__':
     pass
     #----------------------------------- университет -----------------------------------
     # # новый пользователь
-    # # print(insertNewUser('ya.shl@yandex.ru', 'kathy_laip123'))
+    # #print(insertNewUser('ya.shl@yandex.ru', 'kathy_laip123'))
     # userID = getUser('ya.shl@yandex.ru', 'kathy_laip123')
 
     # # добавление нового проекта
