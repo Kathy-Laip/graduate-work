@@ -1,4 +1,5 @@
 import { Schedule } from "./Schedule"
+import apiPos from './fetchConnect'
 
 export class User{
     private login: string
@@ -14,14 +15,23 @@ export class User{
         this.password = password
     }
 
-    private signIn(){ }
-    private logIn(){ }
+    public signIn(){
 
-    private getListOfSchedules(){ }
+    }
+    public async logIn(){ 
+        if(this.login && this.password){
+            console.log('hello')
+            let ans = apiPos({'login': this.login, 'password': this.password}, '/logIn')
+            ans.then(answer => answer)
+            ans.catch(() => {return 'error_server'})
+        } else return 'empty_fields'
+    }
 
-    private addSchedule(){}
-    private editSchedule(){}
-    private deleteSchedule(){}
+    public getListOfSchedules(){ }
 
-    private uploasSchedule(){}
+    public addSchedule(){}
+    public editSchedule(){}
+    public deleteSchedule(){}
+
+    public uploasSchedule(){}
 }

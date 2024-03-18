@@ -14,6 +14,14 @@ def cleanDB(nameDB):
     return ans
 
 
+def getDataUser(login):
+    try: 
+        data = connection.get_data_from_table('select password from users where login="{}"'.format(login))
+        if(data is not None):
+            return data
+    except:
+        return False
+
 def getType(type):
     try:
         id_type = connection.get_data_from_table('select type_id from type where name_type="{}"'.format(type))

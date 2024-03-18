@@ -14,10 +14,27 @@ def signInUser():
     print(text)
     return json.dumps({'otvet': flag})
 
+@app.route('/logIn', methods=['POST'])
+def logIn():
+    info = json.loads(request.get_data())
+    login = info['login']
+    password = info['password']
+
+    data = getDataUser(login)
+
+    if(data == False): return json.dumps({'otv': 'error_data'})
+    if(len(data) == 0): return json.dumps({'otv': 'invalid_login'})
+    if(data[0][0] != password): return json.dumps({'otv': 'invalid_password'})
+    else: 
+        return json.dumps({'otv': 'good'})
+
 
 if __name__ == '__main__':
-    # app.run(debug=True, host="127.0.0.1", port="5000")
-    pass
+    app.run(debug=True, host="127.0.0.1", port="5000")
+
+
+
+    # pass
     #----------------------------------- университет -----------------------------------
     # # новый пользователь
     # #print(insertNewUser('ya.shl@yandex.ru', 'kathy_laip123'))

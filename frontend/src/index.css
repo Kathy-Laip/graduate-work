@@ -69,6 +69,10 @@ input::placeholder{
   color: black;
 }
 
+.bdr5UP{
+  border-radius: 5px 5px 0 0;
+}
+
 .bdR5{
   border-radius: 5px;
 }
@@ -83,6 +87,9 @@ input::placeholder{
   padding: 0.5rem 1rem;
 }
 
+.btnOrange{
+  background-color: var(--main-orange);
+}
 
 .btnGreen{
   background-color: var(--main-blue-blue);
@@ -280,7 +287,7 @@ input::placeholder{
 
   width: 80vw;
 
-  padding: 3rem 4rem 2rem 1rem;
+  padding: 3rem 4rem 1rem 1rem;
 }
 
 .leftNav{
@@ -305,14 +312,14 @@ input::placeholder{
 
 .workBodyShedules{
   width: 80vw;
-  height: 75vh;
+  height: 80vh;
 }
 
 .workPlaceSchedules{
   width: 90%;
   height: 100%;
 
-  background-color: var(--main-dar-dar-blue);
+  background-color: var(--main-dark-blue);
   margin: 0rem 1rem 0rem 1rem;
 
   overflow-y: auto;
@@ -422,4 +429,56 @@ input::placeholder{
 .workScheduleMain .rightNav button{
   padding-left: 3rem;
   padding-right: 3rem;
+}
+
+.back{
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0.5rem 0.8rem;
+}
+
+.workSchedule{
+  width: 95%;
+  height: 100%;
+
+  background-color: var(--main-dark-blue);
+  margin: 0rem 1rem 0rem 1rem;
+
+  overflow-y: auto;
+  overflow-x: auto;
+  display: flex;
+
+  padding: 1rem 1rem;
+
+  flex-direction: column;
+}
+
+.navSchedule{
+  overflow-x: auto;
+  width: 100%;
+
+  white-space: nowrap;
+}
+
+.navSchedule::-webkit-scrollbar{
+  display: none;
+  -ms-overflow-style: none;
+  scrollbar-width: none
+}
+
+.menuPos{
+  padding: 0.3rem 0.5rem;
+
+  display: inline-block;
+  cursor: pointer;
+}
+
+.menuAndSchedule{
+  width: 100%;
+  height: 100%;
+
+   overflow-y: auto;
+   overflow-x: auto;
+
+  background-color: white;
 }
