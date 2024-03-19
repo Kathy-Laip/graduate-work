@@ -22,7 +22,9 @@ def logIn():
 
     data = getDataUser(login)
 
-    if(data == False): return json.dumps({'otv': 'error_data'})
+    print(login, password, data)
+
+    if(data is False): return json.dumps({'otv': 'error_data'})
     if(len(data) == 0): return json.dumps({'otv': 'invalid_login'})
     if(data[0][0] != password): return json.dumps({'otv': 'invalid_password'})
     else: 

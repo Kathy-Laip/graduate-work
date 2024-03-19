@@ -2,8 +2,8 @@ import { Schedule } from "./Schedule"
 import apiPos from './fetchConnect'
 
 export class User{
-    private login: string
-    private password: string
+    public login: string
+    public password: string
 
     private currentSchedule?: Schedule
     private openSchedules?: Schedule[]
@@ -19,12 +19,8 @@ export class User{
 
     }
     public async logIn(){ 
-        if(this.login && this.password){
-            console.log('hello')
-            let ans = apiPos({'login': this.login, 'password': this.password}, '/logIn')
-            ans.then(answer => answer)
-            ans.catch(() => {return 'error_server'})
-        } else return 'empty_fields'
+        let ans = apiPos({'login': this.login, 'password': this.password}, '/logIn')
+        return ans
     }
 
     public getListOfSchedules(){ }

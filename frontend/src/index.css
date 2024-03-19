@@ -184,6 +184,10 @@ input::placeholder{
   padding: 0.5rem 1rem;
 }
 
+.mesForUserText{
+  margin-top: 2rem;
+}
+
 .divExitOrSignUp input{
   margin-bottom: 1.2rem;
 }
@@ -363,7 +367,8 @@ input::placeholder{
 }
 
 #addProject,
-#editProject{
+#editProject,
+#mesBloack{
   margin: auto;  
 
   width: 50%;
@@ -378,14 +383,18 @@ input::placeholder{
 }
 
 #addProject #close,
-#editProject #close{
+#editProject #close,
+#mesBloack #close{
   width: 1rem;
   height: 1rem;
 }
 
 #addProject #close:hover,
-#editProject #close:hover{
+#editProject #close:hover,
+#mesBloack #close:hover{
   color: var(--main-orange);
+
+  cursor: pointer;
 }
 
 .closeCreate{
