@@ -353,7 +353,8 @@ input::placeholder{
   margin-top: 0.5rem;
 }
 
-#blockWithClose{
+#blockWithClose,
+#blockWithCloseMES{
   display: none;
 
   width: 100vw;
@@ -364,6 +365,10 @@ input::placeholder{
   position: absolute;
   top:0;
   left: 0;
+}
+
+#blockWithCloseMES{
+  z-index: 10;
 }
 
 #addProject,
@@ -380,6 +385,11 @@ input::placeholder{
   padding: 2.5rem 2.5rem 3.5rem 2.5rem;
 
   background-color: white;
+}
+
+#mesBloack{
+  z-index: 12;
+  width: 55%;
 }
 
 #addProject #close,

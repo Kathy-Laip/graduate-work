@@ -26,7 +26,17 @@ export class User{
 
     public getListOfSchedules(){ }
 
-    public addSchedule(){}
+    public async addSchedule(theme: string, type: string){
+        const dateObj = new Date();
+        const month   = dateObj.getUTCMonth() + 1; // months from 1-12
+        const day     = dateObj.getUTCDate();
+        const year    = dateObj.getUTCFullYear();
+
+        const newDate = year + "-" + month + "-" + day;
+        let ans = apiPos({'theme': theme, 'type': type, 'date': newDate, 'login': this.login, 'password': this.password}, '/addSchedule')
+        return ans
+
+    }
     public editSchedule(){}
     public deleteSchedule(){}
 

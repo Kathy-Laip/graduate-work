@@ -1,9 +1,9 @@
 import React, { ClassType, useState } from "react";
 import { Circle } from "../components/Circle";
-import { circles, reEmail, rePas } from "../constants/const";
+import { circles, reEmail, rePas , switchBlock} from "../constants/const";
 import {Link, useNavigate} from 'react-router-dom';
 import {User} from '../architecture/User'
-import { CreateNewBlock } from "../components/CreateNewBlock";
+import { Message } from "../components/Message";
 
 type Exits = {
     flag: boolean,
@@ -20,13 +20,6 @@ export const Exit: React.FC<Exits> = (props) => {
 
     const [mes, setMessage] = useState<string>('')
     const navigate = useNavigate()
-
-    const switchBlock = (type:string) => {
-        if(type === 'newMessage'){
-            document.getElementById('blockWithClose')!.style.display = 'flex'
-            document.getElementById('mesBloack')!.style.display = 'flex'
-        }
-    }
 
     const changeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
         if(event.target.id === 'login'){
@@ -147,7 +140,7 @@ export const Exit: React.FC<Exits> = (props) => {
                 ><h1 className="h1">Зарегистрироваться</h1></button>
             </div>
             )}
-            <CreateNewBlock mess={mes}/>
+            <Message mess={mes}/>
         </div>
     )
 } 

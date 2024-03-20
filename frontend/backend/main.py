@@ -44,6 +44,24 @@ def newUser():
     else: return json.dumps({'otv': 'error_data'})
 
     
+@app.route('/addSchedule', methods=['POST'])
+def addSchedule():
+    info = json.loads(request.get_data())
+    theme = info['theme']
+    date = info['date']
+    type = info['type'].lower()
+    login = info['login']
+    password = info['password']
+
+    typeID = getType(type)
+    userID = getUser(login, password)
+
+    if(typeID and userID):
+        if(addProject(userID, theme, date, typeID)):
+            return json.dumps({'otv': 'OK'})
+        else:
+            return json.dumps({'otv': 'error_add'})
+    else: return json.dumps({'otv': 'error_data'})
 
 
 

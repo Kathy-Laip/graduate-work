@@ -52,4 +52,12 @@ export const circles = [
 
 export const reEmail = /^[A-Z0-9._%+-]+@[A-Z0-9-]+.+.[A-Z]{2,4}$/i
 
-export const rePas = /^(?=.*[A-Z].*[A-Z])(?=.*[!@#$&*])(?=.*[0-9].*[0-9])(?=.*[a-z].*[a-z].*[a-z]).{8,}$/
+export const rePas = /^(?=.*[A-Z])(?=.*[!@#$&*])(?=.*[0-9])(?=.*[a-z].*[a-z].*[a-z]).{8,}$/
+
+
+export const switchBlock = (type:string) => {
+    if(type === 'newMessage'){
+        document.getElementById('blockWithCloseMES')!.style.display = 'flex'
+        document.getElementById('mesBloack')!.style.display = 'flex'
+    }
+}

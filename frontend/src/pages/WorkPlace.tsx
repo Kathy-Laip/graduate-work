@@ -19,6 +19,9 @@ export const WorkPlace: React.FC<WorkPlaceProps> = (props) => {
             document.getElementById('editProject')!.style.display = 'flex'
         }
     }
+
+
+
     return (
        <div className="workMain">
         <SideBar/>
@@ -34,6 +37,9 @@ export const WorkPlace: React.FC<WorkPlaceProps> = (props) => {
             </div>
             <div className="workBodyShedules">
                 <div className="workPlaceSchedules bdR10">
+                    {/* {props.user.listOfSchedules === null ?
+                    ():
+                    ()} */}
                     {/* <div className="scheduleBlock bdR5">
                         <span>Тема: Расписание 1 семестр 2023-2024, ИВМиИТ КФУ</span>
                         <span>Создано: 21.09.2023</span>
@@ -82,7 +88,7 @@ export const WorkPlace: React.FC<WorkPlaceProps> = (props) => {
                 </div>
             </div>
         </div>
-        <CreateNewBlock/>
+        <CreateNewBlock user={props.user}/>
        </div>
     )
 }
