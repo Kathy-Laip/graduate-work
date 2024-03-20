@@ -1,9 +1,14 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { User } from "../architecture/User";
 import { CreateNewBlock } from "../components/CreateNewBlock";
 import { SideBar } from "../components/SideBar";
 
-export const WorkPlace: React.FC = () => {
+type WorkPlaceProps = {
+    user: User
+}
+
+export const WorkPlace: React.FC<WorkPlaceProps> = (props) => {
     const switchBlock = (type:string) => {
         if(type === 'newProject'){
             document.getElementById('blockWithClose')!.style.display = 'flex'
@@ -29,7 +34,7 @@ export const WorkPlace: React.FC = () => {
             </div>
             <div className="workBodyShedules">
                 <div className="workPlaceSchedules bdR10">
-                    <div className="scheduleBlock bdR5">
+                    {/* <div className="scheduleBlock bdR5">
                         <span>Тема: Расписание 1 семестр 2023-2024, ИВМиИТ КФУ</span>
                         <span>Создано: 21.09.2023</span>
                         <span>Тип учреждения: университет</span>
@@ -73,7 +78,7 @@ export const WorkPlace: React.FC = () => {
                             <button className="edit btn1 btnYellow bdR5" onClick={() => switchBlock('editProject')}>Редактировать</button>
                             <button className="come btn1 btnGreen bdR5">Перейти</button>
                         </div>
-                    </div>
+                    </div> */}
                 </div>
             </div>
         </div>

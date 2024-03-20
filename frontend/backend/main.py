@@ -30,6 +30,22 @@ def logIn():
     else: 
         return json.dumps({'otv': 'good'})
 
+@app.route('/newUser', methods=['POST'])
+def newUser():
+    info = json.loads(request.get_data())
+    newLogin = info['newLogin']
+    newPassword = info['newPassword']
+
+    data = getDataUser(newLogin)
+    if(data is False): return json.dumps({'otv': 'error_data'})
+    if(len(data) != 0): return json.dumps({'otv': 'has_login'})
+
+    if(insertNewUser(newLogin, newPassword)): return json.dumps({'otv': 'OK'})
+    else: return json.dumps({'otv': 'error_data'})
+
+    
+
+
 
 if __name__ == '__main__':
     app.run(debug=True, host="127.0.0.1", port="5000")

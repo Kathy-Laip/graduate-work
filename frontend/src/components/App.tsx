@@ -25,7 +25,7 @@ export const App: React.FC = () => {
             <BrowserRouter>
                 <Routes>
                     <Route index element={<Exit flag={state.flagEntrance} change={changeFlagExitOrSignUp} user={us}/>} path='/'></Route>
-                    <Route element={<WorkPlace/>} path='/workBook'></Route>
+                    <Route element={<WorkPlace user={us}/>} path='/workBook'></Route>
                     <Route element={<WorkSchedule/>} path='/workBook/workSchedule'></Route>
                 </Routes>
             </BrowserRouter>
