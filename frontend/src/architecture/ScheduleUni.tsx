@@ -2,6 +2,9 @@ import { Schedule } from "./Schedule";
 import { IPlanUni, ITeachUni } from "../interfaces/interface";
 
 export class ScheduleUni extends Schedule{
+    constructor(public name: string, public type: string, public createDate: string) {
+        super(name, type, createDate)
+    }
     public currentCoorse?: number
     public currentDir?: string
 

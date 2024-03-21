@@ -46,6 +46,14 @@ def getWorkID(theme, userID):
     except:
         return False
 
+def getWorks(userID):
+    try:
+        works = connection.get_data_from_table('select schedules.work_folder.theme, schedules.work_folder.date, schedules.type.name_type from schedules.work_folder inner join schedules.type on schedules.work_folder.type_institue = schedules.type.type_id where user_id = {};'.format(userID))
+        if(works is not None):
+            return works
+    except:
+        return False
+
 def getType(type):
     try:
         id_type = connection.get_data_from_table('select type_id from type where name_type="{}"'.format(type))

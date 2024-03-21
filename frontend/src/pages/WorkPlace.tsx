@@ -20,8 +20,6 @@ export const WorkPlace: React.FC<WorkPlaceProps> = (props) => {
         }
     }
 
-
-
     return (
        <div className="workMain">
         <SideBar/>

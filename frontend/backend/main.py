@@ -63,7 +63,30 @@ def addSchedule():
             return json.dumps({'otv': 'error_add'})
     else: return json.dumps({'otv': 'error_data'})
 
+@app.route('/getSchedules', methods=['POST'])
+def getSchedules():
+    info = json.loads(request.get_data())
+    login = info['login']
+    password = info['password']
 
+    userID = getUser(login, password)
+    print(userID)
+    if(userID):
+        schedules = getWorks(userID)
+        print(schedules)
+        if(len(schedules) >= 0):
+            works = []
+            for sch in schedules:
+                works.append({
+                    'theme': sch[0],
+                    'date' : str(sch[1]),
+                    'type': sch[2]
+                })
+            return json.dumps({'otv': 'OK', 'works': works})
+        else:
+            return json.dumps({'otv': 'error_works'})
+    else:
+        return json.dumps({'otv': 'error_data'})
 
 if __name__ == '__main__':
     app.run(debug=True, host="127.0.0.1", port="5000")

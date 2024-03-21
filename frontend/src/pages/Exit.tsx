@@ -58,6 +58,7 @@ export const Exit: React.FC<Exits> = (props) => {
                         switchBlock('newMessage')
                     }
                     else if(answer.otv === 'good') {
+                        props.user.getListOfSchedules()
                         navigate('/workBook')
                     }
             })

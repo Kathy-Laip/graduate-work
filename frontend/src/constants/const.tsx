@@ -57,6 +57,9 @@ export const rePas = /^(?=.*[A-Z])(?=.*[!@#$&*])(?=.*[0-9])(?=.*[a-z].*[a-z].*[a
 
 export const switchBlock = (type:string) => {
     if(type === 'newMessage'){
+        if(document.getElementById('blockWithClose')){
+            document.getElementById('blockWithClose')!.style.display = 'flex'
+        }
         document.getElementById('blockWithCloseMES')!.style.display = 'flex'
         document.getElementById('mesBloack')!.style.display = 'flex'
     }

@@ -5,7 +5,7 @@ export class Schedule{
     public id?: number
     public name: string
     public type: string
-    public createDate: Date
+    public createDate: string
 
     public settings?: ScheduleSettings
 
@@ -14,7 +14,7 @@ export class Schedule{
 
     public suggestion?: IClass[]
 
-    constructor(name: string, type: string, createDate: Date){
+    constructor(name: string, type: string, createDate: string){
         this.name = name
         this.type = type
         this.createDate = createDate

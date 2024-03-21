@@ -1,6 +1,12 @@
 import { Schedule } from "./Schedule"
+import { ScheduleSchool } from "./ScheduleSchool";
+import { ScheduleUni } from "./ScheduleUni";
+import { ScheduleFabrica } from "./ScheduleFabrica"
+import { switchBlock } from "../constants/const"
+import { Messages } from "../components/Message"
 import apiPos from './fetchConnect'
 
+type ScheduleType = typeof ScheduleSchool | typeof ScheduleUni;
 export class User{
     public login: string
     public password: string
@@ -8,7 +14,7 @@ export class User{
     public currentSchedule?: Schedule
     public openSchedules?: Schedule[]
 
-    public listOfSchedules?: Schedule[]
+    public listOfSchedules?: any
     
     constructor(login: string, password: string){
         this.login = login
@@ -24,7 +30,19 @@ export class User{
         return ans
     }
 
-    public getListOfSchedules(){ }
+    public async getListOfSchedules(){ 
+        let ans = apiPos({'login': this.login, 'password': this.password}, '/getSchedules')
+        ans.then(answer => {
+            if(answer.otv === 'OK'){
+                let schFabrica = new ScheduleFabrica()
+                for(let sch of answer.works){
+                    let type = sch.type === 'университет' ? 'uni' : 'school'
+                    this.listOfSchedules?.push(schFabrica.create(sch.theme, type, sch.date))
+                }
+            }
+        })
+
+    }
 
     public async addSchedule(theme: string, type: string){
         const dateObj = new Date();
