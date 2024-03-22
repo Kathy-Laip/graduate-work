@@ -25,6 +25,9 @@ export const CreateNewBlock: React.FC<Message> = (props) => {
     const closeAdd = () => {
         document.getElementById('blockWithClose')!.style.display = 'none'
         document.getElementById('addProject')!.style.display = 'none'
+        if(document.getElementById('blockWithCloseMES')){
+            document.getElementById('blockWithCloseMES')!.style.display = 'none'
+        }
     }
     
 

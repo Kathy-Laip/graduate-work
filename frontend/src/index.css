@@ -332,6 +332,18 @@ input::placeholder{
   flex-direction: column;
 }
 
+.emptySch{
+  background-color: white;
+  width: 80%;
+  
+  margin: auto;
+  padding: 1rem 2rem;
+}
+
+.emptySch h1{
+  text-align: center;
+}
+
 .scheduleBlock{
   display: flex;
   flex-direction: column;

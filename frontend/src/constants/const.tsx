@@ -63,4 +63,12 @@ export const switchBlock = (type:string) => {
         document.getElementById('blockWithCloseMES')!.style.display = 'flex'
         document.getElementById('mesBloack')!.style.display = 'flex'
     }
+    else if(type === 'newProject'){
+        document.getElementById('blockWithClose')!.style.display = 'flex'
+        document.getElementById('addProject')!.style.display = 'flex'
+    }
+    else if(type === 'editProject'){
+        document.getElementById('blockWithClose')!.style.display = 'flex'
+        document.getElementById('editProject')!.style.display = 'flex'
+    }
 }

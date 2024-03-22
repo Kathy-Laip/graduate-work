@@ -3,23 +3,15 @@ import { Link } from "react-router-dom";
 import { User } from "../architecture/User";
 import { CreateNewBlock } from "../components/CreateNewBlock";
 import { SideBar } from "../components/SideBar";
+import {switchBlock} from '../constants/const'
+import {ScheduleBlock} from '../components/ScheduleBlock'
 
 type WorkPlaceProps = {
     user: User
 }
 
 export const WorkPlace: React.FC<WorkPlaceProps> = (props) => {
-    const switchBlock = (type:string) => {
-        if(type === 'newProject'){
-            document.getElementById('blockWithClose')!.style.display = 'flex'
-            document.getElementById('addProject')!.style.display = 'flex'
-        }
-        else if(type === 'editProject'){
-            document.getElementById('blockWithClose')!.style.display = 'flex'
-            document.getElementById('editProject')!.style.display = 'flex'
-        }
-    }
-
+    console.log(props.user.listOfSchedules)
     return (
        <div className="workMain">
         <SideBar/>
@@ -35,54 +27,15 @@ export const WorkPlace: React.FC<WorkPlaceProps> = (props) => {
             </div>
             <div className="workBodyShedules">
                 <div className="workPlaceSchedules bdR10">
-                    {/* {props.user.listOfSchedules === null ?
-                    ():
-                    ()} */}
-                    {/* <div className="scheduleBlock bdR5">
-                        <span>Тема: Расписание 1 семестр 2023-2024, ИВМиИТ КФУ</span>
-                        <span>Создано: 21.09.2023</span>
-                        <span>Тип учреждения: университет</span>
-                        <div className="buttonSchedule">
-                            <button className="edit btn1 btnYellow bdR5" onClick={() => switchBlock('editProject')}>Редактировать</button>
-                            <button className="come btn1 btnGreen bdR5"><Link to='/workBook/workSchedule'>Перейти</Link></button>
-                        </div>
-                    </div>
-                    <div className="scheduleBlock bdR5">
-                        <span>Тема: Расписание 1 семестр 2023-2024, ИВМиИТ КФУ</span>
-                        <span>Создано: 21.09.2023</span>
-                        <span>Тип учреждения: университет</span>
-                        <div className="buttonSchedule">
-                            <button className="edit btn1 btnYellow bdR5" onClick={() => switchBlock('editProject')}>Редактировать</button>
-                            <button className="come btn1 btnGreen bdR5">Перейти</button>
-                        </div>
-                    </div>
-                    <div className="scheduleBlock bdR5">
-                        <span>Тема: Расписание 1 семестр 2023-2024, ИВМиИТ КФУ</span>
-                        <span>Создано: 21.09.2023</span>
-                        <span>Тип учреждения: университет</span>
-                        <div className="buttonSchedule">
-                            <button className="edit btn1 btnYellow bdR5" onClick={() => switchBlock('editProject')}>Редактировать</button>
-                            <button className="come btn1 btnGreen bdR5">Перейти</button>
-                        </div>
-                    </div>
-                    <div className="scheduleBlock bdR5">
-                        <span>Тема: Расписание 1 семестр 2023-2024, ИВМиИТ КФУ</span>
-                        <span>Создано: 21.09.2023</span>
-                        <span>Тип учреждения: университет</span>
-                        <div className="buttonSchedule">
-                            <button className="edit btn1 btnYellow bdR5" onClick={() => switchBlock('editProject')}>Редактировать</button>
-                            <button className="come btn1 btnGreen bdR5">Перейти</button>
-                        </div>
-                    </div>
-                    <div className="scheduleBlock bdR5">
-                        <span>Тема: Расписание 1 семестр 2023-2024, ИВМиИТ КФУ</span>
-                        <span>Создано: 21.09.2023</span>
-                        <span>Тип учреждения: университет</span>
-                        <div className="buttonSchedule">
-                            <button className="edit btn1 btnYellow bdR5" onClick={() => switchBlock('editProject')}>Редактировать</button>
-                            <button className="come btn1 btnGreen bdR5">Перейти</button>
-                        </div>
-                    </div> */}
+                    {props.user.listOfSchedules.length === 0 ? 
+                    (<div className="emptySch bdR5"><h1 className="h1">Нет расписаний!</h1></div>) 
+                    :
+                    props.user.listOfSchedules.map(el => {
+                        if(el !== 'ERROR_CREATE'){
+                            return ( <ScheduleBlock theme={el.name} type={el.type} date={el.createDate}/>)
+                        }
+                    }
+                    )}
                 </div>
             </div>
         </div>

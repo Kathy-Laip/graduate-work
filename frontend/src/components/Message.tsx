@@ -15,7 +15,7 @@ export const Message: React.FC<Messages> = (props) => {
                         document.getElementById('blockWithCloseMES')!.style.display = 'none'
                         document.getElementById('mesBloack')!.style.display = 'none'
                         if(document.getElementById('blockWithClose')){
-                            document.getElementById('blockWithClose')!.style.display = 'flex'
+                            document.getElementById('blockWithClose')!.style.display = 'none'
                         }
                         }}/>
                 </div>

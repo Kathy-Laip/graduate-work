@@ -6,7 +6,6 @@ import { switchBlock } from "../constants/const"
 import { Messages } from "../components/Message"
 import apiPos from './fetchConnect'
 
-type ScheduleType = typeof ScheduleSchool | typeof ScheduleUni;
 export class User{
     public login: string
     public password: string
@@ -14,7 +13,7 @@ export class User{
     public currentSchedule?: Schedule
     public openSchedules?: Schedule[]
 
-    public listOfSchedules?: any
+    public listOfSchedules: (ScheduleSchool|ScheduleUni|'ERROR_CREATE')[] = []
     
     constructor(login: string, password: string){
         this.login = login
@@ -32,13 +31,15 @@ export class User{
 
     public async getListOfSchedules(){ 
         let ans = apiPos({'login': this.login, 'password': this.password}, '/getSchedules')
-        ans.then(answer => {
+        await ans.then(answer => {
             if(answer.otv === 'OK'){
                 let schFabrica = new ScheduleFabrica()
                 for(let sch of answer.works){
                     let type = sch.type === 'университет' ? 'uni' : 'school'
-                    this.listOfSchedules?.push(schFabrica.create(sch.theme, type, sch.date))
+                    this.listOfSchedules.push(schFabrica.create(sch.theme, type, sch.date))
                 }
+            }else{
+                console.log('error')
             }
         })
 
