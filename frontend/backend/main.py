@@ -3,6 +3,7 @@ from flask import Flask, request
 from db_requests import *
 import json
 
+
 app = Flask(__name__)
 app.config.from_object(Config)
 
@@ -79,10 +80,15 @@ def getSchedules():
             for sch in schedules:
                 works.append({
                     'theme': sch[0],
-                    'date' : str(sch[1]),
+                    'date' : sch[1],
                     'type': sch[2]
                 })
-            return json.dumps({'otv': 'OK', 'works': works})
+            works_f = sorted(works, key=lambda x: x['date'], reverse=True)
+
+            for sch in works_f:
+                sch['date'] = str(sch['date'])
+            print(works_f)
+            return json.dumps({'otv': 'OK', 'works': works_f})
         else:
             return json.dumps({'otv': 'error_works'})
     else:

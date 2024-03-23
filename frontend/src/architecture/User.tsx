@@ -31,18 +31,7 @@ export class User{
 
     public async getListOfSchedules(){ 
         let ans = apiPos({'login': this.login, 'password': this.password}, '/getSchedules')
-        await ans.then(answer => {
-            if(answer.otv === 'OK'){
-                let schFabrica = new ScheduleFabrica()
-                for(let sch of answer.works){
-                    let type = sch.type === 'университет' ? 'uni' : 'school'
-                    this.listOfSchedules.push(schFabrica.create(sch.theme, type, sch.date))
-                }
-            }else{
-                console.log('error')
-            }
-        })
-
+        return ans
     }
 
     public async addSchedule(theme: string, type: string){

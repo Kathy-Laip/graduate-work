@@ -1,17 +1,35 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { User } from "../architecture/User";
 import { CreateNewBlock } from "../components/CreateNewBlock";
 import { SideBar } from "../components/SideBar";
 import {switchBlock} from '../constants/const'
 import {ScheduleBlock} from '../components/ScheduleBlock'
+import { ScheduleFabrica } from "../architecture/ScheduleFabrica"
 
 type WorkPlaceProps = {
     user: User
 }
 
 export const WorkPlace: React.FC<WorkPlaceProps> = (props) => {
-    console.log(props.user.listOfSchedules)
+    const [isLoading, setIsLoading] = useState(true);
+
+    (async () => {
+        let ans = props.user.getListOfSchedules()
+        ans.then(answer => {
+            if(answer.otv === 'OK'){
+                props.user.listOfSchedules = []
+                let schFabrica = new ScheduleFabrica()
+                for(let sch of answer.works){
+                    let type = sch.type === 'университет' ? 'uni' : 'school'
+                    props.user.listOfSchedules.push(schFabrica.create(sch.theme, type, sch.date))
+                }
+                setIsLoading(false)
+            }else{
+                console.log('error')
+            }
+        })
+    })()
     return (
        <div className="workMain">
         <SideBar/>
@@ -27,7 +45,9 @@ export const WorkPlace: React.FC<WorkPlaceProps> = (props) => {
             </div>
             <div className="workBodyShedules">
                 <div className="workPlaceSchedules bdR10">
-                    {props.user.listOfSchedules.length === 0 ? 
+                    {isLoading && <div className="divLoad"><div id="load"></div></div>}
+                    {
+                    isLoading === false && props.user.listOfSchedules.length === 0 ? 
                     (<div className="emptySch bdR5"><h1 className="h1">Нет расписаний!</h1></div>) 
                     :
                     props.user.listOfSchedules.map(el => {
@@ -35,7 +55,8 @@ export const WorkPlace: React.FC<WorkPlaceProps> = (props) => {
                             return ( <ScheduleBlock theme={el.name} type={el.type} date={el.createDate}/>)
                         }
                     }
-                    )}
+                    )
+                }
                 </div>
             </div>
         </div>
