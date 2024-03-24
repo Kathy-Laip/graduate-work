@@ -1,17 +1,24 @@
-import React, { ReactEventHandler, useState } from "react";
+import React, { ReactEventHandler, useContext, useState } from "react";
 import { User } from "../architecture/User";
 import close from '../pictures/Close.svg'
 import {switchBlock} from "../constants/const";
 import { Message } from "../components/Message";
+import {ScheduleFabrica} from '../architecture/ScheduleFabrica'
+import { Link } from "react-router-dom";
+import { ScheduleBlock } from "./ScheduleBlock";
+import ReactDOM from 'react-dom'
+import {WorkPlace} from '../pages/WorkPlace'
 
 type Message = {
     user?: User   
+    update: Function
 }
 
 export const CreateNewBlock: React.FC<Message> = (props) => {
     const [theme, setTheme] = useState<string>('')
     const [type, setType] = useState<string>('')
     const [mes, setMes] = useState<string>('')
+    // const {basename} = useContext(ScheduleBlock)
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         if(event.target.id === 'themeProject'){
@@ -42,9 +49,31 @@ export const CreateNewBlock: React.FC<Message> = (props) => {
                     setMes('Ошибка добавления расписания! Попробуйте позже...')
                     switchBlock('newMessage')
                 }else if(answer.otv === 'OK'){
+                    let schFabrica = new ScheduleFabrica()
+                    let newType = type === 'университет' ? 'uni' : 'school'
+                    const dateObj = new Date();
+                    const month   = dateObj.getUTCMonth() + 1; // months from 1-12
+                    const day     = dateObj.getUTCDate();
+                    const year    = dateObj.getUTCFullYear();
+            
+                    const hour = dateObj.getHours()
+                    const minutes = dateObj.getMinutes()
+                    const sec = dateObj.getSeconds()
+            
+                    const newDate = year + "-" + month + "-" + day + ' ' + hour + ':' + minutes + ':' + sec;
+                    props.user!.listOfSchedules.unshift(schFabrica.create(theme, newType, newDate))
+                    console.log(props.user!.listOfSchedules)
+
+                    
+                    // // ReactDOM.createPortal(<ScheduleBlock type={type} theme={theme} date={newDate}/>, document.getElementById('works')!.firstElementChild)
+                    // // ReactDOM.render(<><ScheduleBlock theme={theme} type={type} date={newDate}/></>, document.getElementById('works')!)
+                    // // let domworks = document.getElementById('works')!.firstChild
+                    // // ReactDOM.createPortal(<ScheduleBlock type={type} theme={theme} date={newDate}/>, domworks)
+                    // ReactDOM.render(<ScheduleBlock type={type} theme={theme} date={newDate}/>, document.getElementById('works')!)
                     setMes('Новое расписание успешно добавлено!')
                     document.getElementById('addProject')!.style.display = 'none'
                     switchBlock('newMessage')
+                    window.location.reload();
                 }
             })
         }

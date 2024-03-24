@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { User } from "../architecture/User";
 import { CreateNewBlock } from "../components/CreateNewBlock";
@@ -13,11 +13,13 @@ type WorkPlaceProps = {
 
 export const WorkPlace: React.FC<WorkPlaceProps> = (props) => {
     const [isLoading, setIsLoading] = useState(true);
+    const [get, setGet] = useState(true)
 
-    (async () => {
+    const updateSchs = () => {
         let ans = props.user.getListOfSchedules()
         ans.then(answer => {
             if(answer.otv === 'OK'){
+                setIsLoading(true)
                 props.user.listOfSchedules = []
                 let schFabrica = new ScheduleFabrica()
                 for(let sch of answer.works){
@@ -29,7 +31,19 @@ export const WorkPlace: React.FC<WorkPlaceProps> = (props) => {
                 console.log('error')
             }
         })
+    }
+    (async () => {
+        if(get){
+            const saved = JSON.parse(localStorage.getItem('user')!)
+            console.log(saved)
+            props.user.login = saved.login
+            props.user.password = saved.password
+            updateSchs()
+            setGet(false)
+        }
     })()
+
+    
     return (
        <div className="workMain">
         <SideBar/>
@@ -44,7 +58,7 @@ export const WorkPlace: React.FC<WorkPlaceProps> = (props) => {
                 </div>
             </div>
             <div className="workBodyShedules">
-                <div className="workPlaceSchedules bdR10">
+                <div className="workPlaceSchedules bdR10" id="works">
                     {isLoading && <div className="divLoad"><div id="load"></div></div>}
                     {
                     isLoading === false && props.user.listOfSchedules.length === 0 ? 
@@ -60,7 +74,7 @@ export const WorkPlace: React.FC<WorkPlaceProps> = (props) => {
                 </div>
             </div>
         </div>
-        <CreateNewBlock user={props.user}/>
+        <CreateNewBlock user={props.user} update={updateSchs}/>
        </div>
     )
 }

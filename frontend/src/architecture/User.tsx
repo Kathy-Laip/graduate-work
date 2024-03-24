@@ -30,6 +30,7 @@ export class User{
     }
 
     public async getListOfSchedules(){ 
+        console.log(this.login, this.password)
         let ans = apiPos({'login': this.login, 'password': this.password}, '/getSchedules')
         return ans
     }
@@ -40,7 +41,11 @@ export class User{
         const day     = dateObj.getUTCDate();
         const year    = dateObj.getUTCFullYear();
 
-        const newDate = year + "-" + month + "-" + day;
+        const hour = dateObj.getHours()
+        const minutes = dateObj.getMinutes()
+        const sec = dateObj.getSeconds()
+
+        const newDate = year + "-" + month + "-" + day + ' ' + hour + ':' + minutes + ':' + sec;
         let ans = apiPos({'theme': theme, 'type': type, 'date': newDate, 'login': this.login, 'password': this.password}, '/addSchedule')
         return ans
 

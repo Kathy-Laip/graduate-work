@@ -1,4 +1,4 @@
-import React, { ClassType, useState } from "react";
+import React, { ClassType, useState, useEffect } from "react";
 import { Circle } from "../components/Circle";
 import { circles, reEmail, rePas , switchBlock} from "../constants/const";
 import {Link, useNavigate} from 'react-router-dom';
@@ -35,6 +35,17 @@ export const Exit: React.FC<Exits> = (props) => {
         }
     }
 
+    useEffect(() => {
+        const saved = JSON.parse(localStorage.getItem('user')!)
+        console.log(saved)
+        props.user.login = saved.login
+        props.user.password = saved.password
+      }, [])
+
+    useEffect(() => {
+        console.log(props.user)
+        localStorage.setItem('user', JSON.stringify(props.user))
+    }, [props.user.login, props.user.password])
 
     const logIn = () => {
         if(!login || !password) {
