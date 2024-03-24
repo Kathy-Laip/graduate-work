@@ -63,6 +63,13 @@ export const switchBlock = (type:string) => {
         document.getElementById('blockWithCloseMES')!.style.display = 'flex'
         document.getElementById('mesBloack')!.style.display = 'flex'
     }
+    if(type === 'newMessageConfirm'){
+        if(document.getElementById('blockWithClose')){
+            document.getElementById('blockWithClose')!.style.display = 'flex'
+        }
+        document.getElementById('blockWithCloseMESCONFIRM')!.style.display = 'flex'
+        document.getElementById('mesBloackCONFIRM')!.style.display = 'flex'
+    }
     else if(type === 'newProject'){
         document.getElementById('blockWithClose')!.style.display = 'flex'
         document.getElementById('addProject')!.style.display = 'flex'

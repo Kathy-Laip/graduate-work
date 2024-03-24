@@ -52,3 +52,9 @@ export interface ITeachSchool{
     class_count: number
     initial_group: string
 }
+
+export interface ISCH{
+    theme? : string
+    type? : string
+    date? : string
+}

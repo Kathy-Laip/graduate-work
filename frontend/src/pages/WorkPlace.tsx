@@ -6,6 +6,7 @@ import { SideBar } from "../components/SideBar";
 import {switchBlock} from '../constants/const'
 import {ScheduleBlock} from '../components/ScheduleBlock'
 import { ScheduleFabrica } from "../architecture/ScheduleFabrica"
+import {ISCH} from '../interfaces/interface'
 
 type WorkPlaceProps = {
     user: User
@@ -14,6 +15,11 @@ type WorkPlaceProps = {
 export const WorkPlace: React.FC<WorkPlaceProps> = (props) => {
     const [isLoading, setIsLoading] = useState(true);
     const [get, setGet] = useState(true)
+    const [dataCurSch, setDataCurSch] = useState<ISCH>({theme: '', type: '', date: ''})
+
+    const change = (theme: string, type: string, date: string) => {
+        setDataCurSch({theme: theme, type: type, date: date})
+    }
 
     const updateSchs = () => {
         let ans = props.user.getListOfSchedules()
@@ -66,7 +72,7 @@ export const WorkPlace: React.FC<WorkPlaceProps> = (props) => {
                     :
                     props.user.listOfSchedules.map(el => {
                         if(el !== 'ERROR_CREATE'){
-                            return ( <ScheduleBlock theme={el.name} type={el.type} date={el.createDate}/>)
+                            return ( <ScheduleBlock theme={el.name} type={el.type} date={el.createDate} data={change}/>)
                         }
                     }
                     )
@@ -74,7 +80,7 @@ export const WorkPlace: React.FC<WorkPlaceProps> = (props) => {
                 </div>
             </div>
         </div>
-        <CreateNewBlock user={props.user} update={updateSchs}/>
+        <CreateNewBlock user={props.user} update={updateSchs} dataCur={dataCurSch}/>
        </div>
     )
 }

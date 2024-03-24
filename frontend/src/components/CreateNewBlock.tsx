@@ -4,21 +4,21 @@ import close from '../pictures/Close.svg'
 import {switchBlock} from "../constants/const";
 import { Message } from "../components/Message";
 import {ScheduleFabrica} from '../architecture/ScheduleFabrica'
-import { Link } from "react-router-dom";
-import { ScheduleBlock } from "./ScheduleBlock";
-import ReactDOM from 'react-dom'
-import {WorkPlace} from '../pages/WorkPlace'
+import { MessageConfirm } from "./MessageConfirm";
+import {ISCH} from '../interfaces/interface'
+
 
 type Message = {
-    user?: User   
-    update: Function
+    user: User   
+    update: Function,
+    dataCur: ISCH
 }
 
 export const CreateNewBlock: React.FC<Message> = (props) => {
     const [theme, setTheme] = useState<string>('')
     const [type, setType] = useState<string>('')
     const [mes, setMes] = useState<string>('')
-    // const {basename} = useContext(ScheduleBlock)
+    const [mesConfirm, setMesConfirm] = useState<string>('')
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         if(event.target.id === 'themeProject'){
@@ -35,8 +35,11 @@ export const CreateNewBlock: React.FC<Message> = (props) => {
         if(document.getElementById('blockWithCloseMES')){
             document.getElementById('blockWithCloseMES')!.style.display = 'none'
         }
+        if(document.getElementById('blockWithCloseMESCONFIRM')){
+            document.getElementById('blockWithCloseMESCONFIRM')!.style.display = 'none'
+        }
     }
-    
+
 
     const addSchedule = () => {
         if(!theme || !type){
@@ -62,14 +65,8 @@ export const CreateNewBlock: React.FC<Message> = (props) => {
             
                     const newDate = year + "-" + month + "-" + day + ' ' + hour + ':' + minutes + ':' + sec;
                     props.user!.listOfSchedules.unshift(schFabrica.create(theme, newType, newDate))
-                    console.log(props.user!.listOfSchedules)
 
-                    
-                    // // ReactDOM.createPortal(<ScheduleBlock type={type} theme={theme} date={newDate}/>, document.getElementById('works')!.firstElementChild)
-                    // // ReactDOM.render(<><ScheduleBlock theme={theme} type={type} date={newDate}/></>, document.getElementById('works')!)
-                    // // let domworks = document.getElementById('works')!.firstChild
-                    // // ReactDOM.createPortal(<ScheduleBlock type={type} theme={theme} date={newDate}/>, domworks)
-                    // ReactDOM.render(<ScheduleBlock type={type} theme={theme} date={newDate}/>, document.getElementById('works')!)
+                
                     setMes('Новое расписание успешно добавлено!')
                     document.getElementById('addProject')!.style.display = 'none'
                     switchBlock('newMessage')
@@ -77,6 +74,11 @@ export const CreateNewBlock: React.FC<Message> = (props) => {
                 }
             })
         }
+    }
+
+    const deleteProject = () =>{
+        setMesConfirm('Вы точно хотите удалить расписание?')
+        switchBlock('newMessageConfirm')
     }
     
 
@@ -120,11 +122,12 @@ export const CreateNewBlock: React.FC<Message> = (props) => {
                     <option value={'school'}>Школа</option>
                 </select>
                 <div className="twobtnInBlock">
-                    <button className="btn1 bdR5 btnPink"><span>Удалить проект</span></button>
+                    <button className="btn1 bdR5 btnPink" onClick={deleteProject}><span>Удалить проект</span></button>
                     <button className="btn1 bdR5 btnYellow"><span>Изменить</span></button>
                 </div>
             </div>
             <Message mess={mes}/>
+            <MessageConfirm mess={mesConfirm} data={props.dataCur} user={props.user}/>
         </div>
     )
 }

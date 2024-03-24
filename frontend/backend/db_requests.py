@@ -13,6 +13,10 @@ def cleanDB(nameDB):
     ans = connection.execute_query('delete from {}'.format(nameDB))
     return ans
 
+def deleteWorkID(userID, workID):
+    ans = connection.execute_query('delete from work_folder where work_id={} and user_id={}'.format(workID, userID))
+    return ans
+
 
 def getDataUser(login):
     try: 

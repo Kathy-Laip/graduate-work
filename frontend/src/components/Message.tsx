@@ -17,6 +17,9 @@ export const Message: React.FC<Messages> = (props) => {
                         if(document.getElementById('blockWithClose')){
                             document.getElementById('blockWithClose')!.style.display = 'none'
                         }
+                        if(document.getElementById('blockWithCloseMESCONFIRM')){
+                            document.getElementById('blockWithCloseMESCONFIRM')!.style.display = 'none'
+                        }
                         }}/>
                 </div>
                 <div className="mesForUserText"><h3 className="h3">{props.mess}</h3></div>

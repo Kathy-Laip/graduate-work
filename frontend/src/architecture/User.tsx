@@ -1,10 +1,8 @@
 import { Schedule } from "./Schedule"
 import { ScheduleSchool } from "./ScheduleSchool";
 import { ScheduleUni } from "./ScheduleUni";
-import { ScheduleFabrica } from "./ScheduleFabrica"
-import { switchBlock } from "../constants/const"
-import { Messages } from "../components/Message"
 import apiPos from './fetchConnect'
+import {ISCH} from '../interfaces/interface'
 
 export class User{
     public login: string
@@ -51,7 +49,12 @@ export class User{
 
     }
     public editSchedule(){}
-    public deleteSchedule(){}
+
+    public async deleteSchedule(data: any){
+        console.log(data)
+        let ans = apiPos({'login': this.login, 'password': this.password, 'data': data}, '/deleteSch')
+        return ans
+    }
 
     public uploasSchedule(){}
 }

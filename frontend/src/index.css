@@ -21,7 +21,7 @@ body{
   --main-yellow: #ffb703;
   --main-blue: #8ecae6;
   --main-dark-blue: #219ebc;
-  --main-dar-dar-blue: #023047;
+  --main-dar-dar-blue: #0f171c;
 
   --main-blue-blue: #5fa9cb;
 }
@@ -385,7 +385,8 @@ input::placeholder{
 }
 
 #blockWithClose,
-#blockWithCloseMES{
+#blockWithCloseMES,
+#blockWithCloseMESCONFIRM{
   display: none;
 
   width: 100vw;
@@ -398,13 +399,19 @@ input::placeholder{
   left: 0;
 }
 
-#blockWithCloseMES{
+
+#blockWithCloseMESCONFIRM{
   z-index: 10;
+}
+
+#blockWithCloseMES{
+  z-index: 12;
 }
 
 #addProject,
 #editProject,
-#mesBloack{
+#mesBloack,
+#mesBloackCONFIRM{
   margin: auto;  
 
   width: 50%;
@@ -419,13 +426,19 @@ input::placeholder{
 }
 
 #mesBloack{
-  z-index: 12;
+  z-index: 13;
+  width: 55%;
+}
+
+#mesBloackCONFIRM{
+  z-index:11;
   width: 55%;
 }
 
 #addProject #close,
 #editProject #close,
-#mesBloack #close{
+#mesBloack #close,
+#mesBloackCONFIRM #close{
   width: 1rem;
   height: 1rem;
 }
@@ -473,6 +486,17 @@ input::placeholder{
   margin-top: 2rem;
 }
 
+
+.yes_no{
+  margin-top: 2rem;
+
+  display: flex;
+  justify-content: end;
+}
+
+.yes_no button{
+  margin-left: 2rem;
+}
 
 /*  WorkSchedule page */
 

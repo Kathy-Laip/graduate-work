@@ -94,6 +94,28 @@ def getSchedules():
     else:
         return json.dumps({'otv': 'error_data'})
 
+
+@app.route('/deleteSch', methods=['POST'])
+def deleteSch():
+    info = json.loads(request.get_data())
+    login = info['login']
+    password = info['password']
+
+    data = info['data']
+    userID = getUser(login, password)
+    workID = getWorkID(data['theme'], userID)
+    if(userID and workID):
+        ans = deleteWorkID(userID, workID)
+        if(ans):
+            return json.dumps({'otv': 'OK'})
+        else:
+            return json.dumps({'otv': 'error_data'})
+    else:
+        return json.dumps({'otv': 'error_data'})
+
+    
+
+
 if __name__ == '__main__':
     app.run(debug=True, host="127.0.0.1", port="5000")
 
