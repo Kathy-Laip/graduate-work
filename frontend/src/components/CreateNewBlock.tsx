@@ -19,6 +19,13 @@ export const CreateNewBlock: React.FC<Message> = (props) => {
     const [type, setType] = useState<string>('')
     const [mes, setMes] = useState<string>('')
     const [mesConfirm, setMesConfirm] = useState<string>('')
+    const [val, setValue] = useState<string>('')
+    const [typeEdit, setTypeEdit] = useState('')
+    const [isEdit, setEdit] = useState(false)
+    const [isAdd, setAdd] = useState(false)
+    const [isEditAll, setEditAll] = useState(false)
+    const [update, isUpdate] = useState(false)
+
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         if(event.target.id === 'themeProject'){
@@ -26,6 +33,13 @@ export const CreateNewBlock: React.FC<Message> = (props) => {
         }
         else if(event.target.id === 'selectType'){
             setType(event.target.value)
+        }
+        else if(event.target.id === 'themeProjectEdit'){
+            setValue(event.target.value)
+        } 
+        else if(event.target.id === 'selectTypeEdit'){
+            console.log(event.target.value)
+            setTypeEdit(event.target.value)
         }
     }
 
@@ -38,6 +52,18 @@ export const CreateNewBlock: React.FC<Message> = (props) => {
         if(document.getElementById('blockWithCloseMESCONFIRM')){
             document.getElementById('blockWithCloseMESCONFIRM')!.style.display = 'none'
         }
+    }
+
+    const closeEdit = () => {
+        document.getElementById('blockWithClose')!.style.display = 'none'
+        document.getElementById('editProject')!.style.display = 'none'
+        if(document.getElementById('blockWithCloseMES')){
+            document.getElementById('blockWithCloseMES')!.style.display = 'none'
+        }
+        if(document.getElementById('blockWithCloseMESCONFIRM')){
+            document.getElementById('blockWithCloseMESCONFIRM')!.style.display = 'none'
+        }
+        setValue(props.dataCur.theme!)
     }
 
 
@@ -69,8 +95,8 @@ export const CreateNewBlock: React.FC<Message> = (props) => {
                 
                     setMes('Новое расписание успешно добавлено!')
                     document.getElementById('addProject')!.style.display = 'none'
+                    isUpdate(true)
                     switchBlock('newMessage')
-                    window.location.reload();
                 }
             })
         }
@@ -78,9 +104,45 @@ export const CreateNewBlock: React.FC<Message> = (props) => {
 
     const deleteProject = () =>{
         setMesConfirm('Вы точно хотите удалить расписание?')
+        setAdd(true)
+        setEdit(false)
+        setEditAll(false)
         switchBlock('newMessageConfirm')
     }
     
+    const editProject = () => {
+        if((typeEdit === '' || typeEdit === props.dataCur.type) && (val === '' || val === props.dataCur.theme)){
+            setMes('Изменять нечего!')
+            switchBlock('newMessage')
+        }
+        else if((typeEdit === props.dataCur.type || typeEdit === '') && val !== props.dataCur.theme){
+            let ans = props.user.editSchedule(val, props.dataCur)
+            ans.then(answer => {
+                if(answer.otv === 'error_data'){
+                    setMes('Ошибка изменения расписания!')
+                    switchBlock('newMessage')
+                } else if(answer.otv === 'OK'){
+                    setMes('Расписание успешно изменено!')
+                    isUpdate(true)
+                    switchBlock('newMessage')
+                }
+            })
+        }
+        else if(typeEdit !== props.dataCur.type && typeEdit !== '' &&  val !== props.dataCur.theme){
+            setMesConfirm('Данное изменение требует удаления всех данных о расписании. Вы уверены, что хотите изменить параметры расписания?')
+            setAdd(false)
+            setEdit(false)
+            setEditAll(true)
+            switchBlock('newMessageConfirm')
+        }
+        else if(typeEdit !== props.dataCur.type && typeEdit !== '' && (val === '' || val === props.dataCur.theme)) {
+            setMesConfirm('Внимание! Данное изменение требует удаления всех данных о расписании. Вы уверены, что хотите изменить параметры расписания?')
+            setAdd(false)
+            setEdit(true)
+            setEditAll(false)
+            switchBlock('newMessageConfirm')
+        }
+    }
 
     return(
         <div id="blockWithClose">
@@ -108,26 +170,29 @@ export const CreateNewBlock: React.FC<Message> = (props) => {
             <div id="editProject">
                 <div className='closeCreate'>
                     <h1 className="h1">Редактирование</h1>
-                    <img src={close} id='close' onClick={() => {
-                        document.getElementById('blockWithClose')!.style.display = 'none'
-                        document.getElementById('editProject')!.style.display = 'none'
-                        }}/>
+                    <img src={close} id='close' onClick={closeEdit}/>
                 </div>
                 <span className="mrTB1">Тема проекта:</span>
-                <input id='themeProject'></input>
+                <input id='themeProjectEdit' 
+                value={val || props.dataCur.theme}
+                onChange={handleChange}
+                ></input>
                 <span className="mrTB1">Тип учебного заведения</span>
-                <select className="shadowBlack">
+                <select className="shadowBlack" id='selectTypeEdit'
+                
+                onChange={handleChange}
+                >
                     <option value={''}>Выберите тип учебного заведения</option>
-                    <option value={'univ'}>Университет</option>
-                    <option value={'school'}>Школа</option>
+                    <option value={'университет'}>Университет</option>
+                    <option value={'школа'}>Школа</option>
                 </select>
                 <div className="twobtnInBlock">
                     <button className="btn1 bdR5 btnPink" onClick={deleteProject}><span>Удалить проект</span></button>
-                    <button className="btn1 bdR5 btnYellow"><span>Изменить</span></button>
+                    <button className="btn1 bdR5 btnYellow" onClick={editProject}><span>Изменить</span></button>
                 </div>
             </div>
-            <Message mess={mes}/>
-            <MessageConfirm mess={mesConfirm} data={props.dataCur} user={props.user}/>
+            <Message mess={mes} update={update}/>
+            <MessageConfirm mess={mesConfirm} data={props.dataCur} user={props.user} isEdit={isEdit} isAdd={isAdd} type={typeEdit} isEditAll={isEditAll} val={val}/>
         </div>
     )
 }

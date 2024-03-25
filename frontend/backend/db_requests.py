@@ -9,6 +9,20 @@ connection = Connection(my_db)
 # connection.execute_query('insert into timetable.feedback(feedback) values("{}")'.format(report))
 
 
+# ans = connection.execute_query('update work_folder set period={}, start_time="{}", end_time="{}", acc_hour={} where work_id={}'.format(period, start, end, acc_hour, workID))
+
+def updateTheme(theme, workID, userID):
+    ans = connection.execute_query('update work_folder set theme="{}" where work_id={} and user_id={}'.format(theme, workID, userID))
+    return ans
+
+def updateType(type, workID, userID):
+    ans = connection.execute_query('update work_folder set type_institue={} where work_id={} and user_id={}'.format(type, workID, userID))
+    return ans
+
+def updateAll(theme, type, workID, userID):
+    ans = connection.execute_query('update work_folder set theme="{}", type_institue={} where work_id={} and user_id={}'.format(theme, type, workID, userID))
+    return ans
+
 def cleanDB(nameDB):
     ans = connection.execute_query('delete from {}'.format(nameDB))
     return ans

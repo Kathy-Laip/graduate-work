@@ -48,10 +48,23 @@ export class User{
         return ans
 
     }
-    public editSchedule(){}
+
+    public async editSchedule(newTheme: string, data: any){
+        let ans = apiPos({'login': this.login, 'password': this.password, 'newTheme': newTheme, 'data': data}, '/editThemeSch')
+        return ans
+    }
+
+    public async editScheduleType(newType: string, data: any){
+        let ans = apiPos({'login': this.login, 'password': this.password, 'newType': newType, 'data': data}, '/editTypeSch')
+        return ans
+    }
+
+    public async editScheduleAll(newTheme: string, newType: string, data: any){
+        let ans = apiPos({'login': this.login, 'password': this.password, 'newTheme': newTheme, 'newType': newType,'data': data}, '/editAllSch')
+        return ans
+    }
 
     public async deleteSchedule(data: any){
-        console.log(data)
         let ans = apiPos({'login': this.login, 'password': this.password, 'data': data}, '/deleteSch')
         return ans
     }

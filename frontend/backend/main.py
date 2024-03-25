@@ -50,9 +50,9 @@ def addSchedule():
     info = json.loads(request.get_data())
     theme = info['theme']
     date = info['date']
-    type = info['type'].lower()
     login = info['login']
     password = info['password']
+    type = info['type'].lower()
 
     typeID = getType(type)
     userID = getUser(login, password)
@@ -113,8 +113,78 @@ def deleteSch():
     else:
         return json.dumps({'otv': 'error_data'})
 
-    
 
+@app.route('/editThemeSch', methods=['POST'])
+def editTheme():
+    info = json.loads(request.get_data())
+    login = info['login']
+    password = info['password']
+    
+    data = info['data']
+    newTheme = info['newTheme']
+    userID = getUser(login, password)
+    workID = getWorkID(data['theme'], userID)
+    
+    if(userID and workID):
+        ans = updateTheme(newTheme, workID, userID)
+        if(ans):
+            return json.dumps({'otv': 'OK'})
+        else:
+            return json.dumps({'otv': 'error_data'})
+    else:
+        return json.dumps({'otv': 'error_data'})
+
+@app.route('/editTypeSch', methods=['POST'])
+def editType():
+    info = json.loads(request.get_data())
+    login = info['login']
+    password = info['password']
+    
+    data = info['data']
+    type = info['newType'].lower()
+
+    typeID = getType(type)
+    userID = getUser(login, password)
+    workID = getWorkID(data['theme'], userID)
+    
+    if(userID and workID and typeID):
+        ans = updateType(typeID, workID, userID)
+        if(ans):
+            return json.dumps({'otv': 'OK'})
+        else:
+            return json.dumps({'otv': 'error_data'})
+    else:
+        return json.dumps({'otv': 'error_data'})
+
+@app.route('/editAllSch', methods=['POST'])
+def editAll():
+    info = json.loads(request.get_data())
+    login = info['login']
+    password = info['password']
+    
+    data = info['data']
+    newTheme = info['newTheme']
+    type = info['newType'].lower()
+
+    typeID = getType(type)
+    userID = getUser(login, password)
+    workID = getWorkID(data['theme'], userID)
+    
+    print(typeID)
+    if(userID and workID and typeID):
+        ans = updateTheme(newTheme, workID, userID)
+        print(ans)
+        if(ans):
+            ans = updateType(typeID, workID, userID)
+            print(ans)
+            if(ans):
+                return json.dumps({'otv': 'OK'})
+            else:
+                return json.dumps({'otv': 'error_data'})
+        else:
+            return json.dumps({'otv': 'error_data'})
+    else:
+        return json.dumps({'otv': 'error_data'})
 
 if __name__ == '__main__':
     app.run(debug=True, host="127.0.0.1", port="5000")

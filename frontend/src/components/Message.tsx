@@ -3,6 +3,7 @@ import close from '../pictures/Close.svg'
 
 export type Messages = {
     mess?: string 
+    update?: boolean
 }
 
 export const Message: React.FC<Messages> = (props) => {
@@ -19,6 +20,9 @@ export const Message: React.FC<Messages> = (props) => {
                         }
                         if(document.getElementById('blockWithCloseMESCONFIRM')){
                             document.getElementById('blockWithCloseMESCONFIRM')!.style.display = 'none'
+                        }
+                        if(props.update){
+                            window.location.reload()
                         }
                         }}/>
                 </div>
