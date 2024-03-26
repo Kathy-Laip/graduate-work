@@ -30,7 +30,7 @@ export const WorkPlace: React.FC<WorkPlaceProps> = (props) => {
                 let schFabrica = new ScheduleFabrica()
                 for(let sch of answer.works){
                     let type = sch.type === 'университет' ? 'uni' : 'school'
-                    props.user.listOfSchedules.push(schFabrica.create(sch.theme, type, sch.date))
+                    props.user.listOfSchedules.push(schFabrica.create(sch.id, sch.theme, type, sch.date))
                 }
                 setIsLoading(false)
             }else{
@@ -41,7 +41,6 @@ export const WorkPlace: React.FC<WorkPlaceProps> = (props) => {
     (async () => {
         if(get){
             const saved = JSON.parse(localStorage.getItem('user')!)
-            console.log(saved)
             props.user.login = saved.login
             props.user.password = saved.password
             updateSchs()
@@ -72,7 +71,7 @@ export const WorkPlace: React.FC<WorkPlaceProps> = (props) => {
                     :
                     props.user.listOfSchedules.map(el => {
                         if(el !== 'ERROR_CREATE'){
-                            return ( <ScheduleBlock theme={el.name} type={el.type} date={el.createDate} data={change}/>)
+                            return ( <ScheduleBlock id={el.id} theme={el.name} type={el.type} date={el.createDate} data={change} user={props.user}/>)
                         }
                     }
                     )

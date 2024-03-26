@@ -1,16 +1,49 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { switchBlock } from "../constants/const";
-import {Link} from 'react-router-dom'
+import {Link, useNavigate} from 'react-router-dom'
 import {ISCH} from '../interfaces/interface'
+import {User} from '../architecture/User'
+import { ScheduleFabrica } from "../architecture/ScheduleFabrica"
+
 
 type BlockSchedule = {
+    id: number,
     theme: string,
     type: string,
     date: string,
-    data: Function
+    data: Function,
+    user: User
 }
 
 export const ScheduleBlock: React.FC<BlockSchedule> = (props) => {
+    const navigate = useNavigate()
+
+    const linkScheduleWork = () => {
+        props.user.currentSchedule = props.user.listOfSchedules.filter(el => el !== 'ERROR_CREATE' ? el.id === props.id : [])[0]
+        localStorage.setItem('user', JSON.stringify(props.user))
+        navigate('/workBook/workSchedule')
+    }
+
+    // useEffect(() => {
+    //     const saved = JSON.parse(localStorage.getItem('user')!)
+        
+    //     props.user.login = saved.login
+    //     props.user.password = saved.password
+    //     let schFabrica = new ScheduleFabrica()
+    //     console.log(saved)
+    //     let type = saved.currentSchedule !== undefined ? saved.currentSchedule.type === 'университет' ? 'uni' : 'school' : ''
+    //     if(saved.currentSchedule){
+    //         props.user.currentSchedule = schFabrica.create(saved.currentSchedule.id, saved.currentSchedule.theme, type, saved.currentSchedule.date)
+    //     }
+    //     console.log(props.user)
+    //   }, [])
+
+    // useEffect(() => {
+    //     localStorage.setItem('user', JSON.stringify(props.user))
+    //     console.log(props.user)
+    // }, [props.user.currentSchedule])
+
+
     return (
         <div className="scheduleBlock bdR5">
             <span>{props.theme}</span>
@@ -21,7 +54,7 @@ export const ScheduleBlock: React.FC<BlockSchedule> = (props) => {
                     switchBlock('editProject')
                     props.data(props.theme, props.type, props.date)
                 }}>Редактировать</button>
-                <button className="come btn1 btnGreen bdR5"><Link to='/workBook/workSchedule'>Перейти</Link></button>
+                <button className="come btn1 btnGreen bdR5" onClick={linkScheduleWork}>Перейти</button>
             </div>
         </div>
     )

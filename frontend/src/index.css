@@ -178,7 +178,9 @@ input::placeholder{
 #addProject input,
 #addProject select,
 #editProject input,
-#editProject select{
+#editProject select,
+#settings input,
+#settings select{
   width: 100%;
 
   padding: 0.5rem 1rem;
@@ -386,7 +388,8 @@ input::placeholder{
 
 #blockWithClose,
 #blockWithCloseMES,
-#blockWithCloseMESCONFIRM{
+#blockWithCloseMESCONFIRM,
+#blockWithCloseSett{
   display: none;
 
   width: 100vw;
@@ -399,6 +402,10 @@ input::placeholder{
   left: 0;
 }
 
+#blockWithCloseSett{
+  display: flex;
+  z-index: 10;
+}
 
 #blockWithCloseMESCONFIRM{
   z-index: 10;
@@ -425,6 +432,22 @@ input::placeholder{
   background-color: white;
 }
 
+#settings{
+  margin: auto;
+
+  width: 55%;
+  height: 80%;
+
+  overflow-y: auto;
+
+  display: flex;
+  flex-direction: column;
+
+  padding: 2.5rem 2.5rem 3.5rem 2.5rem;
+
+  background-color: white;
+}
+
 #mesBloack{
   z-index: 13;
   width: 55%;
@@ -438,7 +461,8 @@ input::placeholder{
 #addProject #close,
 #editProject #close,
 #mesBloack #close,
-#mesBloackCONFIRM #close{
+#mesBloackCONFIRM #close,
+#settings #close{
   width: 1rem;
   height: 1rem;
 }
@@ -460,7 +484,9 @@ input::placeholder{
 #addProject input,
 #addProject select,
 #editProject input,
-#editProject select{
+#editProject select,
+#settings input,
+#settings select{
   border: 0px solid #ccc;
   box-shadow: 0px 2px 10px  rgba(0, 0, 0, .2);
 }

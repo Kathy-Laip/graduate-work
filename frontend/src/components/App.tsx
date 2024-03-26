@@ -18,18 +18,6 @@ export const App: React.FC = () => {
             flagEntrance: !prev.flagEntrance
         }))
     }
-    
-
-    // useEffect(() => {
-    //     const saved = JSON.parse(localStorage.getItem('user')!)
-    //     console.log(saved)
-    //     setUser(new User(saved.login, saved.password))
-    //   }, [])
-
-    // useEffect(() => {
-    //     console.log(user)
-    //     localStorage.setItem('user', JSON.stringify(user))
-    // }, [user])
 
     return (
         <>
@@ -37,7 +25,7 @@ export const App: React.FC = () => {
                 <Routes>
                     <Route index element={<Exit flag={state.flagEntrance} change={changeFlagExitOrSignUp} user={user}/>} path='/'></Route>
                     <Route element={<WorkPlace user={user}/>} path='/workBook'></Route>
-                    <Route element={<WorkSchedule/>} path='/workBook/workSchedule'></Route>
+                    <Route element={<WorkSchedule user={user}/>} path='/workBook/workSchedule' ></Route>
                 </Routes>
             </BrowserRouter>
         </>

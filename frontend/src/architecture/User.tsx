@@ -8,7 +8,7 @@ export class User{
     public login: string
     public password: string
 
-    public currentSchedule?: Schedule
+    public currentSchedule?: ScheduleSchool | ScheduleUni | 'ERROR_CREATE'
     public openSchedules?: Schedule[]
 
     public listOfSchedules: (ScheduleSchool|ScheduleUni|'ERROR_CREATE')[] = []

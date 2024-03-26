@@ -1,10 +1,13 @@
 import { IPlanSchool, ITeachSchool } from "../interfaces/interface"
 import { Schedule } from "./Schedule"
+import { ScheduleSettings } from "./ScheduleSettings"
 
 export class ScheduleSchool extends Schedule{
-    constructor(public name: string, public type: string, public createDate: string) {
-        super(name, type, createDate)
+    public settings?: ScheduleSettings
+    constructor(public id: number, public name: string, public type: string, public createDate: string) {
+        super(id, name, type, createDate)
     }
+
     public currentDir?: number
 
     public study_plan?: IPlanSchool[]

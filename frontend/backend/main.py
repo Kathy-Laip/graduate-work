@@ -79,9 +79,10 @@ def getSchedules():
             works = []
             for sch in schedules:
                 works.append({
-                    'theme': sch[0],
-                    'date' : sch[1],
-                    'type': sch[2]
+                    'id': sch[0],
+                    'theme': sch[1],
+                    'date' : sch[2],
+                    'type': sch[3]
                 })
             works_f = sorted(works, key=lambda x: x['date'], reverse=True)
 

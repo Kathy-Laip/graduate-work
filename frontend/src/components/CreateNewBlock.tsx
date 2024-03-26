@@ -78,21 +78,6 @@ export const CreateNewBlock: React.FC<Message> = (props) => {
                     setMes('Ошибка добавления расписания! Попробуйте позже...')
                     switchBlock('newMessage')
                 }else if(answer.otv === 'OK'){
-                    let schFabrica = new ScheduleFabrica()
-                    let newType = type === 'университет' ? 'uni' : 'school'
-                    const dateObj = new Date();
-                    const month   = dateObj.getUTCMonth() + 1; // months from 1-12
-                    const day     = dateObj.getUTCDate();
-                    const year    = dateObj.getUTCFullYear();
-            
-                    const hour = dateObj.getHours()
-                    const minutes = dateObj.getMinutes()
-                    const sec = dateObj.getSeconds()
-            
-                    const newDate = year + "-" + month + "-" + day + ' ' + hour + ':' + minutes + ':' + sec;
-                    props.user!.listOfSchedules.unshift(schFabrica.create(theme, newType, newDate))
-
-                
                     setMes('Новое расписание успешно добавлено!')
                     document.getElementById('addProject')!.style.display = 'none'
                     isUpdate(true)
