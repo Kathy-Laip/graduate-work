@@ -709,3 +709,7 @@ form{
 #courses .datePeriod form label:hover{
   background-color: var(--main-blue-blue);
 }
+
+.menuPos:active{
+  box-shadow: 1px -5px 26px rgba(0, 0, 0, 0.51);
+}
