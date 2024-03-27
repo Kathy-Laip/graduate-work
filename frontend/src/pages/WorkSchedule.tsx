@@ -26,7 +26,6 @@ export const WorkSchedule: React.FC<WorkSch> = (props) => {
         }
     })()
 
-    console.log(props.user.currentSchedule)
     return (
         <div className="workScheduleMain">
             <SideBar/>
