@@ -65,7 +65,7 @@ export const ScheduleBlockSettingsUni: React.FC<SchSetts> = (props) => {
                     	<label className="input-file">
                     	   	<span className="input-file-text shadowBlack"></span>
                     	   	<input type="file" name="file" accept=".xlsx"/>        
-                     	   	<span className="input-file-btn">Выберите файл</span>
+                     	   	<span className="input-file-btn"><span>Выберите файл</span></span>
                      	</label>
                     </form>
                     <span className="mrTB1">График работы аудиторий:</span>
@@ -74,7 +74,7 @@ export const ScheduleBlockSettingsUni: React.FC<SchSetts> = (props) => {
                     	<label className="input-file">
                     	   	<span className="input-file-text shadowBlack"></span>
                     	   	<input type="file" name="file" accept=".xlsx"/>        
-                     	   	<span className="input-file-btn">Выберите файл</span>
+                     	   	<span className="input-file-btn"><span>Выберите файл</span></span>
                      	</label>
                     </form>
                     <div className="datePeriod">

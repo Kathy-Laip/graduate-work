@@ -87,6 +87,10 @@ input::placeholder{
   padding: 0.5rem 1rem;
 }
 
+.btnBlue{
+  background-color: var(--main-blue);
+}
+
 .btnOrange{
   background-color: var(--main-orange);
 }
@@ -389,7 +393,8 @@ input::placeholder{
 #blockWithClose,
 #blockWithCloseMES,
 #blockWithCloseMESCONFIRM,
-#blockWithCloseSett{
+#blockWithCloseSett,
+#blockWithCloseAddPlan{
   display: none;
 
   width: 100vw;
@@ -402,7 +407,8 @@ input::placeholder{
   left: 0;
 }
 
-#blockWithCloseSett{
+#blockWithCloseSett,
+#blockWithCloseAddPlan{
   display: flex;
   z-index: 10;
 }
@@ -437,6 +443,21 @@ input::placeholder{
 
   width: 55%;
   height: 80%;
+
+
+  display: flex;
+  flex-direction: column;
+
+  padding: 2.5rem 2.5rem 3.5rem 2.5rem;
+
+  background-color: white;
+}
+
+#blockAddOrEdit{
+  margin: auto;
+
+  width: 55%;
+  /* height: 65%; */
 
 
   display: flex;
@@ -485,7 +506,9 @@ input::placeholder{
 #editProject input,
 #editProject select,
 .scrolls input,
-.scrolls select{
+.scrolls select,
+#blockAddOrEdit select,
+#blockAddOrEdit input{
   border: 0px solid #ccc;
   box-shadow: 0px 2px 10px  rgba(0, 0, 0, .2);
 }
@@ -595,11 +618,12 @@ form{
 	position: relative;
 	display: inline-block;
 }
+
 .input-file-text {
 	padding: 0 10px;
-	line-height: 40px;
+	/* line-height: 10vh; */
 	text-align: left;
-	height: 40px;
+	height: 6vh;
 	display: block;
 	float: left;
 	box-sizing: border-box;
@@ -609,7 +633,7 @@ form{
 }
 .input-file-btn {
   position: relative;
-	display: inline-block;
+	/* display: inline-block; */
 	cursor: pointer;
 	outline: none;
 	text-decoration: none;
@@ -619,15 +643,19 @@ form{
 	text-align: center;
 	border-radius: 0 4px 4px 0;
 	background-color: var(--main-blue-blue);
-	line-height: 22px;
-	height: 40px;
-	padding: 10px 20px;
+	height: 6vh; 
 	box-sizing: border-box;
 	border: none;
-	margin: 0;
   width: 30%;
 	transition: background-color 0.2s;
+  display:table;
 }
+
+.input-file-btn span{
+  display:table-cell;
+  vertical-align:middle;
+}
+
 .input-file input[type=file] {
 	position: absolute;
 	z-index: -1;
@@ -713,3 +741,34 @@ form{
 .menuPos:active{
   box-shadow: 1px -5px 26px rgba(0, 0, 0, 0.51);
 }
+
+.planMenu{
+  display: flex;
+  flex-direction: column;
+
+  padding: 3rem 2rem;
+}
+
+.planMenu button{
+  width: 50%;
+
+  margin-bottom: 1rem;
+}
+
+.planMenu button span{
+  margin: auto;
+}
+
+#blockAddOrEdit select{
+  margin-top: 1.5rem;
+  padding: 0.8rem 0.5rem;
+}
+
+#blockAddOrEdit form{
+  padding: 0;
+  margin-top: 1.5rem;
+}
+
+/* #blockAddOrEdit {
+  padding: 1rem;
+} */

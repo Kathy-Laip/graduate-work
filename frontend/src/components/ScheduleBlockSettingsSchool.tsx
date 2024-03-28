@@ -42,14 +42,15 @@ export const ScheduleBlockSettingsSchool: React.FC<SchSetts> = (props) => {
                 <div className="scrolls">
                     <select className="shadowBlack" id='selectPeriod'
                     >
-                        <option value={''}>Выберите семестр</option>
+                        <option value={''}>Выберите четверть</option>
                         <option value={'1'}>1</option>
                         <option value={'2'}>2</option>
+                        <option value={'3'}>3</option>
+                        <option value={'4'}>4</option>
                     </select>
                     <span className="mrTB1">Академический час:</span>
                     <select className="shadowBlack" id='selectTypeEdit'
                     >
-                        <option value={'40'}>40</option>
                         <option value={'45'}>45</option>
                         <option value={'50'}>50</option>
                         <option value={'55'}>55</option>
@@ -65,16 +66,16 @@ export const ScheduleBlockSettingsSchool: React.FC<SchSetts> = (props) => {
                     	<label className="input-file">
                     	   	<span className="input-file-text shadowBlack"></span>
                     	   	<input type="file" name="file" accept=".xlsx"/>        
-                     	   	<span className="input-file-btn">Выберите файл</span>
+                     	   	<span className="input-file-btn"><span>Выберите файл</span></span>
                      	</label>
                     </form>
-                    <span className="mrTB1">График работы аудиторий:</span>
+                    <span className="mrTB1">Кабинеты:</span>
                     {/* <input type="file"  id="avatar"  accept=".xlsx"/> */}
                     <form method="post" encType="multipart/form-data">
                     	<label className="input-file">
                     	   	<span className="input-file-text shadowBlack"></span>
                     	   	<input type="file" name="file" accept=".xlsx"/>        
-                     	   	<span className="input-file-btn">Выберите файл</span>
+                     	   	<span className="input-file-btn"><span>Выберите файл</span></span>
                      	</label>
                     </form>
                     <div className="datePeriod">
@@ -86,7 +87,7 @@ export const ScheduleBlockSettingsSchool: React.FC<SchSetts> = (props) => {
                         <input type='date'/>
                     </div>
                     <div className="datePeriod">
-                        <span>Кол-во курсов</span>
+                        <span>Кол-во параллелей</span>
                         <input type='number' min={1} id='count' value={count} onChange={handleChange}></input>
                     </div>
                     <div id='courses'>

@@ -8,6 +8,8 @@ import {WorkSchSchool} from '../components/ScheduleWorkSchool'
 import { ScheduleBlockSettingsUni } from "../components/ScheduleBlockSettingsUni";
 import { ScheduleFabrica } from "../architecture/ScheduleFabrica"
 import { ScheduleBlockSettingsSchool } from "../components/ScheduleBlockSettingsSchool";
+import { AddOrEditPlansUni } from "../components/AddOrEditPlansUni";
+import { EdiPlanUni } from "../components/EditPlanUni";
 
 type WorkSch = {
     user: User
@@ -16,6 +18,8 @@ type WorkSch = {
 export const WorkSchedule: React.FC<WorkSch> = (props) => {
     const [setUni, isSetUni] = useState(false)
     const [setSchool, isSetSchool] = useState(false)
+    const [addPlanUni, setAddPlanUni] = useState(false)
+    const [editPlanUni, setEditPlanUni] = useState(false)
 
     const onSettings = () => {
         if(props.user.currentSchedule !== 'ERROR_CREATE' && props.user.currentSchedule!.type === 'uni') isSetUni(true)
@@ -25,6 +29,20 @@ export const WorkSchedule: React.FC<WorkSch> = (props) => {
     const onSettingsFalse = () => {
         if(props.user.currentSchedule !== 'ERROR_CREATE' && props.user.currentSchedule!.type === 'uni') isSetUni(false)
         if(props.user.currentSchedule !== 'ERROR_CREATE' && props.user.currentSchedule!.type === 'school') isSetSchool(false)
+    }
+
+    const addPlanUniTrue = () => {
+        setAddPlanUni(true)
+    }
+    const addPlanUniFalse = () => {
+        setAddPlanUni(false)
+    }
+
+    const editPlanUniTrue = () => {
+        setEditPlanUni(true)
+    }
+    const editPlanUniFalse = () => {
+        setEditPlanUni(false)
     }
 
     (async () => {
@@ -47,6 +65,8 @@ export const WorkSchedule: React.FC<WorkSch> = (props) => {
             <SideBar/>
             {setUni && props.user.currentSchedule !== 'ERROR_CREATE' && props.user.currentSchedule!.type === 'uni' && (<ScheduleBlockSettingsUni onSettingsFalse={onSettingsFalse}/>)}
             {setSchool && props.user.currentSchedule !== 'ERROR_CREATE' && props.user.currentSchedule!.type === 'school' && (<ScheduleBlockSettingsSchool onSettingsFalse={onSettingsFalse}/>)}
+            {addPlanUni && (<AddOrEditPlansUni deletePlan={addPlanUniFalse}/>)}
+            {editPlanUni && (<EdiPlanUni deletePlan={editPlanUniFalse}/>)}
             <div className="bodyWork">
                 <div className="nav">
                     <div className="leftNav">
@@ -59,7 +79,7 @@ export const WorkSchedule: React.FC<WorkSch> = (props) => {
                 </div>
                 <div className="workBodyShedules">
                     {props.user.currentSchedule && props.user.currentSchedule !== 'ERROR_CREATE' && (props.user.currentSchedule!.type === 'uni' ?
-                         (<WorkSchUni user={props.user}/>)
+                         (<WorkSchUni user={props.user} addPlan={addPlanUniTrue} editPlan={editPlanUniTrue}/>)
                          :
                          (<WorkSchSchool user={props.user}/>)
                     )
