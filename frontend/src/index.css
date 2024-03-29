@@ -394,7 +394,8 @@ input::placeholder{
 #blockWithCloseMES,
 #blockWithCloseMESCONFIRM,
 #blockWithCloseSett,
-#blockWithCloseAddPlan{
+#blockWithCloseAddPlan,
+#blockWithCloseAddTeachs{
   display: none;
 
   width: 100vw;
@@ -408,7 +409,8 @@ input::placeholder{
 }
 
 #blockWithCloseSett,
-#blockWithCloseAddPlan{
+#blockWithCloseAddPlan,
+#blockWithCloseAddTeachs{
   display: flex;
   z-index: 10;
 }
@@ -547,6 +549,16 @@ input::placeholder{
 }
 
 /*  WorkSchedule page */
+
+.rightNav{
+  display: flex;
+  justify-content: space-between;
+}
+
+.rightNav p{
+  margin: auto;
+  margin-right: 1rem;
+}
 
 .workScheduleMain .rightNav button{
   padding-left: 3rem;
@@ -762,6 +774,15 @@ form{
 #blockAddOrEdit select{
   margin-top: 1.5rem;
   padding: 0.8rem 0.5rem;
+}
+
+#blockWithCloseAddTeachs input{
+  margin: 0.5rem 0;
+  padding: 0.8rem 0.5rem;
+}
+
+#blockWithCloseAddTeachs #h1{
+  margin: 1.2rem 0;
 }
 
 #blockAddOrEdit form{

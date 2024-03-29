@@ -10,7 +10,9 @@ import { MenuTeachsUni } from "./menuTeachsUni";
 type WorkSch = {
     user: User,
     addPlan: Function,
-    editPlan: Function
+    editPlan: Function,
+    addTeachs: Function,
+    editTeachs: Function
 }
 
 export const WorkSchUni: React.FC<WorkSch> = (props) => {
@@ -56,7 +58,7 @@ export const WorkSchUni: React.FC<WorkSch> = (props) => {
             <div className="menuAndSchedule">
                 {sch && (<MenuSchUni/>)}
                 {plan && (<MenuPlanUni user={props.user} addPlan={props.addPlan} editPlan={props.editPlan}/>)}
-                {teach && (<MenuTeachsUni/>)}
+                {teach && (<MenuTeachsUni user={props.user} addTeachs={props.addTeachs} editTeachs={props.editTeachs}/>)}
             </div>
         </div>
     )

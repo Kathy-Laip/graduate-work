@@ -8,7 +8,11 @@ import { MenuPlanSchool } from "./menuPlansSchool";
 import { MenuTeachsSchool } from "./menuTeachsSchool";
 
 type WorkSch = {
-    user: User
+    user: User,
+    addPlan: Function,
+    editPlan: Function,
+    addTeachs: Function,
+    editTeachs: Function
 }
 
 export const WorkSchSchool: React.FC<WorkSch> = (props) => {
@@ -53,8 +57,8 @@ export const WorkSchSchool: React.FC<WorkSch> = (props) => {
             </div>
             <div className="menuAndSchedule">
                 {sch && (<MenuSchSchool/>)}
-                {plan && (<MenuPlanSchool/>)}
-                {teach && (<MenuTeachsSchool/>)}
+                {plan && (<MenuPlanSchool user={props.user} addPlan={props.addPlan} editPlan={props.editPlan}/>)}
+                {teach && (<MenuTeachsSchool user={props.user} addTeachs={props.addTeachs} editTeachs={props.editTeachs}/>)}
             </div>
         </div>
     )
