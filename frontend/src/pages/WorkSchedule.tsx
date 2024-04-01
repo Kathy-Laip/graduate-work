@@ -7,6 +7,8 @@ import {WorkSchUni} from '../components/ScheduleWorkUni'
 import {WorkSchSchool} from '../components/ScheduleWorkSchool'
 import { ScheduleBlockSettingsUni } from "../components/ScheduleBlockSettingsUni";
 import { ScheduleFabrica } from "../architecture/ScheduleFabrica"
+import { ScheduleUni } from "../architecture/ScheduleUni";
+import { ScheduleSchool } from "../architecture/ScheduleSchool";
 import { ScheduleBlockSettingsSchool } from "../components/ScheduleBlockSettingsSchool";
 import { AddOrEditPlansUni } from "../components/AddOrEditPlansUni";
 import { EdiPlanUni } from "../components/EditPlanUni";
@@ -17,6 +19,8 @@ import { EdiPlanSschool } from "../components/EditPlanSchool";
 import { AddOrEditTeachsSchool } from "../components/AddOrEditTeachsSchool";
 import { EdiTeachsSchool } from "../components/EditTeachsSchool";
 import download from '../pictures/download.svg'
+import { Message } from "../components/Message";
+import { switchBlock } from "../constants/const";
 
 type WorkSch = {
     user: User
@@ -37,6 +41,9 @@ export const WorkSchedule: React.FC<WorkSch> = (props) => {
 
     const [addTeachsSchool, setAddTeachsSchool] = useState(false)
     const [editTeachsSchool, setEditTeachsSchool] = useState(false)
+
+    const [mes, setMes] = useState<string>('')
+    const [upd, setUpd] = useState<boolean>(false)
 
     const onSettings = () => {
         if(props.user.currentSchedule !== 'ERROR_CREATE' && props.user.currentSchedule!.type === 'uni') isSetUni(true)
@@ -125,14 +132,21 @@ export const WorkSchedule: React.FC<WorkSch> = (props) => {
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-      }
+    }
 
+    const message = (mes:string, up:boolean) => {
+        setMes(mes)
+        setUpd(upd)
+        switchBlock('newMessage')
+    }
 
     return (
         <div className="workScheduleMain">
             <SideBar/>
-            {props.user.currentSchedule !== 'ERROR_CREATE' && (setUni || props.user.currentSchedule!.settings === undefined)  && props.user.currentSchedule!.type === 'uni' && (<ScheduleBlockSettingsUni onSettingsFalse={onSettingsFalse}/>)}
-            {props.user.currentSchedule !== 'ERROR_CREATE' && (setSchool || props.user.currentSchedule!.settings === undefined) && props.user.currentSchedule!.type === 'school' && (<ScheduleBlockSettingsSchool onSettingsFalse={onSettingsFalse}/>)}
+            {/* (setUni || props.user.currentSchedule!.settings === undefined)  */}
+            {(setUni || false)  && props.user.currentSchedule! instanceof ScheduleUni && (<ScheduleBlockSettingsUni onSettingsFalse={onSettingsFalse} sch={props.user.currentSchedule} mes={message}/>)}
+            {/* (setSchool || props.user.currentSchedule!.settings === undefined) */}
+            {(setSchool || false) && props.user.currentSchedule! instanceof ScheduleSchool && (<ScheduleBlockSettingsSchool onSettingsFalse={onSettingsFalse} sch={props.user.currentSchedule}/>)}
 
             {addPlanUni && (<AddOrEditPlansUni deletePlan={addPlanUniFalse}/>)}
             {editPlanUni && (<EdiPlanUni deletePlan={editPlanUniFalse}/>)}
@@ -166,6 +180,7 @@ export const WorkSchedule: React.FC<WorkSch> = (props) => {
                     }
                 </div>
             </div>
+            <Message mess={mes} update={upd}/>
         </div>
     )
 }

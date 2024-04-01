@@ -58,3 +58,13 @@ export interface ISCH{
     type? : string
     date? : string
 }
+
+export interface President { // интерфейс данных
+    Name: string;
+    Index: number;
+}
+  
+export interface IFile{
+    id: number,
+    nameFile: string
+}

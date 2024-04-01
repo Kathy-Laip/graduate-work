@@ -1,21 +1,27 @@
 import React, {useState} from "react";
+import { ScheduleSchool } from "../architecture/ScheduleSchool";
 import close from '../pictures/Close.svg'
 
 type SchSetts = {
     onSettingsFalse: Function
+    sch: ScheduleSchool
 }
 
+
+
 export const ScheduleBlockSettingsSchool: React.FC<SchSetts> = (props) => {
-    const [count, setCount] = useState<number>(1)
+    const [count, setCount] = useState<number>()
     const [courseBlocks, setCourseBlocks] = useState<JSX.Element[]>([]);
+    // let count:number
+    // let courseBlocks:JSX.Element[] = []
 
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if(event.target.id === 'count'){
             setCount(Number(event.target.value))
             // courseBlocks = []
-            const newCourseBlocks = [];
-            for(let i = 1; i <= Number(count); i++){
+            let newCourseBlocks = [];
+            for(let i = 1; i <= Number(event.target.value); i++){
                 newCourseBlocks.push(
                     <div key={i} className="datePeriod">
                         <span>{i}</span>
@@ -29,8 +35,10 @@ export const ScheduleBlockSettingsSchool: React.FC<SchSetts> = (props) => {
                 );
             }
             setCourseBlocks(newCourseBlocks);
+            console.log(courseBlocks)
         }
     }
+
 
     return (
         <div id="blockWithCloseSett">
@@ -88,7 +96,7 @@ export const ScheduleBlockSettingsSchool: React.FC<SchSetts> = (props) => {
                     </div>
                     <div className="datePeriod">
                         <span>Кол-во параллелей</span>
-                        <input type='number' min={1} id='count' value={count} onChange={handleChange}></input>
+                        <input type='number' id='count' min='0' value={count} onChange={handleChange}></input>
                     </div>
                     <div id='courses'>
                         {courseBlocks}

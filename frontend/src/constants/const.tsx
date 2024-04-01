@@ -1,3 +1,6 @@
+import {read, utils} from 'xlsx';
+import { President } from '../interfaces/interface';
+
 export const circles = [
     { // вынесли как константу
         width: '15em',
@@ -79,3 +82,19 @@ export const switchBlock = (type:string) => {
         document.getElementById('editProject')!.style.display = 'flex'
     }
 }
+
+
+// export const handleUpload = (selectedFile: File) => { // функция загрузки содержимого и отправки данных на сервер при нажатии на кнопку
+//     if (selectedFile) {
+//       const reader = new FileReader();
+//       reader.onload = (event: any) => {
+//         const result = event.target.result;
+        
+//         const workbook = read(result, { type: 'binary' });
+//         const ws = workbook.Sheets[workbook.SheetNames[0]]
+//         const data: President[] = utils.sheet_to_json<President>(ws); // generate objects
+//         return data
+//       };
+//       reader.readAsBinaryString(selectedFile);
+//     } else ''
+//   };

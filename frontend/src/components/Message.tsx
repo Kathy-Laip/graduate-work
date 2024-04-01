@@ -15,9 +15,9 @@ export const Message: React.FC<Messages> = (props) => {
                     <img src={close} id='close' onClick={() => {
                         document.getElementById('blockWithCloseMES')!.style.display = 'none'
                         document.getElementById('mesBloack')!.style.display = 'none'
-                        if(document.getElementById('blockWithClose')){
-                            document.getElementById('blockWithClose')!.style.display = 'none'
-                        }
+                        // if(document.getElementById('blockWithClose')){
+                        //     document.getElementById('blockWithClose')!.style.display = 'none'
+                        // }
                         if(document.getElementById('blockWithCloseMESCONFIRM')){
                             document.getElementById('blockWithCloseMESCONFIRM')!.style.display = 'none'
                         }

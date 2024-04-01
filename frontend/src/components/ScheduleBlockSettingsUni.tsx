@@ -1,34 +1,164 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import close from '../pictures/Close.svg'
+import {ScheduleSettings} from '../architecture/ScheduleSettings'
+import {ScheduleUni} from '../architecture/ScheduleUni'
+import {President} from '../interfaces/interface'
+// import {handleUpload} from '../constants/const'
+import { NewCouse } from "./NewCourse";
+import {IFile} from '../interfaces/interface'
+import {read, utils} from 'xlsx';
+
+const handleUpload = async (selectedFile: File) => { // функция загрузки содержимого и отправки данных на сервер при нажатии на кнопку
+    return new Promise((resolve, reject) => {
+        let reader = new FileReader();
+        reader.onload = (event: any) => {
+          let result = event.target.result;
+          
+          let workbook = read(result, { type: 'binary' });
+          let ws = workbook.Sheets[workbook.SheetNames[0]]
+          let data =  utils.sheet_to_json(ws, {raw: false}); // generate objects
+          resolve(data)
+          
+        };
+        reader.readAsBinaryString(selectedFile);
+    })
+};
+
 
 type SchSetts = {
-    onSettingsFalse: Function
+    onSettingsFalse: Function,
+    sch: ScheduleUni,
+    mes: Function 
 }
 
+type MyType = {
+    courseNumber: number,
+    strings: any[];
+  };
+
 export const ScheduleBlockSettingsUni: React.FC<SchSetts> = (props) => {
-    const [count, setCount] = useState<number>(1)
-    const [courseBlocks, setCourseBlocks] = useState<JSX.Element[]>([]);
+    const [count, setCount] = useState<number>(0)
+    const [courseBlocks, setCourseBlocks] = useState<number[]>([]);
+    const [courses, setCourses] = useState<any[]>([])
+    const [presCourses, setPresCourses] = useState<any>();
 
+    const [semestr, setSemester] = useState<number>()
+    const [accHour, setAccHour] = useState<number>()
 
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const [nameGrafic, setNameGrafic] = useState('')
+    const [selectedGraficFile, setSelectedGraficFile] = useState<File | null>(null);
+    const [presGrafic, setPresGrafic] = useState<any|undefined>([]);
+
+    const [nameAudit, setNameAudit] = useState('')
+    const [selectedAuditFile, setSelectedAuditFile] = useState<File | null>(null);
+    const [presAudit, setPresAudit] = useState<any|undefined>([]);
+
+    const [startDate, setStartDate] = useState<string>('')
+    const [endDate, setEndDate] = useState<string>('')
+
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement|HTMLSelectElement>) => {
         if(event.target.id === 'count'){
             setCount(Number(event.target.value))
-            // courseBlocks = []
-            const newCourseBlocks = [];
-            for(let i = 1; i <= Number(count); i++){
-                newCourseBlocks.push(
-                    <div key={i} className="datePeriod">
-                        <span>{i}</span>
-                        <form method="post" encType="multipart/form-data">
-                            <label className="input-file">
-                                <input type="file" name={`file-${i}`}/>		
-                                <span>Выберите файл</span>
-                            </label>
-                        </form>
-                    </div>
-                );
-            }
+            const newCourseBlocks = Array.from({length: Number(event.target.value)}, (_, ind) => ind+1);
+            const coursess = Array.from({length: Number(event.target.value)+1}, () => 0)
+            setCourses(coursess)
             setCourseBlocks(newCourseBlocks);
+        }else if(event.target.id === 'selectPeriod'){
+            setSemester(Number(event.target.value))
+            // console.log(event.target.value)
+        }else if(event.target.id === 'selectTypeEdit'){
+            setAccHour(Number(event.target.value))
+            // console.log(event.target.value)
+        }else if(event.target.id === 'startDate'){
+            setStartDate(event.target.value)
+        }else if(event.target.id === 'endDate'){
+            setEndDate(event.target.value)
+        }
+    }
+
+    const fileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        if(event.target.id === 'graficFile'){
+            const file = event.target.files && event.target.files[0]; 
+            setSelectedGraficFile(file)
+            setNameGrafic(file!.name)
+        }else if(event.target.id === 'auditFile'){
+            const file = event.target.files && event.target.files[0]
+            setSelectedAuditFile(file)
+            setNameAudit(file!.name)
+        }
+    }
+
+    const changeFilesCourse = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const fileIndex = Number(event.target.name.split('-')[1]);
+        const file = event.target.files && event.target.files[0]; 
+
+        setCourses(prevNames => {
+            const updatedNames = [...prevNames];
+            updatedNames[fileIndex] = file;
+            return updatedNames;
+        });
+    }
+
+    const save = () => {
+        if(!semestr) props.mes('Заполните пожалуйста поле с семестром!', false)
+        else{
+            if(!accHour) props.mes('Заполните пожалуйста поле с академическим часом!', false)
+            else{
+                if(selectedGraficFile === null) props.mes('Выберите файл с графиком!', false)
+                else{
+                    let ans = handleUpload(selectedGraficFile!)
+                    ans.then(ans => {
+                        setPresGrafic(ans)
+                        let presGr: any[] = ans as any
+                        let keysGr = Object.keys(presGr[0])
+                        if(keysGr[0] !== 'начало' || keysGr[1] !== 'конец') props.mes('Файл с графиком не соответсвует требованиям!', false)
+                        else {
+                            if(selectedAuditFile === null) props.mes('Выберите файл с аудиториями!', false)
+                            else{
+                                let ans = handleUpload(selectedAuditFile!)
+                                ans.then(ans => {
+                                    setPresAudit(ans)
+                                    let presAu: any[] = ans as any
+                                    let keysAu = Object.keys(presAu[0])
+                                    if(keysAu[0] !== 'номер аудитории' || keysAu[1] !== 'вместимость' || keysAu[2] !== 'начало работы' || keysAu[3] !== 'конец работы' || keysAu[4] !== 'тип аудитории' || keysAu[5] !== 'день недели') props.mes('Файл с аудиториями не соответсвует требованиям!', false)
+                                    else {
+                                        if(!startDate || !endDate) props.mes('Заполните начало и конец периода!', false)
+                                        else{
+                                            let presCs:any[] = []
+                                            if(courses.length === 0) props.mes(`Пожалуйста, заполните информации с курсами!`, false)
+                                            else{
+                                                for(let i = 1; i < courses.length; i++){
+                                                    let obj: MyType = {courseNumber: i, strings: []}
+                                                    console.log(courses)
+                                                    if(courses[i] === 0 || courses[i] === undefined){
+                                                        props.mes(`Выберите файл для курса ${i}`, false)
+                                                        setCount(0)
+                                                        setCourseBlocks([])
+                                                        i = courses.length;
+                                                        presCs = []
+                                                    } 
+                                                    else{
+                                                        let ans = handleUpload(courses[i]!)
+                                                        ans.then(ans => {
+                                                            let datCs: any = ans as any
+                                                            obj.strings = datCs
+                                                            let keysCs = Object.keys(datCs[0])
+                                                            if(keysCs[0] !== 'наименование' || keysCs[1] !== 'номер группы/инициалы' || keysCs[2] !== 'количество') props.mes(`Файл с курсом ${count} не соответствует требованиям!`, false)
+                                                        })
+                                                        presCs.push(obj)
+                                                    }
+                                                }
+                                                setPresCourses(presCs)
+                                            }
+                                        }
+                                    }
+                                })
+                            }
+                        }
+                    
+                    })
+                }
+            }
         }
     }
 
@@ -41,6 +171,7 @@ export const ScheduleBlockSettingsUni: React.FC<SchSetts> = (props) => {
                 </div>
                 <div className="scrolls">
                     <select className="shadowBlack" id='selectPeriod'
+                    onChange={handleChange}
                     >
                         <option value={''}>Выберите семестр</option>
                         <option value={'1'}>1</option>
@@ -48,7 +179,9 @@ export const ScheduleBlockSettingsUni: React.FC<SchSetts> = (props) => {
                     </select>
                     <span className="mrTB1">Академический час:</span>
                     <select className="shadowBlack" id='selectTypeEdit'
+                    onChange={handleChange}
                     >
+                        <option value={''}>Выберите час</option>
                         <option value={'40'}>40</option>
                         <option value={'45'}>45</option>
                         <option value={'50'}>50</option>
@@ -63,37 +196,39 @@ export const ScheduleBlockSettingsUni: React.FC<SchSetts> = (props) => {
                     {/* <input type="file"  id="avatar"  accept=".xlsx"/> */}
                     <form method="post" encType="multipart/form-data">
                     	<label className="input-file">
-                    	   	<span className="input-file-text shadowBlack"></span>
-                    	   	<input type="file" name="file" accept=".xlsx"/>        
-                     	   	<span className="input-file-btn"><span>Выберите файл</span></span>
+                    	   	<span className="input-file-text shadowBlack"><span>{nameGrafic}</span></span>
+                    	   	<input type="file" name="file" accept=".xlsx" id='graficFile' onChange={fileChange}/>        
+                     	   	<span className="input-file-btn"><span>Выберите файл!</span></span>
                      	</label>
                     </form>
                     <span className="mrTB1">График работы аудиторий:</span>
                     {/* <input type="file"  id="avatar"  accept=".xlsx"/> */}
                     <form method="post" encType="multipart/form-data">
                     	<label className="input-file">
-                    	   	<span className="input-file-text shadowBlack"></span>
-                    	   	<input type="file" name="file" accept=".xlsx"/>        
-                     	   	<span className="input-file-btn"><span>Выберите файл</span></span>
+                    	   	<span className="input-file-text shadowBlack"><span>{nameAudit}</span></span>
+                    	   	<input type="file" name="file" accept=".xlsx" id='auditFile' onChange={fileChange}/>        
+                     	   	<span className="input-file-btn"><span>Выберите файл!</span></span>
                      	</label>
                     </form>
                     <div className="datePeriod">
                         <span>Начало периода</span>
-                        <input type='date'/>
+                        <input type='date' id='startDate' onChange={handleChange}/>
                     </div>
                     <div className="datePeriod">
                         <span>Конец периода</span>
-                        <input type='date'/>
+                        <input type='date' id='endDate' onChange={handleChange}/>
                     </div>
                     <div className="datePeriod">
                         <span>Кол-во курсов</span>
-                        <input type='number' min={1} id='count' value={count} onChange={handleChange}></input>
+                        <input type='number' min={0} id='count' value={count} onChange={handleChange}></input>
                     </div>
                     <div id='courses'>
-                        {courseBlocks}
+                        {courseBlocks.map(el => (
+                            <NewCouse number={el} change={changeFilesCourse}/>
+                        ))}
                     </div>
                     <div className="onebtn">
-                        <button className="btn1 btnYellow"><span>Сохранить</span></button>
+                        <button className="btn1 btnYellow" onClick={save}><span>Сохранить</span></button>
                     </div>
                 </div>
             </div>

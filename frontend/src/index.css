@@ -430,6 +430,8 @@ input::placeholder{
   margin: auto;  
 
   width: 50%;
+  max-height: 70%;
+  overflow-y: scroll;
 
   display: none;
   flex-direction: column;
@@ -453,6 +455,16 @@ input::placeholder{
   padding: 2.5rem 2.5rem 3.5rem 2.5rem;
 
   background-color: white;
+}
+
+
+#blockWithCloseSett #settings form .input-file-text span{
+  display: inline-block;
+  margin: auto;
+  width: 100%;
+  white-space: nowrap;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
 }
 
 #blockAddOrEdit{
@@ -696,16 +708,28 @@ form{
 }
 
 .datePeriod{
-  display: flex;
+  display: table;
   justify-content: space-between;
 
   margin-top: 1rem;
+  width: 100%;
 }
 
 .datePeriod span,
 .datePeriod form{
   width: 50%;
   margin: auto;
+}
+
+.datePeriod input{
+  display: table-cell;
+  text-align:end;
+}
+
+.datePeriod span{
+  display: table-cell;
+  vertical-align: middle;
+
 }
 
 .datePeriod label{
@@ -738,12 +762,17 @@ form{
 #courses .datePeriod form{
   background-color: var(--main-blue);
   transition: background-color 0.2s;
+  height: 100%;
+  width: 100%;
 }
 
 #courses .datePeriod form label{
   text-align: right;
   padding: 0.8rem 1rem;
   cursor: pointer;
+  height: 100%;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 #courses .datePeriod form label:hover{
