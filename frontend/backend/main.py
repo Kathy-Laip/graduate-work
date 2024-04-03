@@ -187,6 +187,80 @@ def editAll():
     else:
         return json.dumps({'otv': 'error_data'})
 
+@app.route('/settingsFirst', methods=['POST'])
+def setFirst():
+    info = json.loads(request.get_data())
+    print(info)
+    # {'id': 75, 'semester': 1, 
+    # 'accHour': 45,
+    #  'grafic': [['начало', 'конец'], ['8:30', '10:10'], ['10:10', '11:40'], ['12:10', '13:40'], ['13:50', '15:20'], ['15:50', '17:20'], ['17:30', '19:00'], ['19:10', '20:40']],
+    # [['номер аудитории', 'вместимость', 'начало работы', 'конец работы', 'тип аудитории', 'день недели'], ['808', '200', '8:00', '16:00', ' lect', 'понедельник']]
+    # 'start': '2024-04-02', 'end': '2024-05-30', 
+    #  'courses': [{'courseNumber': 1, 'st': [['наименование', 'номер группы/инициалы', 'количество'], ['ФИИТ 09.02.03 2023', '09-331', '30'], ['ФИИТ 09.02.03 2023', '09-332', '28'], ['ФИИТ 09.02.03 2023', '09-333', '33']]}]}
+    workID = info['id']
+    semester = info['semester']
+    accHour = info['accHour']
+    grafic = info['grafic']
+    audit = info['audit']
+    start = info['start']
+    end = info['end']
+
+    courses = info['courses']
+
+    ans = addProjectSettings(semester, accHour, start, end, workID)
+    if(ans == False):
+        return json.dumps({'otv': 'error add set'})
+
+    arr = []
+    for i in range(1, len(grafic)):
+        ans = addTimesGrafic(grafic[i][0], grafic[i][1], workID)
+        arr.append(ans)
+    
+    if(all(arr) == False):
+        return json.dumps({'otv': 'error grafic'})
+    
+    arr = []
+    for i in range(1, len(audit)):
+        type_place_ID = getTypePlaceID(audit[i][4])
+        week_ID = getWeekID(audit[i][5])
+        ans = addPlaceUni(workID, audit[i][0], week_ID, type_place_ID, audit[i][1], audit[i][2], audit[i][3])
+        arr.append(ans)
+    
+    if(all(arr) == False):
+        return json.dumps({'otv': 'error audit'})
+
+    arr = []
+    for i in range(1, len(courses) + 1):
+        ans = addCourses(i, workID)
+        arr.append(ans)
+       
+    if(all(arr) == False):
+        return json.dumps({'otv': 'error courses number'})
+    
+    # arr = []
+    # # # добавление информации про курсы
+    # for i in range(len(courses)):
+    #     course_ID = getCourseID(courses[i]["courseNumber"], workID)
+    #     for j in range(1, len(courses[i]['st'])):
+    #         ans = addDirection(course_ID, courses[i]['st'][j][0])
+    #         # dir_ID = getDirection(course_ID, 'ПИ')
+
+    # course_ID = getCourseID(1, workID)
+    # # print(addDirection(course_ID, 'ФИИТ'))
+    # # print(addDirection(course_ID, 'ПИ'))
+    # # print(addDirection(course_ID, 'ПМИ'))
+    # # print(addDirection(course_ID, 'ИСТ'))
+
+    # # добавление информации про направления
+    # dir_ID = getDirection(course_ID, 'ПИ')
+    # # print(addClass(dir_ID, '09-051', 20))
+    # # print(addClass(dir_ID, '09-052', 30))
+
+
+    
+    return json.dumps({'otv': 'ok'})
+
+
 if __name__ == '__main__':
     app.run(debug=True, host="127.0.0.1", port="5000")
 

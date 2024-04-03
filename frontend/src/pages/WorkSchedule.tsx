@@ -136,13 +136,13 @@ export const WorkSchedule: React.FC<WorkSch> = (props) => {
 
     const message = (mes:string, up:boolean) => {
         setMes(mes)
-        setUpd(upd)
+        setUpd(up)
         switchBlock('newMessage')
     }
 
     return (
         <div className="workScheduleMain">
-            <SideBar/>
+            <SideBar login={props.user.login}/>
             {/* (setUni || props.user.currentSchedule!.settings === undefined)  */}
             {(setUni || false)  && props.user.currentSchedule! instanceof ScheduleUni && (<ScheduleBlockSettingsUni onSettingsFalse={onSettingsFalse} sch={props.user.currentSchedule} mes={message}/>)}
             {/* (setSchool || props.user.currentSchedule!.settings === undefined) */}

@@ -1,11 +1,8 @@
 import React, {useEffect, useState} from "react";
 import close from '../pictures/Close.svg'
-import {ScheduleSettings} from '../architecture/ScheduleSettings'
 import {ScheduleUni} from '../architecture/ScheduleUni'
-import {President} from '../interfaces/interface'
 // import {handleUpload} from '../constants/const'
 import { NewCouse } from "./NewCourse";
-import {IFile} from '../interfaces/interface'
 import {read, utils} from 'xlsx';
 
 const handleUpload = async (selectedFile: File) => { // функция загрузки содержимого и отправки данных на сервер при нажатии на кнопку
@@ -16,7 +13,7 @@ const handleUpload = async (selectedFile: File) => { // функция загр�
           
           let workbook = read(result, { type: 'binary' });
           let ws = workbook.Sheets[workbook.SheetNames[0]]
-          let data =  utils.sheet_to_json(ws, {raw: false}); // generate objects
+          let data =  utils.sheet_to_json(ws, {header: 1, raw: false}); // generate objects
           resolve(data)
           
         };
@@ -33,7 +30,7 @@ type SchSetts = {
 
 type MyType = {
     courseNumber: number,
-    strings: any[];
+    st: any[];
   };
 
 export const ScheduleBlockSettingsUni: React.FC<SchSetts> = (props) => {
@@ -58,6 +55,7 @@ export const ScheduleBlockSettingsUni: React.FC<SchSetts> = (props) => {
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement|HTMLSelectElement>) => {
         if(event.target.id === 'count'){
+            console.log(event.target.id)
             setCount(Number(event.target.value))
             const newCourseBlocks = Array.from({length: Number(event.target.value)}, (_, ind) => ind+1);
             const coursess = Array.from({length: Number(event.target.value)+1}, () => 0)
@@ -79,12 +77,17 @@ export const ScheduleBlockSettingsUni: React.FC<SchSetts> = (props) => {
     const fileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if(event.target.id === 'graficFile'){
             const file = event.target.files && event.target.files[0]; 
-            setSelectedGraficFile(file)
-            setNameGrafic(file!.name)
+            console.log(file)
+            if(file){
+                setSelectedGraficFile(file)
+                setNameGrafic(file!.name)
+            }
         }else if(event.target.id === 'auditFile'){
             const file = event.target.files && event.target.files[0]
-            setSelectedAuditFile(file)
-            setNameAudit(file!.name)
+            if(file){
+                setSelectedAuditFile(file)
+                setNameAudit(file!.name)
+            }
         }
     }
 
@@ -92,14 +95,17 @@ export const ScheduleBlockSettingsUni: React.FC<SchSetts> = (props) => {
         const fileIndex = Number(event.target.name.split('-')[1]);
         const file = event.target.files && event.target.files[0]; 
 
-        setCourses(prevNames => {
-            const updatedNames = [...prevNames];
-            updatedNames[fileIndex] = file;
-            return updatedNames;
-        });
+        if(file){
+            setCourses(prevNames => {
+                const updatedNames = [...prevNames];
+                updatedNames[fileIndex] = file;
+                return updatedNames;
+            });
+        }
     }
 
     const save = () => {
+        console.log('hello')
         if(!semestr) props.mes('Заполните пожалуйста поле с семестром!', false)
         else{
             if(!accHour) props.mes('Заполните пожалуйста поле с академическим часом!', false)
@@ -110,7 +116,7 @@ export const ScheduleBlockSettingsUni: React.FC<SchSetts> = (props) => {
                     ans.then(ans => {
                         setPresGrafic(ans)
                         let presGr: any[] = ans as any
-                        let keysGr = Object.keys(presGr[0])
+                        let keysGr = presGr[0]
                         if(keysGr[0] !== 'начало' || keysGr[1] !== 'конец') props.mes('Файл с графиком не соответсвует требованиям!', false)
                         else {
                             if(selectedAuditFile === null) props.mes('Выберите файл с аудиториями!', false)
@@ -119,7 +125,7 @@ export const ScheduleBlockSettingsUni: React.FC<SchSetts> = (props) => {
                                 ans.then(ans => {
                                     setPresAudit(ans)
                                     let presAu: any[] = ans as any
-                                    let keysAu = Object.keys(presAu[0])
+                                    let keysAu = presAu[0]
                                     if(keysAu[0] !== 'номер аудитории' || keysAu[1] !== 'вместимость' || keysAu[2] !== 'начало работы' || keysAu[3] !== 'конец работы' || keysAu[4] !== 'тип аудитории' || keysAu[5] !== 'день недели') props.mes('Файл с аудиториями не соответсвует требованиям!', false)
                                     else {
                                         if(!startDate || !endDate) props.mes('Заполните начало и конец периода!', false)
@@ -128,8 +134,7 @@ export const ScheduleBlockSettingsUni: React.FC<SchSetts> = (props) => {
                                             if(courses.length === 0) props.mes(`Пожалуйста, заполните информации с курсами!`, false)
                                             else{
                                                 for(let i = 1; i < courses.length; i++){
-                                                    let obj: MyType = {courseNumber: i, strings: []}
-                                                    console.log(courses)
+                                                    let obj: MyType = {courseNumber: i, st: []}
                                                     if(courses[i] === 0 || courses[i] === undefined){
                                                         props.mes(`Выберите файл для курса ${i}`, false)
                                                         setCount(0)
@@ -141,14 +146,34 @@ export const ScheduleBlockSettingsUni: React.FC<SchSetts> = (props) => {
                                                         let ans = handleUpload(courses[i]!)
                                                         ans.then(ans => {
                                                             let datCs: any = ans as any
-                                                            obj.strings = datCs
-                                                            let keysCs = Object.keys(datCs[0])
-                                                            if(keysCs[0] !== 'наименование' || keysCs[1] !== 'номер группы/инициалы' || keysCs[2] !== 'количество') props.mes(`Файл с курсом ${count} не соответствует требованиям!`, false)
+                                                            // console.log(datCs)
+                                                            obj.st = datCs
+                                                            let keysCs = datCs[0]
+                                                            if(keysCs[0] !== 'наименование' || keysCs[1] !== 'номер группы/инициалы' || keysCs[2] !== 'количество'){
+                                                                props.mes(`Файл с курсом ${count} не соответствует требованиям!`, false)
+                                                                setCount(0)
+                                                                setCourseBlocks([])
+                                                                i = courses.length;
+                                                                presCs = []
+                                                            } else{
+                                                                presCs.push(obj)
+                                                            } 
+
+                                                            if(i === courses.length - 1){
+                                                                setPresCourses(presCs)
+                                                                console.log(presCs)
+                                                                if(presCs.length === courses.length - 1){
+                                                                    let ans = props.sch.saveSettingsSchedule('first', semestr, accHour, presGr, presAu, startDate, endDate, presCs)
+                                                                    ans?.then(answer => {
+                                                                        if(answer.otv === 'ok'){
+                                                                            props.mes('Информация добавлена!', true)
+                                                                        }
+                                                                    })
+                                                                }
+                                                            }
                                                         })
-                                                        presCs.push(obj)
                                                     }
                                                 }
-                                                setPresCourses(presCs)
                                             }
                                         }
                                     }
