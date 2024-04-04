@@ -6,6 +6,7 @@ import { SideBar } from "../components/SideBar";
 import {switchBlock} from '../constants/const'
 import {ScheduleBlock} from '../components/ScheduleBlock'
 import { ScheduleFabrica } from "../architecture/ScheduleFabrica"
+import { ScheduleSettings } from "../architecture/ScheduleSettings";
 import {ISCH} from '../interfaces/interface'
 
 type WorkPlaceProps = {
@@ -30,7 +31,12 @@ export const WorkPlace: React.FC<WorkPlaceProps> = (props) => {
                 let schFabrica = new ScheduleFabrica()
                 for(let sch of answer.works){
                     let type = sch.type === 'университет' ? 'uni' : 'school'
-                    props.user.listOfSchedules.push(schFabrica.create(sch.id, sch.theme, type, sch.date))
+                    // console.log(sch)
+                    if(sch.settings && sch.courseCount && sch.grafic && sch.courses){
+                        props.user.listOfSchedules.push(schFabrica.create(sch.id, sch.theme, type, sch.date, sch.settings, sch.courseCount, sch.grafic, sch.courses))
+                    }else{
+                        props.user.listOfSchedules.push(schFabrica.create(sch.id, sch.theme, type, sch.date))
+                    }
                 }
                 setIsLoading(false)
             }else{
@@ -47,6 +53,8 @@ export const WorkPlace: React.FC<WorkPlaceProps> = (props) => {
             setGet(false)
         }
     })()
+
+    // console.log(props.user.listOfSchedules)
 
     
     return (

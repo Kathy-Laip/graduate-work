@@ -121,7 +121,11 @@ export const WorkSchedule: React.FC<WorkSch> = (props) => {
         console.log(saved.currentSchedule)
         // let type = saved.currentSchedule !== undefined ? saved.currentSchedule.type === 'университет' ? 'uni' : 'school' : ''
         if(saved.currentSchedule){
-            props.user.currentSchedule = schFabrica.create(saved.currentSchedule.id, saved.currentSchedule.name, saved.currentSchedule.type, saved.currentSchedule.createDate)
+            if(saved.currentSchedule.settings){
+                props.user.currentSchedule = (schFabrica.create(saved.currentSchedule.id, saved.currentSchedule.theme, saved.currentSchedule.type, saved.currentSchedule.date, {'period': saved.currentSchedule.settings.period, 'acc_hour': saved.currentSchedule.settings.acc_hour, 'start': saved.currentSchedule.settings.start_date, 'end': saved.currentSchedule.settings.end_date}, saved.currentSchedule.settings.count_class, saved.currentSchedule.settings.work_times, saved.currentSchedule.settings.arr_courses))
+            }else {
+                props.user.currentSchedule = schFabrica.create(saved.currentSchedule.id, saved.currentSchedule.name, saved.currentSchedule.type, saved.currentSchedule.createDate)
+            }
         }
     })()
 
@@ -140,6 +144,7 @@ export const WorkSchedule: React.FC<WorkSch> = (props) => {
         switchBlock('newMessage')
     }
 
+    console.log(props.user.currentSchedule)
     return (
         <div className="workScheduleMain">
             <SideBar login={props.user.login}/>
@@ -148,7 +153,7 @@ export const WorkSchedule: React.FC<WorkSch> = (props) => {
             {/* (setSchool || props.user.currentSchedule!.settings === undefined) */}
             {(setSchool || false) && props.user.currentSchedule! instanceof ScheduleSchool && (<ScheduleBlockSettingsSchool onSettingsFalse={onSettingsFalse} sch={props.user.currentSchedule}/>)}
 
-            {addPlanUni && (<AddOrEditPlansUni deletePlan={addPlanUniFalse}/>)}
+            {addPlanUni && (<AddOrEditPlansUni deletePlan={addPlanUniFalse} />)}
             {editPlanUni && (<EdiPlanUni deletePlan={editPlanUniFalse}/>)}
 
             {addTeachsUni && (<AddOrEditTeachsUni deleteTeachs={addTeachsUniFalse}/>)}

@@ -7,13 +7,13 @@ import json
 app = Flask(__name__)
 app.config.from_object(Config)
 
-@app.route("/", methods=["POST"])
-def signInUser():
-    info = json.loads(request.get_data())
-    text = info['data']
-    flag = True
-    print(text)
-    return json.dumps({'otvet': flag})
+# @app.route("/", methods=["POST"])
+# def signInUser():
+#     info = json.loads(request.get_data())
+#     text = info['data']
+#     flag = True
+#     print(text)
+#     return json.dumps({'otvet': flag})
 
 @app.route('/logIn', methods=['POST'])
 def logIn():
@@ -71,10 +71,9 @@ def getSchedules():
     password = info['password']
 
     userID = getUser(login, password)
-    print(userID)
     if(userID):
         schedules = getWorks(userID)
-        print(schedules)
+        
         if(len(schedules) >= 0):
             works = []
             for sch in schedules:
@@ -88,7 +87,39 @@ def getSchedules():
 
             for sch in works_f:
                 sch['date'] = str(sch['date'])
-            print(works_f)
+            
+            for sch in works_f:
+                sett = settingsWork(sch['id'])
+                courseNumb = getCourseCount(sch['id'])
+                if(sett is not None):
+                    sch['settings'] = {'period': sett[0], 'acc_hour': sett[1], 'start': str(sett[2]), 'end': str(sett[3])}
+                if(len(courseNumb) > 0):
+                    sch['courseCount'] = len(courseNumb)
+            
+            for sch in works_f:
+                grafic = getGrafic(sch['id'])
+                if(len(grafic) > 0):
+                    sch['grafic'] = []
+                    for i in range(len(grafic)):
+                        sch['grafic'].append([str(grafic[i][1]), str(grafic[i][2])])
+            
+
+            for sch in works_f:
+                cls = getCoursesClasses(sch['id'])
+
+                if(len(cls) > 0):
+                    sets = set()
+                    classes = {}
+                    for i in range(len(cls)):
+                        # print(cls[i])
+                        if(cls[i][0] not in sets):
+                            classes[cls[i][0]] = [[cls[i][1], cls[i][2], cls[i][3]]]
+                            sets.add(cls[i][0])
+                        else:
+                            classes[cls[i][0]].append([cls[i][1], cls[i][2], cls[i][3]])
+                    sch['courses'] = classes
+            
+            # print(works_f)
             return json.dumps({'otv': 'OK', 'works': works_f})
         else:
             return json.dumps({'otv': 'error_works'})
@@ -190,13 +221,7 @@ def editAll():
 @app.route('/settingsFirst', methods=['POST'])
 def setFirst():
     info = json.loads(request.get_data())
-    print(info)
-    # {'id': 75, 'semester': 1, 
-    # 'accHour': 45,
-    #  'grafic': [['начало', 'конец'], ['8:30', '10:10'], ['10:10', '11:40'], ['12:10', '13:40'], ['13:50', '15:20'], ['15:50', '17:20'], ['17:30', '19:00'], ['19:10', '20:40']],
-    # [['номер аудитории', 'вместимость', 'начало работы', 'конец работы', 'тип аудитории', 'день недели'], ['808', '200', '8:00', '16:00', ' lect', 'понедельник']]
-    # 'start': '2024-04-02', 'end': '2024-05-30', 
-    #  'courses': [{'courseNumber': 1, 'st': [['наименование', 'номер группы/инициалы', 'количество'], ['ФИИТ 09.02.03 2023', '09-331', '30'], ['ФИИТ 09.02.03 2023', '09-332', '28'], ['ФИИТ 09.02.03 2023', '09-333', '33']]}]}
+    
     workID = info['id']
     semester = info['semester']
     accHour = info['accHour']
@@ -237,25 +262,24 @@ def setFirst():
     if(all(arr) == False):
         return json.dumps({'otv': 'error courses number'})
     
-    # arr = []
-    # # # добавление информации про курсы
-    # for i in range(len(courses)):
-    #     course_ID = getCourseID(courses[i]["courseNumber"], workID)
-    #     for j in range(1, len(courses[i]['st'])):
-    #         ans = addDirection(course_ID, courses[i]['st'][j][0])
-    #         # dir_ID = getDirection(course_ID, 'ПИ')
+    arr = []
+    arr2 = []
+    # # добавление информации про курсы
+    for i in range(len(courses)):
+        course_ID = getCourseID(courses[i]["courseNumber"], workID)
+        for j in range(1, len(courses[i]['st'])):
+            dir_ID = getDirection(course_ID, courses[i]['st'][j][0])
+            if(dir_ID == False):
+                ans = addDirection(course_ID, courses[i]['st'][j][0])
+                arr.append(ans)
+            dir_ID = getDirection(course_ID, courses[i]['st'][j][0])
+            ans = addClass(dir_ID, courses[i]['st'][j][1], courses[i]['st'][j][2])
+            arr2.append(ans)
 
-    # course_ID = getCourseID(1, workID)
-    # # print(addDirection(course_ID, 'ФИИТ'))
-    # # print(addDirection(course_ID, 'ПИ'))
-    # # print(addDirection(course_ID, 'ПМИ'))
-    # # print(addDirection(course_ID, 'ИСТ'))
-
-    # # добавление информации про направления
-    # dir_ID = getDirection(course_ID, 'ПИ')
-    # # print(addClass(dir_ID, '09-051', 20))
-    # # print(addClass(dir_ID, '09-052', 30))
-
+    if(all(arr) == False):
+        return json.dumps({'otv': 'error courses name'})
+    if(all(arr2) == False):
+        return json.dumps({'otv': 'error courses initial'})
 
     
     return json.dumps({'otv': 'ok'})

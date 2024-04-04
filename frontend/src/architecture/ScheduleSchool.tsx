@@ -4,8 +4,8 @@ import { ScheduleSettings } from "./ScheduleSettings"
 
 export class ScheduleSchool extends Schedule{
     public settings?: ScheduleSettings
-    constructor(public id: number, public name: string, public type: string, public createDate: string) {
-        super(id, name, type, createDate)
+    constructor(public id: number, public name: string, public type: string, public createDate: string, settings?: ScheduleSettings) {
+        super(id, name, type, createDate, settings)
     }
 
     public currentDir?: number

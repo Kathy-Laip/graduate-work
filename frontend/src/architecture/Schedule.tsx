@@ -15,11 +15,12 @@ export class Schedule{
 
     public suggestion?: IClass[]
 
-    constructor(id:number, name: string, type: string, createDate: string){
+    constructor(id:number, name: string, type: string, createDate: string, settings?: ScheduleSettings){
         this.id = id
         this.name = name
         this.type = type
         this.createDate = createDate
+        this.settings = settings
     }
 
     public getClasses(){}

@@ -84,17 +84,18 @@ export const switchBlock = (type:string) => {
 }
 
 
-// export const handleUpload = (selectedFile: File) => { // функция загрузки содержимого и отправки данных на сервер при нажатии на кнопку
-//     if (selectedFile) {
-//       const reader = new FileReader();
-//       reader.onload = (event: any) => {
-//         const result = event.target.result;
-        
-//         const workbook = read(result, { type: 'binary' });
-//         const ws = workbook.Sheets[workbook.SheetNames[0]]
-//         const data: President[] = utils.sheet_to_json<President>(ws); // generate objects
-//         return data
-//       };
-//       reader.readAsBinaryString(selectedFile);
-//     } else ''
-//   };
+export const handleUpload = async (selectedFile: File) => { // функция загрузки содержимого и отправки данных на сервер при нажатии на кнопку
+    return new Promise((resolve, reject) => {
+        let reader = new FileReader();
+        reader.onload = (event: any) => {
+          let result = event.target.result;
+          
+          let workbook = read(result, { type: 'binary' });
+          let ws = workbook.Sheets[workbook.SheetNames[0]]
+          let data =  utils.sheet_to_json(ws, {header: 1, raw: false}); // generate objects
+          resolve(data)
+          
+        };
+        reader.readAsBinaryString(selectedFile);
+    })
+};

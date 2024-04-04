@@ -72,6 +72,13 @@ def getWorks(userID):
     except:
         return False
 
+def settingsWork(workID):
+    try: 
+        worksSet = connection.get_data_from_table('select schedules.work_folder.period, schedules.work_folder.acc_hour, schedules.work_folder.start_time, schedules.work_folder.end_time from schedules.work_folder where work_id = {};'.format(workID))
+        if(worksSet[0][0] is not None):
+            return worksSet[0]
+    except: return False
+
 def getType(type):
     try:
         id_type = connection.get_data_from_table('select type_id from type where name_type="{}"'.format(type))
@@ -95,6 +102,14 @@ def getCourseID(course_number, workID):
     except:
         return False
 
+def getCourseCount(workID):
+    try:
+        id_course = connection.get_data_from_table('select course_id from courses where work_id={} '.format(workID))
+        if(id_course is not None):
+            return id_course
+    except:
+        return False
+
 def getDirection(courseID, name):
     try:
         id_dir = connection.get_data_from_table('select direction_id from direction where course_id={} and name_course="{}"'.format(courseID, name))
@@ -109,6 +124,14 @@ def getClass(directionID, initial_class):
         if(id_class is not None):
             return id_class[0][0]
     except:
+        return False
+
+def getCoursesClasses(work_ID):
+    try:
+        courses = connection.get_data_from_table('select schedules.courses.course_number, schedules.direction.name_course, schedules.classes.initial_class, schedules.classes.count from schedules.classes inner join schedules.direction on schedules.classes.direction_id = schedules.direction.direction_id inner join schedules.courses on schedules.direction.course_id = schedules.courses.course_id where schedules.courses.work_id = {};'.format(work_ID))
+        if(courses is not None):
+            return courses
+    except: 
         return False
 
 def getCafedraID(name, workID):

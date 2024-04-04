@@ -1,25 +1,8 @@
 import React, {useEffect, useState} from "react";
 import close from '../pictures/Close.svg'
 import {ScheduleUni} from '../architecture/ScheduleUni'
-// import {handleUpload} from '../constants/const'
+import {handleUpload} from '../constants/const'
 import { NewCouse } from "./NewCourse";
-import {read, utils} from 'xlsx';
-
-const handleUpload = async (selectedFile: File) => { // функция загрузки содержимого и отправки данных на сервер при нажатии на кнопку
-    return new Promise((resolve, reject) => {
-        let reader = new FileReader();
-        reader.onload = (event: any) => {
-          let result = event.target.result;
-          
-          let workbook = read(result, { type: 'binary' });
-          let ws = workbook.Sheets[workbook.SheetNames[0]]
-          let data =  utils.sheet_to_json(ws, {header: 1, raw: false}); // generate objects
-          resolve(data)
-          
-        };
-        reader.readAsBinaryString(selectedFile);
-    })
-};
 
 
 type SchSetts = {
@@ -74,6 +57,7 @@ export const ScheduleBlockSettingsUni: React.FC<SchSetts> = (props) => {
         }
     }
 
+    
     const fileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if(event.target.id === 'graficFile'){
             const file = event.target.files && event.target.files[0]; 
@@ -105,7 +89,6 @@ export const ScheduleBlockSettingsUni: React.FC<SchSetts> = (props) => {
     }
 
     const save = () => {
-        console.log('hello')
         if(!semestr) props.mes('Заполните пожалуйста поле с семестром!', false)
         else{
             if(!accHour) props.mes('Заполните пожалуйста поле с академическим часом!', false)
@@ -161,12 +144,19 @@ export const ScheduleBlockSettingsUni: React.FC<SchSetts> = (props) => {
 
                                                             if(i === courses.length - 1){
                                                                 setPresCourses(presCs)
-                                                                console.log(presCs)
                                                                 if(presCs.length === courses.length - 1){
                                                                     let ans = props.sch.saveSettingsSchedule('first', semestr, accHour, presGr, presAu, startDate, endDate, presCs)
                                                                     ans?.then(answer => {
                                                                         if(answer.otv === 'ok'){
                                                                             props.mes('Информация добавлена!', true)
+                                                                        }else if(answer.otv === 'error add set'){
+                                                                            props.mes('Что-то не так с выбором семестра, академического часа или с датами об окончании и начале семестра! Перепроверьте данные!', false)
+                                                                        }else if(answer.otv === 'error grafic'){
+                                                                            props.mes('Что-то не так с графиком! Перепроверьте данные!', false)
+                                                                        }else if(answer.otv === 'error audit'){
+                                                                            props.mes('Что-то не так с данными об аудиториях! Перепроверьте данные!', false)
+                                                                        } else if(answer.otv === 'courses number' || answer.otv === 'error courses name' || answer.otv === 'error courses initial'){
+                                                                            props.mes('Что-то не так с добавлением курсов! Перепроверьте данные!', false)
                                                                         }
                                                                     })
                                                                 }
