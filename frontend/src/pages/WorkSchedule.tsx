@@ -153,8 +153,8 @@ export const WorkSchedule: React.FC<WorkSch> = (props) => {
             {/* (setSchool || props.user.currentSchedule!.settings === undefined) */}
             {(setSchool || false) && props.user.currentSchedule! instanceof ScheduleSchool && (<ScheduleBlockSettingsSchool onSettingsFalse={onSettingsFalse} sch={props.user.currentSchedule}/>)}
 
-            {addPlanUni && (<AddOrEditPlansUni deletePlan={addPlanUniFalse} />)}
-            {editPlanUni && (<EdiPlanUni deletePlan={editPlanUniFalse}/>)}
+            {addPlanUni && props.user.currentSchedule! instanceof ScheduleUni && (<AddOrEditPlansUni deletePlan={addPlanUniFalse} sch={props.user.currentSchedule} mes={message}/>)}
+            {editPlanUni && props.user.currentSchedule! instanceof ScheduleUni && (<EdiPlanUni deletePlan={editPlanUniFalse} sch={props.user.currentSchedule} mes={message}/>)}
 
             {addTeachsUni && (<AddOrEditTeachsUni deleteTeachs={addTeachsUniFalse}/>)}
             {editTeachsUni && (<EdiTeachsUni deleteTeachs={editTeachsUniFalse}/>)}

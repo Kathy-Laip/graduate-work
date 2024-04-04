@@ -31,6 +31,10 @@ def deleteWorkID(userID, workID):
     ans = connection.execute_query('delete from work_folder where work_id={} and user_id={}'.format(workID, userID))
     return ans
 
+def deleteWorkPlan(direction_id):
+    ans = connection.execute_query('delete from plan_direction where direction_id={}'.format(direction_id))
+    return ans
+
 
 def getDataUser(login):
     try: 
@@ -189,6 +193,13 @@ def getScheduleSchool(workID):
             return schedules
     except: 
         return False
+
+def getPlans(direction_id):
+    try:
+        plans = connection.get_data_from_table('select schedules.plan_direction.sub_id from schedules.plan_direction where direction_id={}'.format(direction_id))
+        if(plans is not None):
+            return plans
+    except: return False
 
 
 def insertNewUser(login, password):

@@ -458,7 +458,8 @@ input::placeholder{
 }
 
 
-#blockWithCloseSett #settings form .input-file-text span{
+#blockWithCloseSett #settings form .input-file-text span,
+#blockWithCloseAddPlan #blockAddOrEdit .input-file-text span{
   display: inline-block;
   margin: auto;
   width: 100%;

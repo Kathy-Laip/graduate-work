@@ -32,14 +32,25 @@ export class Schedule{
 
     public saveSettingsSchedule(flag: string, semestr: number, accHour: number, grafic: any, audit: any, start: string, end: string, courses: any){
         if(flag === 'first'){
-            console.log(courses)
             let ans = apiPos({'id': this.id, 'semester': semestr, 'accHour': accHour, 'grafic': grafic, 'audit': audit, 'start': start, 'end': end, 'courses': courses}, '/settingsFirst')
             return ans
         }
     }
 
-    public addDirection(){}
-    public editDirection(){}
+    public addDirection(type:string, courseNumber: number, nameCourse: string, data: string[]){
+        let ans = apiPos({'id': this.id, 'numberCourse': courseNumber, 'nameCourse': nameCourse, 'data': data}, '/addPlanUni')
+        return ans
+    }
+
+    public deleteDirection(numberCourse: number, name_course: string){
+        let ans = apiPos({'id': this.id, 'numberCourse': numberCourse, 'name_course': name_course}, '/deletePlanUni')
+        return ans
+    }
+
+    public editDirection(numberCourse: number, name_course: string, data: any){
+        let ans = apiPos({'id': this.id, 'numberCourse': numberCourse, 'name_course': name_course, 'data': data}, '/editPlanUni')
+        return ans
+    }
 
     public addCafedra(){}
     public editCafedra(){}

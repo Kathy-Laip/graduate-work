@@ -285,6 +285,84 @@ def setFirst():
     return json.dumps({'otv': 'ok'})
 
 
+@app.route('/addPlanUni', methods=['POST'])
+def addPlanUn():
+    info = json.loads(request.get_data())
+    work_id = info['id']
+    numberCourse = info['numberCourse']
+    nameCourse = info['nameCourse']
+    data = info['data']
+
+    course_id = getCourseID(numberCourse, work_id)
+    direction_id = getDirection(course_id, nameCourse)
+    
+    arr = []
+
+    if(course_id and direction_id):
+        plans = getPlans(direction_id)
+        if(len(plans) > 0):
+            return json.dumps({'otv': 'has'})  
+        elif(plans == False):
+            return json.dumps({'otv': 'false'})  
+        else: 
+            for i in range(1, len(data)):
+                ans = addPlanUni(direction_id, data[i][0], data[i][1], data[i][2], data[i][3], data[i][4], data[i][5])
+                arr.append(ans)
+    else:
+        return json.dumps({'otv': 'error courses name'})   
+
+    if(all(arr) == False):
+        return json.dumps({'otv': 'error courses name'})
+    return json.dumps({'otv': 'ok'})
+
+
+@app.route('/deletePlanUni', methods=['POST'])
+def deletePlanUni():
+    info = json.loads(request.get_data())
+    work_id = info['id']
+    numberCourse = info['numberCourse']
+    name_course = info['name_course']
+
+    course_id = getCourseID(numberCourse, work_id)
+    direction_id = getDirection(course_id, name_course)
+    
+    if(course_id and direction_id):
+        ans = deleteWorkPlan(direction_id)
+        print(ans)
+        if(ans):
+            return json.dumps({'otv': 'ok'})
+        else: return json.dumps({'otv': 'error'})
+    else: return json.dumps({'otv': 'error data'})
+
+
+@app.route('/editPlanUni', methods=['POST'])
+def editPlanUni():
+    info = json.loads(request.get_data())
+    work_id = info['id']
+    numberCourse = info['numberCourse']
+    name_course = info['name_course']
+    data = info['data']
+
+    course_id = getCourseID(numberCourse, work_id)
+    direction_id = getDirection(course_id, name_course)
+
+    arr = []
+    print(course_id, direction_id)
+    if(course_id and direction_id):
+        ans = deleteWorkPlan(direction_id)
+        if(ans):
+            for i in range(1, len(data)):
+                ans = addPlanUni(direction_id, data[i][0], data[i][1], data[i][2], data[i][3], data[i][4], data[i][5])
+                arr.append(ans)
+            if(all(arr) == False):
+                return json.dumps({'otv': 'error courses name'})
+            else :return json.dumps({'otv': 'ok'})
+        else: return json.dumps({'otv': 'error'})
+
+    else: return json.dumps({'otv': 'error data'})
+    
+
+
 if __name__ == '__main__':
     app.run(debug=True, host="127.0.0.1", port="5000")
 
