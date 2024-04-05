@@ -1,11 +1,15 @@
 import React, {useEffect, useState} from "react";
 import close from '../pictures/Close.svg'
 import {ScheduleUni} from '../architecture/ScheduleUni'
+import { ScheduleFabrica } from "../architecture/ScheduleFabrica";
 import {handleUpload} from '../constants/const'
 import { NewCouse } from "./NewCourse";
-
+import question from '../pictures/question.svg'
+import { User } from "../architecture/User";
+import { MessageConfirmYN } from "./MessageConfirmTrueFalse";
 
 type SchSetts = {
+    user: User,
     onSettingsFalse: Function,
     sch: ScheduleUni,
     mes: Function 
@@ -22,6 +26,10 @@ export const ScheduleBlockSettingsUni: React.FC<SchSetts> = (props) => {
     const [courses, setCourses] = useState<any[]>([])
     const [presCourses, setPresCourses] = useState<any>();
 
+    const [confirm, setConfirm] = useState(true)
+    const [mes, setMes] = useState('')
+
+
     const [semestr, setSemester] = useState<number>()
     const [accHour, setAccHour] = useState<number>()
 
@@ -36,6 +44,8 @@ export const ScheduleBlockSettingsUni: React.FC<SchSetts> = (props) => {
     const [startDate, setStartDate] = useState<string>('')
     const [endDate, setEndDate] = useState<string>('')
 
+    console.log(props.sch)
+
     const handleChange = (event: React.ChangeEvent<HTMLInputElement|HTMLSelectElement>) => {
         if(event.target.id === 'count'){
             console.log(event.target.id)
@@ -46,10 +56,8 @@ export const ScheduleBlockSettingsUni: React.FC<SchSetts> = (props) => {
             setCourseBlocks(newCourseBlocks);
         }else if(event.target.id === 'selectPeriod'){
             setSemester(Number(event.target.value))
-            // console.log(event.target.value)
         }else if(event.target.id === 'selectTypeEdit'){
             setAccHour(Number(event.target.value))
-            // console.log(event.target.value)
         }else if(event.target.id === 'startDate'){
             setStartDate(event.target.value)
         }else if(event.target.id === 'endDate'){
@@ -88,10 +96,111 @@ export const ScheduleBlockSettingsUni: React.FC<SchSetts> = (props) => {
         }
     }
 
+    const closeConfirm = () => {
+        setConfirm(false)
+    }
+
+
     const save = () => {
-        if(!semestr) props.mes('Заполните пожалуйста поле с семестром!', false)
+        if(!props.sch.settings){
+            if(!semestr) props.mes('Заполните пожалуйста поле с семестром!', false)
+            else{
+                if(!accHour) props.mes('Заполните пожалуйста поле с академическим часом!', false)
+                else{
+                    if(selectedGraficFile === null) props.mes('Выберите файл с графиком!', false)
+                    else{
+                        let ans = handleUpload(selectedGraficFile!)
+                        ans.then(ans => {
+                            setPresGrafic(ans)
+                            let presGr: any[] = ans as any
+                            let keysGr = presGr[0]
+                            if(keysGr[0] !== 'начало' || keysGr[1] !== 'конец') props.mes('Файл с графиком не соответсвует требованиям!', false)
+                            else {
+                                if(selectedAuditFile === null) props.mes('Выберите файл с аудиториями!', false)
+                                else{
+                                    let ans = handleUpload(selectedAuditFile!)
+                                    ans.then(ans => {
+                                        setPresAudit(ans)
+                                        let presAu: any[] = ans as any
+                                        let keysAu = presAu[0]
+                                        if(keysAu[0] !== 'номер аудитории' || keysAu[1] !== 'вместимость' || keysAu[2] !== 'начало работы' || keysAu[3] !== 'конец работы' || keysAu[4] !== 'тип аудитории' || keysAu[5] !== 'день недели') props.mes('Файл с аудиториями не соответсвует требованиям!', false)
+                                        else {
+                                            if(!startDate || !endDate) props.mes('Заполните начало и конец периода!', false)
+                                            else{
+                                                let presCs:any[] = []
+                                                if(courses.length === 0) props.mes(`Пожалуйста, заполните информации с курсами!`, false)
+                                                else{
+                                                    for(let i = 1; i < courses.length; i++){
+                                                        let obj: MyType = {courseNumber: i, st: []}
+                                                        if(courses[i] === 0 || courses[i] === undefined){
+                                                            props.mes(`Выберите файл для курса ${i}`, false)
+                                                            setCount(0)
+                                                            setCourseBlocks([])
+                                                            i = courses.length;
+                                                            presCs = []
+                                                        } 
+                                                        else{
+                                                            let ans = handleUpload(courses[i]!)
+                                                            ans.then(ans => {
+                                                                let datCs: any = ans as any
+                                                                // console.log(datCs)
+                                                                obj.st = datCs
+                                                                let keysCs = datCs[0]
+                                                                if(keysCs[0] !== 'наименование' || keysCs[1] !== 'номер группы/инициалы' || keysCs[2] !== 'количество'){
+                                                                    props.mes(`Файл с курсом ${count} не соответствует требованиям!`, false)
+                                                                    setCount(0)
+                                                                    setCourseBlocks([])
+                                                                    i = courses.length;
+                                                                    presCs = []
+                                                                } else{
+                                                                    presCs.push(obj)
+                                                                } 
+
+                                                                if(i === courses.length - 1){
+                                                                    setPresCourses(presCs)
+                                                                    if(presCs.length === courses.length - 1){
+                                                                        let ans = props.sch.saveSettingsSchedule('first', semestr, accHour, presGr, presAu, startDate, endDate, presCs)
+                                                                        ans?.then(answer => {
+                                                                            if(answer.otv === 'ok'){
+                                                                                localStorage.setItem('user', JSON.stringify(props.user))
+                                                                                props.mes('Информация добавлена!', true)
+                                                                            }else if(answer.otv === 'error add set'){
+                                                                                props.mes('Что-то не так с выбором семестра, академического часа или с датами об окончании и начале семестра! Перепроверьте данные!', false)
+                                                                            }else if(answer.otv === 'error grafic'){
+                                                                                props.mes('Что-то не так с графиком! Перепроверьте данные!', false)
+                                                                            }else if(answer.otv === 'error audit'){
+                                                                                props.mes('Что-то не так с данными об аудиториях! Перепроверьте данные!', false)
+                                                                            } else if(answer.otv === 'courses number' || answer.otv === 'error courses name' || answer.otv === 'error courses initial'){
+                                                                                props.mes('Что-то не так с добавлением курсов! Перепроверьте данные!', false)
+                                                                            }
+                                                                        })
+                                                                    }
+                                                                }
+                                                            })
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    })
+                                }
+                            }
+                        
+                        })
+                    }
+                }
+        }
+        }else{
+            setMes('Внимание! Для того, чтобы изменить настройки необходимо удалить данные о расписании! Вы точно хотите изменить параметры расписания?')
+            setConfirm(true)
+        }
+    }
+
+    const saveSecond = () => {
+        closeConfirm()
+        if(!semestr) props.mes('При повторной настройке заполните все поля! Заполните пожалуйста поле с семестром!', false)
         else{
-            if(!accHour) props.mes('Заполните пожалуйста поле с академическим часом!', false)
+            if(!accHour) props.mes('При повторной настройке заполните все поля! Заполните пожалуйста поле с академическим часом!', false)
             else{
                 if(selectedGraficFile === null) props.mes('Выберите файл с графиком!', false)
                 else{
@@ -111,10 +220,10 @@ export const ScheduleBlockSettingsUni: React.FC<SchSetts> = (props) => {
                                     let keysAu = presAu[0]
                                     if(keysAu[0] !== 'номер аудитории' || keysAu[1] !== 'вместимость' || keysAu[2] !== 'начало работы' || keysAu[3] !== 'конец работы' || keysAu[4] !== 'тип аудитории' || keysAu[5] !== 'день недели') props.mes('Файл с аудиториями не соответсвует требованиям!', false)
                                     else {
-                                        if(!startDate || !endDate) props.mes('Заполните начало и конец периода!', false)
+                                        if(!startDate || !endDate) props.mes('При повторной настройке заполните все поля! Заполните начало и конец периода!', false)
                                         else{
                                             let presCs:any[] = []
-                                            if(courses.length === 0) props.mes(`Пожалуйста, заполните информации с курсами!`, false)
+                                            if(courses.length === 0) props.mes(`При повторной настройке заполните все поля! Пожалуйста, заполните информации с курсами!`, false)
                                             else{
                                                 for(let i = 1; i < courses.length; i++){
                                                     let obj: MyType = {courseNumber: i, st: []}
@@ -145,17 +254,28 @@ export const ScheduleBlockSettingsUni: React.FC<SchSetts> = (props) => {
                                                             if(i === courses.length - 1){
                                                                 setPresCourses(presCs)
                                                                 if(presCs.length === courses.length - 1){
-                                                                    let ans = props.sch.saveSettingsSchedule('first', semestr, accHour, presGr, presAu, startDate, endDate, presCs)
+                                                                    let ans = props.sch.saveSettingsSchedule('second', semestr, accHour, presGr, presAu, startDate, endDate, presCs)
                                                                     ans?.then(answer => {
                                                                         if(answer.otv === 'ok'){
+                                                                            localStorage.setItem('user', JSON.stringify(props.user))
                                                                             props.mes('Информация добавлена!', true)
+                                                                        }else if(answer.otv === 'error sch'){
+                                                                            props.mes('Не получилось очистить расписание! Попробуйте позже!', false)
                                                                         }else if(answer.otv === 'error add set'){
                                                                             props.mes('Что-то не так с выбором семестра, академического часа или с датами об окончании и начале семестра! Перепроверьте данные!', false)
+                                                                        }else if(answer.otv === 'error grafic del'){
+                                                                            props.mes('Не получилось удалить график учебного заведения! Попробуйте позже!', false)
                                                                         }else if(answer.otv === 'error grafic'){
                                                                             props.mes('Что-то не так с графиком! Перепроверьте данные!', false)
+                                                                        }else if(answer.otv === 'error place'){
+                                                                            props.mes('Не получилось удалить записи об аудиториях! Попробуйте позже!', false)
                                                                         }else if(answer.otv === 'error audit'){
                                                                             props.mes('Что-то не так с данными об аудиториях! Перепроверьте данные!', false)
-                                                                        } else if(answer.otv === 'courses number' || answer.otv === 'error courses name' || answer.otv === 'error courses initial'){
+                                                                        }else if(answer.otv === 'error courses'){
+                                                                            props.mes('Не получилось очистить записи о курсах! Попробуйте позже!', false)
+                                                                        } else if(answer.otv === 'error courses name' || answer.otv === 'error courses initial'){
+                                                                            props.mes('Не получилось очистить записи о направлениях! Попробуйте позже!', false)
+                                                                        }else if(answer.otv === 'courses number' || answer.otv === 'error courses name' || answer.otv === 'error courses initial'){
                                                                             props.mes('Что-то не так с добавлением курсов! Перепроверьте данные!', false)
                                                                         }
                                                                     })
@@ -174,10 +294,11 @@ export const ScheduleBlockSettingsUni: React.FC<SchSetts> = (props) => {
                     })
                 }
             }
-        }
+    }
     }
 
     return (
+        <>
         <div id="blockWithCloseSett">
             <div id='settings'>
                 <div className='closeCreate'>
@@ -207,7 +328,10 @@ export const ScheduleBlockSettingsUni: React.FC<SchSetts> = (props) => {
                         <option value={'75'}>75</option>
                         <option value={'80'}>80</option>
                     </select>
-                    <span className="mrTB1">График работы заведения:</span>
+                    <div className="dis_sp">
+                        <span className="mrTB1">График работы заведения:</span>
+                        <div className="que" id='queT'><img src={question}/><span className="tool-text" id='bottom'>Скачайте документы для настройки, рядом с кнопкой настроить расписание!</span></div>
+                    </div>
                     {/* <input type="file"  id="avatar"  accept=".xlsx"/> */}
                     <form method="post" encType="multipart/form-data">
                     	<label className="input-file">
@@ -248,5 +372,7 @@ export const ScheduleBlockSettingsUni: React.FC<SchSetts> = (props) => {
                 </div>
             </div>
         </div>
+        {confirm && <MessageConfirmYN mess={mes} save={saveSecond} change={closeConfirm}/>}
+        </>
     )
 }

@@ -208,6 +208,10 @@ input::placeholder{
   color: var(--main-dark-blue);
 }
 
+/* .rightNav{
+  position: absolute;
+} */
+
 .circle{
   position: absolute;
 
@@ -415,6 +419,8 @@ input::placeholder{
   z-index: 10;
 }
 
+
+
 #blockWithCloseMESCONFIRM{
   z-index: 10;
 }
@@ -442,6 +448,39 @@ input::placeholder{
   background-color: white;
 }
 
+#blockWithCloseMESCONFIRMYN{
+  display: block;
+
+  width: 100vw;
+  height: 100vh;
+
+  background-color: rgba(0, 0, 0, 0.5);
+
+  position: absolute;
+  top:0;
+  left: 0;
+  z-index: 11;
+}
+
+#mesBloackCONFIRMYN{
+  margin: auto;
+
+  margin-top: 15%;
+  width: 50%;
+  height: 50%;
+  max-height: 70%;
+  overflow-y: scroll;
+
+  display: flex;
+  flex-direction: column;
+  
+
+  padding: 2.5rem 2.5rem 3.5rem 2.5rem;
+
+  background-color: white;
+  z-index: 12;
+}
+
 #settings{
   margin: auto;
 
@@ -455,11 +494,13 @@ input::placeholder{
   padding: 2.5rem 2.5rem 3.5rem 2.5rem;
 
   background-color: white;
+  z-index: 10;
 }
 
 
 #blockWithCloseSett #settings form .input-file-text span,
-#blockWithCloseAddPlan #blockAddOrEdit .input-file-text span{
+#blockWithCloseAddPlan #blockAddOrEdit .input-file-text span,
+#blockWithCloseAddTeachs #blockAddOrEdit .input-file-text span{
   display: inline-block;
   margin: auto;
   width: 100%;
@@ -823,3 +864,81 @@ form{
 /* #blockAddOrEdit {
   padding: 1rem;
 } */
+
+.rightNav,
+.dis_sp{
+  position: relative;
+}
+
+
+.rightNav .tool-text{
+  visibility: hidden;
+  position: absolute;
+  z-index: 2;
+  width: 100%;
+  color: white;
+  font-size: 12px;
+  background-color: #192733;
+  border-radius: 10px;
+  padding: 10px 15px 10px 15px;
+}
+
+.dis_sp .tool-text{
+  visibility: hidden;
+  position: absolute;
+  z-index: 2;
+  width: 50%;
+  color: white;
+  font-size: 12px;
+  background-color: #192733;
+  border-radius: 10px;
+  padding: 10px 15px 10px 15px;
+}
+
+
+#dow:hover .tool-text,
+#queT:hover .tool-text {
+  visibility: visible;
+}
+
+.rightNav #bottom {
+  top: 45px;
+  left: -43%;
+}
+
+.rightNav #bottom::before {
+  top: -5%;
+  left: 45%;
+}
+
+.dis_sp #bottom {
+  top: 45px;
+  right: 0;
+}
+
+.dis_sp #bottom::before {
+  top: -5%;
+  left: 45%;
+}
+
+.dis_sp{
+  display: flex;
+  justify-content: space-between;
+}
+
+.que{
+  width: 1.5rem;
+  height: 1.5rem;
+  margin-top: auto;
+  margin-bottom: auto;
+
+  display: block;
+  background-color: white;
+  border-radius: 50%;
+  border: 1px solid black;
+}
+
+.que img{
+  padding-left: 40%;
+}
+

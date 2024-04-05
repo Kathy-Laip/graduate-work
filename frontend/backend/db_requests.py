@@ -35,6 +35,22 @@ def deleteWorkPlan(direction_id):
     ans = connection.execute_query('delete from plan_direction where direction_id={}'.format(direction_id))
     return ans
 
+def deleteSCH(work_id):
+    ans = connection.execute_query('delete from schedules.schedule where work_id={}'.format(work_id))
+    return ans
+
+def deleteGrafic(work_id):
+    ans = connection.execute_query('delete from schedules.grafic where sch_id={}'.format(work_id))
+    return ans
+
+def deletePlace(work_id):
+    ans = connection.execute_query('delete from schedules.place where work_id={}'.format(work_id))
+    return ans
+
+def deleteCourses(work_id):
+    ans = connection.execute_query('delete from schedules.courses where work_id={}'.format(work_id))
+    return ans
+
 
 def getDataUser(login):
     try: 
@@ -143,6 +159,14 @@ def getCafedraID(name, workID):
         cafedra_id = connection.get_data_from_table('select id_caf_sec from cafedra_or_section where name="{}" and work_id={}'.format(name, workID))
         if(cafedra_id is not None):
             return cafedra_id[0][0]
+    except:
+        return False
+
+def getCafedras(workID):
+    try: 
+        cafedra_id = connection.get_data_from_table('select schedules.cafedra_or_section.name from cafedra_or_section where work_id={}'.format(workID))
+        if(cafedra_id is not None):
+            return cafedra_id
     except:
         return False
 

@@ -8,6 +8,7 @@ import {ScheduleBlock} from '../components/ScheduleBlock'
 import { ScheduleFabrica } from "../architecture/ScheduleFabrica"
 import { ScheduleSettings } from "../architecture/ScheduleSettings";
 import {ISCH} from '../interfaces/interface'
+import { Schedule } from "../architecture/Schedule";
 
 type WorkPlaceProps = {
     user: User
@@ -22,6 +23,7 @@ export const WorkPlace: React.FC<WorkPlaceProps> = (props) => {
         setDataCurSch({theme: theme, type: type, date: date})
     }
 
+    
     const updateSchs = () => {
         let ans = props.user.getListOfSchedules()
         ans.then(answer => {
@@ -31,11 +33,22 @@ export const WorkPlace: React.FC<WorkPlaceProps> = (props) => {
                 let schFabrica = new ScheduleFabrica()
                 for(let sch of answer.works){
                     let type = sch.type === 'университет' ? 'uni' : 'school'
-                    // console.log(sch)
                     if(sch.settings && sch.courseCount && sch.grafic && sch.courses){
-                        props.user.listOfSchedules.push(schFabrica.create(sch.id, sch.theme, type, sch.date, sch.settings, sch.courseCount, sch.grafic, sch.courses))
+                        let curSCH = schFabrica.create(sch.id, sch.theme, type, sch.date, sch.settings, sch.courseCount, sch.grafic, sch.courses)
+                        if(sch.cafedras &&  curSCH instanceof Schedule){
+                            curSCH.cafedras = sch.cafedras
+                        }
+                        if(curSCH instanceof Schedule){
+                            props.user.listOfSchedules.push(curSCH)
+                        }
                     }else{
-                        props.user.listOfSchedules.push(schFabrica.create(sch.id, sch.theme, type, sch.date))
+                        let curSCH = schFabrica.create(sch.id, sch.theme, type, sch.date)
+                        if(sch.cafedras &&  curSCH instanceof Schedule){
+                            curSCH.cafedras = sch.cafedras
+                        }
+                        if(curSCH instanceof Schedule){
+                            props.user.listOfSchedules.push(curSCH)
+                        }
                     }
                 }
                 setIsLoading(false)

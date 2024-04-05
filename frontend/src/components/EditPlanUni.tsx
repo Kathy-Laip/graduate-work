@@ -10,7 +10,7 @@ type AddType ={
 }
 
 export const EdiPlanUni: React.FC<AddType> = (props) => {
-    const [countCoursese, setCountCourses] = useState<Array<number>|undefined>(Array.from({length: props.sch.settings!.count_class || -1}, (_, ind) => ind + 1))
+    const [countCoursese, setCountCourses] = useState<Array<number>|undefined>(props.sch.settings !== undefined ? Array.from({length: props.sch.settings!.count_class || -1}, (_, ind) => ind + 1) : undefined)
     const [numberCourse, setNumberCourse] = useState<number>(0)
     const [currCourse, setCurrCourse] = useState<string>('')
 
@@ -94,35 +94,50 @@ export const EdiPlanUni: React.FC<AddType> = (props) => {
     return (
         <div id="blockWithCloseAddPlan">
             <div id='blockAddOrEdit'>
-                <div className='closeCreate'>
-                    <h1 className="h1">Изменение направления</h1>
-                    <img src={close} id='close' onClick={() => props.deletePlan()}/>
-                </div>
-                <select className="shadowBlack" id='selectAddCourse'
-                onChange={handleChange}
-                >
-                    <option value={''}>Выберите курс</option>
-                    {countCoursese!.map(el => (
-                        <option value={`${el}`}>{el}</option>
-                    ))}
-                </select>
-                <select className="shadowBlack" id='selectAddPlan'
-                onChange={handleChange}
-                >
-                    <option value={''}>Выберите направление</option>
-                    {numberCourse !== 0 && [...new Set(Object.values(props.sch.settings!.arr_courses[numberCourse]).map(el => el[0]))].map(el => (<option value={`${el}`}>{el}</option>)) }
-                </select>
-                <form method="post" encType="multipart/form-data">
-                    	<label className="input-file">
-                    	   	<span className="input-file-text shadowBlack"></span>
-                    	   	<input type="file" name="file" accept=".xlsx" id='plan' onChange={fileChange} />        
-                     	   	<span className="input-file-btn"><span>Выберите файл!</span></span>
-                     	</label>
-                </form>
-                <div className="twobtnInBlock">
-                    <button className="btn1 bdR5 btnPink" onClick={del}><span>Удалить направление</span></button>
-                    <button className="btn1 bdR5 btnYellow" onClick={edit}><span>Изменить</span></button>
-                </div>
+                {props.sch.settings !== undefined ? (
+                    <>
+                        <div className='closeCreate'>
+                            <h1 className="h1">Изменение направления</h1>
+                            <img src={close} id='close' onClick={() => props.deletePlan()}/>
+                        </div>
+                        <select className="shadowBlack" id='selectAddCourse'
+                        onChange={handleChange}
+                        >
+                            <option value={''}>Выберите курс</option>
+                            {countCoursese!.map(el => (
+                                <option value={`${el}`}>{el}</option>
+                            ))}
+                        </select>
+                        <select className="shadowBlack" id='selectAddPlan'
+                        onChange={handleChange}
+                        >
+                            <option value={''}>Выберите направление</option>
+                            {numberCourse !== 0 && [...new Set(Object.values(props.sch.settings!.arr_courses[numberCourse]).map(el => el[0]))].map(el => (<option value={`${el}`}>{el}</option>)) }
+                        </select>
+                        <form method="post" encType="multipart/form-data">
+                            	<label className="input-file">
+                            	   	<span className="input-file-text shadowBlack"></span>
+                            	   	<input type="file" name="file" accept=".xlsx" id='plan' onChange={fileChange} />        
+                             	   	<span className="input-file-btn"><span>Выберите файл!</span></span>
+                             	</label>
+                        </form>
+                        <div className="twobtnInBlock">
+                            <button className="btn1 bdR5 btnPink" onClick={del}><span>Удалить направление</span></button>
+                            <button className="btn1 bdR5 btnYellow" onClick={edit}><span>Изменить</span></button>
+                        </div>
+                    </>
+                ):
+                (
+                    <>
+                        <div className='closeCreate'>
+                            <h1 className="h1">Сообщение!</h1>
+                            <img src={close} id='close' onClick={() => props.deletePlan()}/>
+                        </div>
+                        <div className="mrTB1">
+                            <span>Пожалуйста, для начала настройте расписание, прежде чем добавлять информацию о направлениях!</span>
+                        </div>
+                    </>
+                )}
             </div>
         </div>
     )

@@ -9,6 +9,7 @@ export class Schedule{
     public createDate: string
 
     public settings?: ScheduleSettings
+    public cafedras?: []
 
     public listOfClasses?: IClass[]
     public newClasses?: IClass[]
@@ -28,11 +29,13 @@ export class Schedule{
     public getTeachers(){}
     public getCourse() {}
     public getDirection(){}
-    public getCafedra(){}
 
     public saveSettingsSchedule(flag: string, semestr: number, accHour: number, grafic: any, audit: any, start: string, end: string, courses: any){
         if(flag === 'first'){
             let ans = apiPos({'id': this.id, 'semester': semestr, 'accHour': accHour, 'grafic': grafic, 'audit': audit, 'start': start, 'end': end, 'courses': courses}, '/settingsFirst')
+            return ans
+        }else if(flag === 'second'){
+            let ans = apiPos({'id': this.id, 'semester': semestr, 'accHour': accHour, 'grafic': grafic, 'audit': audit, 'start': start, 'end': end, 'courses': courses}, '/settingsSecond')
             return ans
         }
     }
@@ -52,7 +55,10 @@ export class Schedule{
         return ans
     }
 
-    public addCafedra(){}
+    public addCafedra(nameKafedra: string, data: any){
+        let ans = apiPos({'id': this.id, 'nameKafedra': nameKafedra, 'data': data}, '/addCafedraUni')
+        return ans
+    }
     public editCafedra(){}
 
     public addNewClasses(classes: IClass[]){}

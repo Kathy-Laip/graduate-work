@@ -21,12 +21,16 @@ import { EdiTeachsSchool } from "../components/EditTeachsSchool";
 import download from '../pictures/download.svg'
 import { Message } from "../components/Message";
 import { switchBlock } from "../constants/const";
+import {Schedule} from '../architecture/Schedule'
 
 type WorkSch = {
     user: User
 }
 
 export const WorkSchedule: React.FC<WorkSch> = (props) => {
+    const [isLoading, setIsLoading] = useState(true);
+    const [get, setGet] = useState(true)
+
     const [setUni, isSetUni] = useState(false)
     const [setSchool, isSetSchool] = useState(false)
 
@@ -45,6 +49,7 @@ export const WorkSchedule: React.FC<WorkSch> = (props) => {
     const [mes, setMes] = useState<string>('')
     const [upd, setUpd] = useState<boolean>(false)
 
+    
     const onSettings = () => {
         if(props.user.currentSchedule !== 'ERROR_CREATE' && props.user.currentSchedule!.type === 'uni') isSetUni(true)
         if(props.user.currentSchedule !== 'ERROR_CREATE' && props.user.currentSchedule!.type === 'school') isSetSchool(true)
@@ -111,23 +116,55 @@ export const WorkSchedule: React.FC<WorkSch> = (props) => {
         setEditTeachsSchool(false)
     }
 
-    (async () => {
-        const saved = JSON.parse(localStorage.getItem('user')!)
-        
-        props.user.login = saved.login
-        props.user.password = saved.password
-
-        let schFabrica = new ScheduleFabrica()
-        console.log(saved.currentSchedule)
-        // let type = saved.currentSchedule !== undefined ? saved.currentSchedule.type === 'университет' ? 'uni' : 'school' : ''
-        if(saved.currentSchedule){
-            if(saved.currentSchedule.settings){
-                props.user.currentSchedule = (schFabrica.create(saved.currentSchedule.id, saved.currentSchedule.theme, saved.currentSchedule.type, saved.currentSchedule.date, {'period': saved.currentSchedule.settings.period, 'acc_hour': saved.currentSchedule.settings.acc_hour, 'start': saved.currentSchedule.settings.start_date, 'end': saved.currentSchedule.settings.end_date}, saved.currentSchedule.settings.count_class, saved.currentSchedule.settings.work_times, saved.currentSchedule.settings.arr_courses))
-            }else {
-                props.user.currentSchedule = schFabrica.create(saved.currentSchedule.id, saved.currentSchedule.name, saved.currentSchedule.type, saved.currentSchedule.createDate)
+    const updateSchs = (schs:any) => {
+        let ans = props.user.getListOfSchedules()
+        ans.then(answer => {
+            if(answer.otv === 'OK'){
+                setIsLoading(true)
+                props.user.listOfSchedules = []
+                let schFabrica = new ScheduleFabrica()
+                for(let sch of answer.works){
+                    let type = sch.type === 'университет' ? 'uni' : 'school'
+                    if(sch.settings && sch.courseCount && sch.grafic && sch.courses){
+                        let curSCH = schFabrica.create(sch.id, sch.theme, type, sch.date, sch.settings, sch.courseCount, sch.grafic, sch.courses)
+                        if(schs.id === sch.id &&  curSCH instanceof Schedule){
+                            props.user.currentSchedule = curSCH
+                        }
+                        if(sch.cafedras &&  curSCH instanceof Schedule){
+                            curSCH.cafedras = sch.cafedras
+                        }
+                        if(curSCH instanceof Schedule){
+                            props.user.listOfSchedules.push(curSCH)
+                        }
+                    }else{
+                        let curSCH = schFabrica.create(sch.id, sch.theme, type, sch.date)
+                        if(schs.id === sch.id &&  curSCH instanceof Schedule){
+                            props.user.currentSchedule = curSCH
+                        }
+                        if(sch.cafedras &&  curSCH instanceof Schedule){
+                            curSCH.cafedras = sch.cafedras
+                        }
+                        if(curSCH instanceof Schedule){
+                            props.user.listOfSchedules.push(curSCH)
+                        }
+                    }
+                }
+                setIsLoading(false)
+            }else{
+                console.log('error')
             }
+        })
+    }
+    (async () => {
+        if(get){
+            const saved = JSON.parse(localStorage.getItem('user')!)
+            props.user.login = saved.login
+            props.user.password = saved.password
+            updateSchs(saved.currentSchedule)
+            setGet(false)
         }
     })()
+
 
     const handleDownload = () => {
         const link = document.createElement('a');
@@ -144,26 +181,35 @@ export const WorkSchedule: React.FC<WorkSch> = (props) => {
         switchBlock('newMessage')
     }
 
-    console.log(props.user.currentSchedule)
+    const messageYN = (mes:string, up:boolean) => {
+        setMes(mes)
+        setUpd(up)
+        switchBlock('newMessageConfirm')
+    }
+
+    
     return (
         <div className="workScheduleMain">
             <SideBar login={props.user.login}/>
             {/* (setUni || props.user.currentSchedule!.settings === undefined)  */}
-            {(setUni || false)  && props.user.currentSchedule! instanceof ScheduleUni && (<ScheduleBlockSettingsUni onSettingsFalse={onSettingsFalse} sch={props.user.currentSchedule} mes={message}/>)}
+            {setUni && props.user.currentSchedule! instanceof ScheduleUni
+             && (<ScheduleBlockSettingsUni onSettingsFalse={onSettingsFalse} sch={props.user.currentSchedule} mes={message} user={props.user}/>)}
+            
             {/* (setSchool || props.user.currentSchedule!.settings === undefined) */}
             {(setSchool || false) && props.user.currentSchedule! instanceof ScheduleSchool && (<ScheduleBlockSettingsSchool onSettingsFalse={onSettingsFalse} sch={props.user.currentSchedule}/>)}
 
-            {addPlanUni && props.user.currentSchedule! instanceof ScheduleUni && (<AddOrEditPlansUni deletePlan={addPlanUniFalse} sch={props.user.currentSchedule} mes={message}/>)}
-            {editPlanUni && props.user.currentSchedule! instanceof ScheduleUni && (<EdiPlanUni deletePlan={editPlanUniFalse} sch={props.user.currentSchedule} mes={message}/>)}
+            {props.user.currentSchedule! instanceof ScheduleUni && addPlanUni  && (<AddOrEditPlansUni deletePlan={addPlanUniFalse} sch={props.user.currentSchedule} mes={message}/>)} 
+            
+            {props.user.currentSchedule! instanceof ScheduleUni && editPlanUni && (<EdiPlanUni deletePlan={editPlanUniFalse} sch={props.user.currentSchedule} mes={message}/>) } 
 
-            {addTeachsUni && (<AddOrEditTeachsUni deleteTeachs={addTeachsUniFalse}/>)}
-            {editTeachsUni && (<EdiTeachsUni deleteTeachs={editTeachsUniFalse}/>)}
+            {props.user.currentSchedule! instanceof ScheduleUni && addTeachsUni && (<AddOrEditTeachsUni deleteTeachs={addTeachsUniFalse} sch={props.user.currentSchedule} mes={message}/>)}
+            {props.user.currentSchedule! instanceof ScheduleUni && editTeachsUni && (<EdiTeachsUni deleteTeachs={editTeachsUniFalse}/>)}
 
             {addPlanSchool && (<AddOrEditPlansSchool deletePlan={addPlanSchoolFalse}/>)}
             {editPlanSchool && (<EdiPlanSschool deletePlan={editPlanSchoolFalse}/>)}
 
             {addTeachsSchool && (<AddOrEditTeachsSchool deleteTeachs={addTeachsSchoolFalse}/>)}
-            {editTeachsSchool && (<EdiTeachsSchool deleteTeachs={editTeachsSchoolFalse}/>)}
+            {editTeachsSchool && (<EdiTeachsSchool deleteTeachs={editTeachsSchoolFalse}/>)} 
 
             <div className="bodyWork">
                 <div className="nav">
@@ -172,7 +218,7 @@ export const WorkSchedule: React.FC<WorkSch> = (props) => {
                             <div className="back"><Link to='/workBook'><h3 className="h3">Назад в рабочий каталог</h3></Link></div>
                     </div>
                     <div className="rightNav">
-                        <p><a href="#" onClick={handleDownload}><img src={download}/></a></p>
+                        <p id='dow'><a href="#" onClick={handleDownload}><img src={download}/></a><span className="tool-text" id='bottom'>Скачайте документы для создания расписания! Следуйте примерам из файлом и не изменяйте названия колонок!</span></p>
                         <button className="btn1 bdR5 btnYellow" onClick={onSettings}>Настроить расписание</button>
                     </div>
                 </div>
@@ -186,6 +232,7 @@ export const WorkSchedule: React.FC<WorkSch> = (props) => {
                 </div>
             </div>
             <Message mess={mes} update={upd}/>
+            {/* <MessageConfirmYN mess={mes} update={upd} change={changeYON}/> */}
         </div>
     )
 }
