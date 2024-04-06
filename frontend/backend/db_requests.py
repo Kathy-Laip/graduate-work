@@ -51,6 +51,9 @@ def deleteCourses(work_id):
     ans = connection.execute_query('delete from schedules.courses where work_id={}'.format(work_id))
     return ans
 
+def deleteCafedra(work_ID, nameCafedra):
+    ans = connection.execute_query('delete from schedules.cafedra_or_section where work_id={} and name="{}"'.format(work_ID, nameCafedra))
+    return ans
 
 def getDataUser(login):
     try: 

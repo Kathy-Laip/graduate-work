@@ -203,7 +203,7 @@ export const WorkSchedule: React.FC<WorkSch> = (props) => {
             {props.user.currentSchedule! instanceof ScheduleUni && editPlanUni && (<EdiPlanUni deletePlan={editPlanUniFalse} sch={props.user.currentSchedule} mes={message}/>) } 
 
             {props.user.currentSchedule! instanceof ScheduleUni && addTeachsUni && (<AddOrEditTeachsUni deleteTeachs={addTeachsUniFalse} sch={props.user.currentSchedule} mes={message}/>)}
-            {props.user.currentSchedule! instanceof ScheduleUni && editTeachsUni && (<EdiTeachsUni deleteTeachs={editTeachsUniFalse}/>)}
+            {props.user.currentSchedule! instanceof ScheduleUni && editTeachsUni && (<EdiTeachsUni deleteTeachs={editTeachsUniFalse} sch={props.user.currentSchedule} mes={message}/>)}
 
             {addPlanSchool && (<AddOrEditPlansSchool deletePlan={addPlanSchoolFalse}/>)}
             {editPlanSchool && (<EdiPlanSschool deletePlan={editPlanSchoolFalse}/>)}

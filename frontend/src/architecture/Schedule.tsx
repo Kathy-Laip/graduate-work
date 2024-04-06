@@ -31,35 +31,27 @@ export class Schedule{
     public getDirection(){}
 
     public saveSettingsSchedule(flag: string, semestr: number, accHour: number, grafic: any, audit: any, start: string, end: string, courses: any){
-        if(flag === 'first'){
-            let ans = apiPos({'id': this.id, 'semester': semestr, 'accHour': accHour, 'grafic': grafic, 'audit': audit, 'start': start, 'end': end, 'courses': courses}, '/settingsFirst')
-            return ans
-        }else if(flag === 'second'){
-            let ans = apiPos({'id': this.id, 'semester': semestr, 'accHour': accHour, 'grafic': grafic, 'audit': audit, 'start': start, 'end': end, 'courses': courses}, '/settingsSecond')
-            return ans
-        }
+
     }
 
     public addDirection(type:string, courseNumber: number, nameCourse: string, data: string[]){
-        let ans = apiPos({'id': this.id, 'numberCourse': courseNumber, 'nameCourse': nameCourse, 'data': data}, '/addPlanUni')
-        return ans
+
     }
 
     public deleteDirection(numberCourse: number, name_course: string){
-        let ans = apiPos({'id': this.id, 'numberCourse': numberCourse, 'name_course': name_course}, '/deletePlanUni')
-        return ans
+
     }
 
     public editDirection(numberCourse: number, name_course: string, data: any){
-        let ans = apiPos({'id': this.id, 'numberCourse': numberCourse, 'name_course': name_course, 'data': data}, '/editPlanUni')
-        return ans
+
     }
 
     public addCafedra(nameKafedra: string, data: any){
-        let ans = apiPos({'id': this.id, 'nameKafedra': nameKafedra, 'data': data}, '/addCafedraUni')
-        return ans
+
     }
-    public editCafedra(){}
+
+    public deleteCafedra(nameCafedra: string){}
+    public editCafedra(nameCafedra: string, data: any){}
 
     public addNewClasses(classes: IClass[]){}
 
