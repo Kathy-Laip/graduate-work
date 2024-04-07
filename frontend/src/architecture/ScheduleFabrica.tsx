@@ -16,7 +16,12 @@ export class ScheduleFabrica{
             }
 
         }else if(type === 'school'){
-            return new ScheduleSchool(id, name, type, createDate)
+            if(setting && courseCount && grafic && courses){
+                let settings = new ScheduleSettings(setting.period, setting.acc_hour, grafic, setting.start, setting.end, courseCount, courses)
+                return new ScheduleSchool(id, name, type, createDate, settings)
+            }else{
+                return new ScheduleSchool(id, name, type, createDate)
+            }
         }
         else{
             return 'ERROR_CREATE'

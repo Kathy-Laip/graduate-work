@@ -192,11 +192,11 @@ export const WorkSchedule: React.FC<WorkSch> = (props) => {
         <div className="workScheduleMain">
             <SideBar login={props.user.login}/>
             {/* (setUni || props.user.currentSchedule!.settings === undefined)  */}
+            {/* (setSchool || props.user.currentSchedule!.settings === undefined) */}
+
+            
             {setUni && props.user.currentSchedule! instanceof ScheduleUni
              && (<ScheduleBlockSettingsUni onSettingsFalse={onSettingsFalse} sch={props.user.currentSchedule} mes={message} user={props.user}/>)}
-            
-            {/* (setSchool || props.user.currentSchedule!.settings === undefined) */}
-            {(setSchool || false) && props.user.currentSchedule! instanceof ScheduleSchool && (<ScheduleBlockSettingsSchool onSettingsFalse={onSettingsFalse} sch={props.user.currentSchedule}/>)}
 
             {props.user.currentSchedule! instanceof ScheduleUni && addPlanUni  && (<AddOrEditPlansUni deletePlan={addPlanUniFalse} sch={props.user.currentSchedule} mes={message}/>)} 
             
@@ -205,11 +205,14 @@ export const WorkSchedule: React.FC<WorkSch> = (props) => {
             {props.user.currentSchedule! instanceof ScheduleUni && addTeachsUni && (<AddOrEditTeachsUni deleteTeachs={addTeachsUniFalse} sch={props.user.currentSchedule} mes={message}/>)}
             {props.user.currentSchedule! instanceof ScheduleUni && editTeachsUni && (<EdiTeachsUni deleteTeachs={editTeachsUniFalse} sch={props.user.currentSchedule} mes={message}/>)}
 
-            {addPlanSchool && (<AddOrEditPlansSchool deletePlan={addPlanSchoolFalse}/>)}
-            {editPlanSchool && (<EdiPlanSschool deletePlan={editPlanSchoolFalse}/>)}
+            {setSchool && props.user.currentSchedule! instanceof ScheduleSchool && 
+            (<ScheduleBlockSettingsSchool onSettingsFalse={onSettingsFalse} sch={props.user.currentSchedule} mes={message} user={props.user}/>)}
 
-            {addTeachsSchool && (<AddOrEditTeachsSchool deleteTeachs={addTeachsSchoolFalse}/>)}
-            {editTeachsSchool && (<EdiTeachsSchool deleteTeachs={editTeachsSchoolFalse}/>)} 
+            {props.user.currentSchedule! instanceof ScheduleSchool && addPlanSchool && (<AddOrEditPlansSchool deletePlan={addPlanSchoolFalse} sch={props.user.currentSchedule} mes={message}/>)}
+            {props.user.currentSchedule! instanceof ScheduleSchool && editPlanSchool && (<EdiPlanSschool deletePlan={editPlanSchoolFalse} sch={props.user.currentSchedule} mes={message}/>)}
+
+            {props.user.currentSchedule! instanceof ScheduleSchool && addTeachsSchool && (<AddOrEditTeachsSchool deleteTeachs={addTeachsSchoolFalse} sch={props.user.currentSchedule} mes={message}/>)}
+            {props.user.currentSchedule! instanceof ScheduleSchool &&  editTeachsSchool && (<EdiTeachsSchool deleteTeachs={editTeachsSchoolFalse} sch={props.user.currentSchedule} mes={message}/>)} 
 
             <div className="bodyWork">
                 <div className="nav">

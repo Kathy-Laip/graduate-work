@@ -35,6 +35,10 @@ def deleteWorkPlan(direction_id):
     ans = connection.execute_query('delete from plan_direction where direction_id={}'.format(direction_id))
     return ans
 
+def deleteWorkPlanSchool(class_id):
+    ans = connection.execute_query('delete from plan_direction where class_id={}'.format(class_id))
+    return ans
+
 def deleteSCH(work_id):
     ans = connection.execute_query('delete from schedules.schedule where work_id={}'.format(work_id))
     return ans
@@ -228,6 +232,12 @@ def getPlans(direction_id):
             return plans
     except: return False
 
+def getPlansSchool(class_id):
+    try:
+        plans = connection.get_data_from_table('select schedules.plan_direction.sub_id from schedules.plan_direction where class_id={}'.format(class_id))
+        if(plans is not None):
+            return plans
+    except: return False
 
 def insertNewUser(login, password):
     ans = connection.execute_query('insert into users(login, password) values("{}", "{}")'.format(login, password))
@@ -241,8 +251,8 @@ def addProjectSettings(period, acc_hour, start, end, workID):
     ans = connection.execute_query('update work_folder set period={}, start_time="{}", end_time="{}", acc_hour={} where work_id={}'.format(period, start, end, acc_hour, workID))
     return ans
 
-def addProjectSettingsSchool(period, acc_hour, workID):
-    ans = connection.execute_query('update work_folder set period={}, acc_hour={} where work_id={}'.format(period, acc_hour, workID))
+def addProjectSettingsSchool(period, acc_hour, start, end, workID):
+    ans = connection.execute_query('update work_folder set period={}, acc_hour={}, start_time="{}", end_time="{}" where work_id={}'.format(period, acc_hour, start, end, workID))
     return ans
 
 def addCourses(courseNumber, workID):

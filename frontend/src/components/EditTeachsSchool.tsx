@@ -1,8 +1,11 @@
 import React from "react";
+import { ScheduleSchool } from "../architecture/ScheduleSchool";
 import close from '../pictures/Close.svg'
 
 type AddType ={
-    deleteTeachs: Function
+    deleteTeachs: Function,
+    sch: ScheduleSchool, 
+    mes: Function
 }
 
 export const EdiTeachsSchool: React.FC<AddType> = (props) => {

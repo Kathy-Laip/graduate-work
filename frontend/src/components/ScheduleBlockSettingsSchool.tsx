@@ -1,46 +1,305 @@
 import React, {useState} from "react";
-import { ScheduleSchool } from "../architecture/ScheduleSchool";
+
 import close from '../pictures/Close.svg'
+import question from '../pictures/question.svg'
+
+import {User} from '../architecture/User'
+import { ScheduleSchool } from "../architecture/ScheduleSchool";
+
+import { MessageConfirmYN } from "./MessageConfirmTrueFalse";
+import { NewCouse } from "./NewCourse";
+
+import {handleUpload} from '../constants/const'
 
 type SchSetts = {
     onSettingsFalse: Function
-    sch: ScheduleSchool
+    sch: ScheduleSchool,
+    mes: Function, 
+    user: User
 }
 
-
+type MyType = {
+    courseNumber: number,
+    st: any[];
+  };
 
 export const ScheduleBlockSettingsSchool: React.FC<SchSetts> = (props) => {
-    const [count, setCount] = useState<number>()
-    const [courseBlocks, setCourseBlocks] = useState<JSX.Element[]>([]);
-    // let count:number
-    // let courseBlocks:JSX.Element[] = []
+    const [count, setCount] = useState<number>(0)
+    const [courseBlocks, setCourseBlocks] = useState<number[]>([]);
+    const [courses, setCourses] = useState<any[]>([])
+    const [presCourses, setPresCourses] = useState<any>();
 
+    const [confirm, setConfirm] = useState(false)
+    const [mes, setMes] = useState('')
 
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const [semestr, setSemester] = useState<number>()
+    const [accHour, setAccHour] = useState<number>()
+
+    const [nameGrafic, setNameGrafic] = useState('')
+    const [selectedGraficFile, setSelectedGraficFile] = useState<File | null>(null);
+    const [presGrafic, setPresGrafic] = useState<any|undefined>([]);
+
+    const [nameAudit, setNameAudit] = useState('')
+    const [selectedAuditFile, setSelectedAuditFile] = useState<File | null>(null);
+    const [presAudit, setPresAudit] = useState<any|undefined>([]);
+
+    const [startDate, setStartDate] = useState<string>('')
+    const [endDate, setEndDate] = useState<string>('')
+
+    console.log(props.sch)
+
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement|HTMLSelectElement>) => {
         if(event.target.id === 'count'){
+            console.log(event.target.id)
             setCount(Number(event.target.value))
-            // courseBlocks = []
-            let newCourseBlocks = [];
-            for(let i = 1; i <= Number(event.target.value); i++){
-                newCourseBlocks.push(
-                    <div key={i} className="datePeriod">
-                        <span>{i}</span>
-                        <form method="post" encType="multipart/form-data">
-                            <label className="input-file">
-                                <input type="file" name={`file-${i}`}/>		
-                                <span>Выберите файл</span>
-                            </label>
-                        </form>
-                    </div>
-                );
-            }
+            const newCourseBlocks = Array.from({length: Number(event.target.value)}, (_, ind) => ind+1);
+            const coursess = Array.from({length: Number(event.target.value)+1}, () => 0)
+            setCourses(coursess)
             setCourseBlocks(newCourseBlocks);
-            console.log(courseBlocks)
+        }else if(event.target.id === 'selectPeriod'){
+            setSemester(Number(event.target.value))
+        }else if(event.target.id === 'selectAccHour'){
+            console.log(event.target.value)
+            setAccHour(Number(event.target.value))
+        }else if(event.target.id === 'startDate'){
+            setStartDate(event.target.value)
+        }else if(event.target.id === 'endDate'){
+            setEndDate(event.target.value)
         }
     }
 
+    const fileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        if(event.target.id === 'graficFile'){
+            const file = event.target.files && event.target.files[0]; 
+            console.log(file)
+            if(file){
+                setSelectedGraficFile(file)
+                setNameGrafic(file!.name)
+            }
+        }else if(event.target.id === 'auditFile'){
+            const file = event.target.files && event.target.files[0]
+            if(file){
+                setSelectedAuditFile(file)
+                setNameAudit(file!.name)
+            }
+        }
+    }
+
+    const changeFilesCourse = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const fileIndex = Number(event.target.name.split('-')[1]);
+        const file = event.target.files && event.target.files[0]; 
+
+        if(file){
+            setCourses(prevNames => {
+                const updatedNames = [...prevNames];
+                updatedNames[fileIndex] = file;
+                return updatedNames;
+            });
+        }
+    }
+
+    const closeConfirm = () => {
+        setConfirm(false)
+    }
+
+    const save = () => {
+        if(!props.sch.settings){
+            if(!semestr) props.mes('Заполните пожалуйста поле с четвертью!', false)
+            else{
+                if(!accHour) props.mes('Заполните пожалуйста поле с академическим часом!', false)
+                else{
+                    if(selectedGraficFile === null) props.mes('Выберите файл с графиком!', false)
+                    else{
+                        let ans = handleUpload(selectedGraficFile!)
+                        ans.then(ans => {
+                            setPresGrafic(ans)
+                            let presGr: any[] = ans as any
+                            let keysGr = presGr[0]
+                            if(keysGr[0] !== 'начало' || keysGr[1] !== 'конец') props.mes('Файл с графиком не соответсвует требованиям!', false)
+                            else {
+                                if(selectedAuditFile === null) props.mes('Выберите файл с кабинетами!', false)
+                                else{
+                                    let ans = handleUpload(selectedAuditFile!)
+                                    ans.then(ans => {
+                                        setPresAudit(ans)
+                                        let presAu: any[] = ans as any
+                                        let keysAu = presAu[0]
+                                        if(keysAu[0] !== 'ФИО учителя' || keysAu[1] !== 'кабинет') props.mes('Файл с кабинетами не соответсвует требованиям!', false)
+                                        else {
+                                            if(!startDate || !endDate) props.mes('Заполните начало и конец периода!', false)
+                                            else{
+                                                let presCs:any[] = []
+                                                if(courses.length === 0) props.mes(`Пожалуйста, заполните информацию с параллелями!`, false)
+                                                else{
+                                                    for(let i = 1; i < courses.length; i++){
+                                                        let obj: MyType = {courseNumber: i, st: []}
+                                                        if(courses[i] === 0 || courses[i] === undefined){
+                                                            props.mes(`Выберите файл для параллели ${i}`, false)
+                                                            setCount(0)
+                                                            setCourseBlocks([])
+                                                            i = courses.length;
+                                                            presCs = []
+                                                        } 
+                                                        else{
+                                                            let ans = handleUpload(courses[i]!)
+                                                            ans.then(ans => {
+                                                                let datCs: any = ans as any
+                                                                // console.log(datCs)
+                                                                obj.st = datCs
+                                                                let keysCs = datCs[0]
+                                                                if(keysCs[0] !== 'номер параллели' || keysCs[1] !== 'инициалы' || keysCs[2] !== 'количество'){
+                                                                    props.mes(`Файл с параллелью ${count} не соответствует требованиям!`, false)
+                                                                    setCount(0)
+                                                                    setCourseBlocks([])
+                                                                    i = courses.length;
+                                                                    presCs = []
+                                                                } else{
+                                                                    presCs.push(obj)
+                                                                } 
+
+                                                                if(i === courses.length - 1){
+                                                                    setPresCourses(presCs)
+                                                                    if(presCs.length === courses.length - 1){
+                                                                        let ans = props.sch.saveSettingsSchedule('first', semestr, accHour, presGr, presAu, startDate, endDate, presCs)
+                                                                        ans?.then(answer => {
+                                                                            if(answer.otv === 'ok'){
+                                                                                localStorage.setItem('user', JSON.stringify(props.user))
+                                                                                props.mes('Информация добавлена!', true)
+                                                                            }else if(answer.otv === 'error add set'){
+                                                                                props.mes('Что-то не так с выбором семестра, академического часа или с датами об окончании и начале семестра! Перепроверьте данные!', false)
+                                                                            }else if(answer.otv === 'error grafic'){
+                                                                                props.mes('Что-то не так с графиком! Перепроверьте данные!', false)
+                                                                            }else if(answer.otv === 'error audit'){
+                                                                                props.mes('Что-то не так с данными об аудиториях! Перепроверьте данные!', false)
+                                                                            } else if(answer.otv === 'courses number' || answer.otv === 'error courses name' || answer.otv === 'error courses initial'){
+                                                                                props.mes('Что-то не так с добавлением курсов! Перепроверьте данные!', false)
+                                                                            }
+                                                                        })
+                                                                    }
+                                                                }
+                                                            })
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    })
+                                }
+                            }
+                        
+                        })
+                    }
+                }
+        }
+        }else{
+            setMes('Внимание! Для того, чтобы изменить настройки необходимо удалить данные о расписании! Вы точно хотите изменить параметры расписания?')
+            setConfirm(true)
+        }
+    }
+
+    console.log(props.sch)
+    const saveSecond = () => {
+        closeConfirm()
+        if(!semestr) props.mes('Заполните пожалуйста поле с четвертью!', false)
+        else{
+            if(!accHour) props.mes('Заполните пожалуйста поле с академическим часом!', false)
+            else{
+                if(selectedGraficFile === null) props.mes('Выберите файл с графиком!', false)
+                else{
+                    let ans = handleUpload(selectedGraficFile!)
+                    ans.then(ans => {
+                        setPresGrafic(ans)
+                        let presGr: any[] = ans as any
+                        let keysGr = presGr[0]
+                        if(keysGr[0] !== 'начало' || keysGr[1] !== 'конец') props.mes('Файл с графиком не соответсвует требованиям!', false)
+                        else {
+                            if(selectedAuditFile === null) props.mes('Выберите файл с кабинетами!', false)
+                            else{
+                                let ans = handleUpload(selectedAuditFile!)
+                                ans.then(ans => {
+                                    setPresAudit(ans)
+                                    let presAu: any[] = ans as any
+                                    let keysAu = presAu[0]
+                                    if(keysAu[0] !== 'ФИО учителя' || keysAu[1] !== 'кабинет') props.mes('Файл с кабинетами не соответсвует требованиям!', false)
+                                    else {
+                                        if(!startDate || !endDate) props.mes('Заполните начало и конец периода!', false)
+                                        else{
+                                            let presCs:any[] = []
+                                            if(courses.length === 0) props.mes(`Пожалуйста, заполните информацию с параллелями!`, false)
+                                            else{
+                                                for(let i = 1; i < courses.length; i++){
+                                                    let obj: MyType = {courseNumber: i, st: []}
+                                                    if(courses[i] === 0 || courses[i] === undefined){
+                                                        props.mes(`Выберите файл для параллели ${i}`, false)
+                                                        setCount(0)
+                                                        setCourseBlocks([])
+                                                        i = courses.length;
+                                                        presCs = []
+                                                    } 
+                                                    else{
+                                                        let ans = handleUpload(courses[i]!)
+                                                        ans.then(ans => {
+                                                            let datCs: any = ans as any
+                                                            // console.log(datCs)
+                                                            obj.st = datCs
+                                                            let keysCs = datCs[0]
+                                                            if(keysCs[0] !== 'номер параллели' || keysCs[1] !== 'инициалы' || keysCs[2] !== 'количество'){
+                                                                props.mes(`Файл с параллелью ${count} не соответствует требованиям!`, false)
+                                                                setCount(0)
+                                                                setCourseBlocks([])
+                                                                i = courses.length;
+                                                                presCs = []
+                                                            } else{
+                                                                presCs.push(obj)
+                                                            } 
+
+                                                            if(i === courses.length - 1){
+                                                                setPresCourses(presCs)
+                                                                if(presCs.length === courses.length - 1){
+                                                                    let ans = props.sch.saveSettingsSchedule('second', semestr, accHour, presGr, presAu, startDate, endDate, presCs)
+                                                                    ans?.then(answer => {
+                            
+                                                                        if(answer.otv === 'ok'){
+                                                                            localStorage.setItem('user', JSON.stringify(props.user))
+                                                                            props.mes('Информация добавлена!', true)
+                                                                        }else if(answer.otv === 'error sch'){
+                                                                            props.mes('Не получилось очистить расписание! Попробуйте позже!', false)
+                                                                        }else if(answer.otv === 'error add set'){
+                                                                            props.mes('Что-то не так с выбором семестра, академического часа или с датами об окончании и начале семестра! Перепроверьте данные!', false)
+                                                                        }else if(answer.otv === 'error grafic del'){
+                                                                            props.mes('Не получилось удалить график учебного заведения! Попробуйте позже!', false)
+                                                                        }else if(answer.otv === 'error grafic'){
+                                                                            props.mes('Что-то не так с графиком! Перепроверьте данные!', false)
+                                                                        }else if(answer.otv === 'error place'){
+                                                                            props.mes('Не получилось удалить записи об аудиториях! Попробуйте позже!', false)
+                                                                        }else if(answer.otv === 'error audit'){
+                                                                            props.mes('Что-то не так с данными об аудиториях! Перепроверьте данные!', false)
+                                                                        }else if(answer.otv === 'error courses'){
+                                                                            props.mes('Не получилось очистить записи о курсах! Попробуйте позже!', false)
+                                                                        } else if(answer.otv === 'error courses name' || answer.otv === 'error courses initial'){
+                                                                            props.mes('Не получилось очистить записи о направлениях! Попробуйте позже!', false)
+                                                                        }else if(answer.otv === 'courses number' || answer.otv === 'error courses name' || answer.otv === 'error courses initial'){
+                                                                            props.mes('Что-то не так с добавлением курсов! Перепроверьте данные!', false)
+                                                                        }
+                                                                    })
+                                                                }
+                                                            }
+                                                        })
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                })
+                            }
+                        }
+                    
+                    })
+                }
+    }}}
 
     return (
+        <>
         <div id="blockWithCloseSett">
             <div id='settings'>
                 <div className='closeCreate'>
@@ -49,6 +308,7 @@ export const ScheduleBlockSettingsSchool: React.FC<SchSetts> = (props) => {
                 </div>
                 <div className="scrolls">
                     <select className="shadowBlack" id='selectPeriod'
+                    onChange={handleChange}
                     >
                         <option value={''}>Выберите четверть</option>
                         <option value={'1'}>1</option>
@@ -57,8 +317,10 @@ export const ScheduleBlockSettingsSchool: React.FC<SchSetts> = (props) => {
                         <option value={'4'}>4</option>
                     </select>
                     <span className="mrTB1">Академический час:</span>
-                    <select className="shadowBlack" id='selectTypeEdit'
+                    <select className="shadowBlack" id='selectAccHour'
+                    onChange={handleChange}
                     >
+                        <option value={''}>Выберите час</option>
                         <option value={'45'}>45</option>
                         <option value={'50'}>50</option>
                         <option value={'55'}>55</option>
@@ -68,44 +330,51 @@ export const ScheduleBlockSettingsSchool: React.FC<SchSetts> = (props) => {
                         <option value={'75'}>75</option>
                         <option value={'80'}>80</option>
                     </select>
-                    <span className="mrTB1">График работы заведения:</span>
+                    <div className="dis_sp">
+                        <span className="mrTB1">График работы заведения:</span>
+                        <div className="que" id='queT'><img src={question}/><span className="tool-text" id='bottom'>Скачайте документы для настройки, рядом с кнопкой настроить расписание!</span></div>
+                    </div>
                     {/* <input type="file"  id="avatar"  accept=".xlsx"/> */}
                     <form method="post" encType="multipart/form-data">
                     	<label className="input-file">
-                    	   	<span className="input-file-text shadowBlack"></span>
-                    	   	<input type="file" name="file" accept=".xlsx"/>        
-                     	   	<span className="input-file-btn"><span>Выберите файл</span></span>
+                    	   	<span className="input-file-text shadowBlack"><span>{nameGrafic}</span></span>
+                    	   	<input type="file" name="file" accept=".xlsx" id='graficFile' onChange={fileChange}/>        
+                     	   	<span className="input-file-btn"><span>Выберите файл!</span></span>
                      	</label>
                     </form>
                     <span className="mrTB1">Кабинеты:</span>
                     {/* <input type="file"  id="avatar"  accept=".xlsx"/> */}
                     <form method="post" encType="multipart/form-data">
                     	<label className="input-file">
-                    	   	<span className="input-file-text shadowBlack"></span>
-                    	   	<input type="file" name="file" accept=".xlsx"/>        
-                     	   	<span className="input-file-btn"><span>Выберите файл</span></span>
+                    	   	<span className="input-file-text shadowBlack"><span>{nameAudit}</span></span>
+                    	   	<input type="file" name="file" accept=".xlsx" id='auditFile' onChange={fileChange}/>        
+                     	   	<span className="input-file-btn"><span>Выберите файл!</span></span>
                      	</label>
                     </form>
                     <div className="datePeriod">
                         <span>Начало периода</span>
-                        <input type='date'/>
+                        <input type='date' id='startDate' onChange={handleChange}/>
                     </div>
                     <div className="datePeriod">
                         <span>Конец периода</span>
-                        <input type='date'/>
+                        <input type='date' id='endDate' onChange={handleChange}/>
                     </div>
                     <div className="datePeriod">
                         <span>Кол-во параллелей</span>
                         <input type='number' id='count' min='0' value={count} onChange={handleChange}></input>
                     </div>
                     <div id='courses'>
-                        {courseBlocks}
+                        {courseBlocks.map(el => (
+                            <NewCouse number={el} change={changeFilesCourse}/>
+                        ))}
                     </div>
                     <div className="onebtn">
-                        <button className="btn1 btnYellow"><span>Сохранить</span></button>
+                        <button className="btn1 btnYellow" onClick={save}><span>Сохранить</span></button>
                     </div>
                 </div>
             </div>
         </div>
+        {confirm && <MessageConfirmYN mess={mes} save={saveSecond} change={closeConfirm}/>}
+        </>
     )
 }

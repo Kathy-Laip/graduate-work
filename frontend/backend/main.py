@@ -571,7 +571,299 @@ def editCafedra():
         return json.dumps({'otv': 'error class'})
 
     return json.dumps({'otv': 'ok'})
+
+@app.route('/settingsFirstSchool', methods=['POST'])
+def setFirstSchool():
+    info = json.loads(request.get_data())
     
+    workID = info['id']
+    semester = info['semester']
+    accHour = info['accHour']
+    grafic = info['grafic']
+    audit = info['audit']
+    start = info['start']
+    end = info['end']
+
+    courses = info['courses']
+
+    ans = addProjectSettingsSchool(semester, accHour, start, end, workID)
+    if(ans == False):
+        return json.dumps({'otv': 'error add set'})
+    
+    arr = []
+    for i in range(1, len(grafic)):
+        ans = addTimesGrafic(grafic[i][0], grafic[i][1], workID)
+        arr.append(ans)
+    
+    if(all(arr) == False):
+        return json.dumps({"otv": 'error add grafic'})
+
+    arr = []
+    for i in range(1, len(audit)):
+        ans = addPlaceSchool(workID, audit[i][0], audit[i][1])
+        arr.append(ans)
+
+    if(all(arr) == False):
+        return json.dumps({'otv': 'error audit'})
+    
+    arr = []
+    for i in range(1, len(courses) + 1):
+        ans = addCourses(i, workID)
+        arr.append(ans)
+
+    if(all(arr) == False):
+        return json.dumps({'orv': 'courses number'})
+
+    arr = []
+    arr2 = []
+    for i in range(len(courses)):
+        courseID = getCourseID(courses[i]['courseNumber'], workID)
+        for j in range(1, len(courses[i]['st'])):
+            dir_id = getDirection(courseID, courses[i]['st'][j][0])
+            if(dir_id == False):
+                ans = addDirection(courseID, courses[i]['st'][j][0])
+                arr.append(ans)
+            dir_id = getDirection(courseID, courses[i]['st'][j][0])
+            ans = addClass(dir_id, courses[i]['st'][j][1], courses[i]['st'][j][2])
+            arr2.append(ans)
+
+    if(all(arr) == False):
+        return json.dumps({'otv': 'error courses name'})
+    if(all(arr2) == False):
+        return json.dumps({'otv': 'error courses initial'})
+
+    return json.dumps({'otv': 'ok'})
+    
+@app.route('/settingsSecondSchool', methods=['POST'])
+def setSecondSchool():
+    info = json.loads(request.get_data())
+    
+    workID = info['id']
+    semester = info['semester']
+    accHour = info['accHour']
+    grafic = info['grafic']
+    audit = info['audit']
+    start = info['start']
+    end = info['end']
+
+    courses = info['courses']
+
+    ans = deleteSCH(workID)
+    if(ans == False):
+        return json.dumps({'otv': 'error sch'})
+
+    ans = addProjectSettings(semester, accHour, start, end, workID)
+    if(ans == False):
+        return json.dumps({'otv': 'error add set'})
+
+    ans = deleteGrafic(workID)
+    if(ans == False):
+        return json.dumps({'otv': 'error grafic del'})
+
+    arr = []
+    for i in range(1, len(grafic)):
+        ans = addTimesGrafic(grafic[i][0], grafic[i][1], workID)
+        arr.append(ans)
+    
+    if(all(arr) == False):
+        return json.dumps({'otv': 'error grafic'})
+
+    ans = deletePlace(workID)
+    if(ans == False):
+        return json.dumps({'otv': 'error place'})
+    
+    arr = []
+    for i in range(1, len(audit)):
+        ans = addPlaceSchool(workID, audit[i][0], audit[i][1])
+        arr.append(ans)
+    
+    if(all(arr) == False):
+        return json.dumps({'otv': 'error audit'})
+
+    ans = deleteCourses(workID)
+    if(ans == False):
+        return json.dumps({'otv': 'error courses'})
+
+    arr = []
+    for i in range(1, len(courses) + 1):
+        ans = addCourses(i, workID)
+        arr.append(ans)
+       
+    if(all(arr) == False):
+        return json.dumps({'otv': 'error courses number'})
+    
+    arr = []
+    arr2 = []
+    # # добавление информации про курсы
+    for i in range(len(courses)):
+        course_ID = getCourseID(courses[i]["courseNumber"], workID)
+        for j in range(1, len(courses[i]['st'])):
+            dir_ID = getDirection(course_ID, courses[i]['st'][j][0])
+            if(dir_ID == False):
+                ans = addDirection(course_ID, courses[i]['st'][j][0])
+                arr.append(ans)
+            dir_ID = getDirection(course_ID, courses[i]['st'][j][0])
+            ans = addClass(dir_ID, courses[i]['st'][j][1], courses[i]['st'][j][2])
+            arr2.append(ans)
+
+    if(all(arr) == False):
+        return json.dumps({'otv': 'error courses name'})
+    if(all(arr2) == False):
+        return json.dumps({'otv': 'error courses initial'})
+
+    
+    return json.dumps({'otv': 'ok'})
+
+@app.route('/addPlanSchool', methods=['POST'])
+def addPlanSc():
+    info = json.loads(request.get_data())
+    work_id = info['id']
+    numberCourse = info['numberCourse']
+    nameCourse = info['nameCourse']
+    dir = nameCourse['dir']
+    initial = nameCourse['currCourse']
+    data = info['data']
+
+    # # добавление информации про направления
+    courseID = getCourseID(numberCourse, work_id)
+    dir_schoolID = getDirection(courseID, dir)   
+    class_schoolID = getClass(dir_schoolID, initial)
+    
+    # print(addPlanSchool(class_schoolID, 'Физкультура', 3))
+
+    arr = []
+    if(class_schoolID):
+        plans = getPlansSchool(class_schoolID)
+        if(len(plans) > 0):
+            return json.dumps({'otv': 'has'})  
+        elif(plans == False):
+            return json.dumps({'otv': 'false'})  
+        else: 
+            for i in range(1, len(data)):
+                ans = addPlanSchool(class_schoolID, data[i][0], data[i][1])
+                arr.append(ans)
+    else:
+        return json.dumps({'otv': 'error courses name'})   
+
+    if(all(arr) == False):
+        return json.dumps({'otv': 'error courses name'})
+    return json.dumps({'otv': 'ok'})
+
+@app.route('/deletePlanSchool', methods=['POST'])
+def deletePlanSchool():
+    info = json.loads(request.get_data())
+    work_id = info['id']
+    numberCourse = info['numberCourse']
+    name_course = info['name_course']
+    dir = name_course['dir']
+    currCourse = name_course['currCourse']
+
+    print(info)
+
+    course_id = getCourseID(numberCourse, work_id)
+    direction_id = getDirection(course_id, dir)
+    class_id = getClass(direction_id, currCourse)
+    
+    if(class_id):
+        ans = deleteWorkPlanSchool(direction_id)
+        print(ans)
+        if(ans):
+            return json.dumps({'otv': 'ok'})
+        else: return json.dumps({'otv': 'error'})
+    else: return json.dumps({'otv': 'error data'})
+
+@app.route('/editPlanSchool', methods=['POST'])
+def editPlanSchool():
+    info = json.loads(request.get_data())
+    work_id = info['id']
+    numberCourse = info['numberCourse']
+    name_course = info['name_course']
+    dir = name_course['dir']
+    currCourse = name_course['currCourse']
+    data = info['data']
+
+    print(info)
+
+    course_id = getCourseID(numberCourse, work_id)
+    direction_id = getDirection(course_id, dir)
+    class_id = getClass(direction_id, currCourse)
+
+    arr = []
+    
+    if(class_id):
+        ans = deleteWorkPlanSchool(class_id)
+        if(ans):
+            for i in range(1, len(data)):
+                ans = addPlanSchool(class_id, data[i][0], data[i][1])
+                arr.append(ans)
+            if(all(arr) == False):
+                return json.dumps({'otv': 'error courses name'})
+            else :return json.dumps({'otv': 'ok'})
+        else: return json.dumps({'otv': 'error'})
+
+    else: return json.dumps({'otv': 'error data'})
+
+@app.route('/addCafedraSchool', methods=['POST'])
+def addCafSchool():
+    info = json.loads(request.get_data())
+    work_ID = info['id']
+    nameCafedra = info['nameKafedra']
+    data = info['data']
+
+    print(info)
+
+    ans = getCafedraID(nameCafedra, work_ID)
+    if(ans):
+        return json.dumps({'otv': 'error name'})
+    # # добавление информации про кафедры
+    ans = addCafedra(nameCafedra, work_ID)
+    if(ans == False):
+        return json.dumps({'otv': 'error add name'})
+    
+    cafedra_ID = getCafedraID(nameCafedra, work_ID)
+
+    print(nameCafedra, data)
+    
+    sets = set()
+    arr = []
+    arr1 = []
+    arr2 = []
+    for i in range(1, len(data)):
+        if(data[i][1] not in sets):
+            ans = addTeacher(data[i][1], cafedra_ID)
+            arr.append(ans)
+            sets.add(data[i][1])
+        
+        if(data[i][6] == '-'):
+            dir_id = getDirection(course_id, data[i][5])
+            teacher_ID = getTeacherID(data[i][1], cafedra_ID)
+            ans = addTeacherClassesDir(teacher_ID, dir_id, data[i][0])
+            arr1.append(ans)
+        else:
+            course_id = getCourseID(int(data[i][4]), work_ID)
+            dir_id = getDirection(course_id, data[i][5])
+            class_ID = getClass(dir_id, data[i][6])
+            teacher_ID = getTeacherID(data[i][1], cafedra_ID)
+            ans = addTeacherClassesClass(teacher_ID, class_ID, data[i][0])
+            arr2.append(ans)
+
+    if(all(arr) == False):
+        return json.dumps({'otv': 'error teachers'})
+    
+    if(all(arr1) == False):
+        return json.dumps({'otv': 'error dirs'})
+    
+
+    if(all(arr) == False):
+        return json.dumps({'otv': 'error class'})
+
+    return json.dumps({'otv': 'ok'})
+
+
+
+    # teacher_schoolID = getTeacherID('Ибрагимова Лейсан Раисовная', cafedra_schoolID)
+    # print(addTeacherClassesClass(teacher_schoolID, class_schoolID, 'Русский язык'))
+    # print(addTeacherClassesClass(teacher_schoolID, class_schoolID, 'Литература'))
 
 if __name__ == '__main__':
     app.run(debug=True, host="127.0.0.1", port="5000")

@@ -44,7 +44,7 @@ export const ScheduleBlockSettingsUni: React.FC<SchSetts> = (props) => {
     const [startDate, setStartDate] = useState<string>('')
     const [endDate, setEndDate] = useState<string>('')
 
-    console.log(props.sch)
+
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement|HTMLSelectElement>) => {
         if(event.target.id === 'count'){
