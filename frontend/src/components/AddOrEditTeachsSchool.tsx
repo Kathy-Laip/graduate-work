@@ -41,7 +41,7 @@ export const AddOrEditTeachsSchool: React.FC<AddType> = (props) => {
             ans.then(ans => {
                 let data = ans as any
                 let keys = data[0]
-                if(keys[0] !== 'наименование' || keys[1] !== 'ФИО(полное) преподавателя' || keys[2] !== 'поток' || keys[3] !== 'класс'){
+                if(keys[0] !== 'наименование' || keys[1] !== 'ФИО(полное) учителя' || keys[2] !== 'поток' || keys[3] !== 'класс'){
                     props.mes('Поля файла не соответсвует требованиям! Перепроверьте файл на корректность заполненных полей!', false)
                 }else{
                     let ans = props.sch.addCafedra(nameKafedra, data)
@@ -52,6 +52,10 @@ export const AddOrEditTeachsSchool: React.FC<AddType> = (props) => {
                             props.mes('Кафедра с таким названием уже существует, чтобы изменить или удалить данные, нажмите на кнопку изменения или удаления!', false)
                         }else if(answer.otv === 'error add name'){
                             props.mes('Ошибка добавления кафедры! Попробуйте позже', false)
+                        }else if(answer.otv === 'error class'){
+                            props.mes('Ошибка добавления данных,проверьте корректность введенных занятий для классов', false)
+                        }else if(answer.otv === 'dir error'){
+                            props.mes('Ошибка добавления данных для параллели, проверьте корректность введенных данных!', false)
                         }else if(answer.otv === 'error teachers'){
                             props.mes('Ошибка добавления учителей', false)
                         }else if(answer.otv === 'error dirs'){

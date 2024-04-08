@@ -161,6 +161,14 @@ def getCoursesClasses(work_ID):
     except: 
         return False
 
+def getDataCourseDirs(work_ID):
+    try:
+        courses = connection.get_data_from_table('select schedules.courses.course_number, schedules.direction.direction_id, schedules.direction.name_course from schedules.courses inner join schedules.direction on schedules.courses.course_id = schedules.direction.course_id where work_id = {};'.format(work_ID))
+        if(courses is not None):
+            return courses
+    except:
+        return False
+
 def getCafedraID(name, workID):
     try: 
         cafedra_id = connection.get_data_from_table('select id_caf_sec from cafedra_or_section where name="{}" and work_id={}'.format(name, workID))

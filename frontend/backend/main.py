@@ -810,8 +810,7 @@ def addCafSchool():
     nameCafedra = info['nameKafedra']
     data = info['data']
 
-    print(info)
-
+    dir = getDataCourseDirs(work_ID)
     ans = getCafedraID(nameCafedra, work_ID)
     if(ans):
         return json.dumps({'otv': 'error name'})
@@ -822,8 +821,6 @@ def addCafSchool():
     
     cafedra_ID = getCafedraID(nameCafedra, work_ID)
 
-    print(nameCafedra, data)
-    
     sets = set()
     arr = []
     arr1 = []
@@ -834,18 +831,20 @@ def addCafSchool():
             arr.append(ans)
             sets.add(data[i][1])
         
-        if(data[i][6] == '-'):
-            dir_id = getDirection(course_id, data[i][5])
-            teacher_ID = getTeacherID(data[i][1], cafedra_ID)
-            ans = addTeacherClassesDir(teacher_ID, dir_id, data[i][0])
-            arr1.append(ans)
-        else:
-            course_id = getCourseID(int(data[i][4]), work_ID)
-            dir_id = getDirection(course_id, data[i][5])
-            class_ID = getClass(dir_id, data[i][6])
-            teacher_ID = getTeacherID(data[i][1], cafedra_ID)
-            ans = addTeacherClassesClass(teacher_ID, class_ID, data[i][0])
-            arr2.append(ans)
+            dir_id = ''
+            for j in range(len(dir)):
+                if(dir[j][2] == data[i][2]):
+                    dir_id = dir[j][1]
+            if(dir_id):
+                class_ID = getClass(dir_id, data[i][3])
+                if(class_ID):
+                    teacher_ID = getTeacherID(data[i][1], cafedra_ID)
+                    ans = addTeacherClassesClass(teacher_ID, class_ID, data[i][0])
+                    arr2.append(ans)
+                else:
+                    return json.dumps({'otv': 'error class'})
+            else: 
+                return json.dumps({'otv': 'dir error'})
 
     if(all(arr) == False):
         return json.dumps({'otv': 'error teachers'})
@@ -860,10 +859,73 @@ def addCafSchool():
     return json.dumps({'otv': 'ok'})
 
 
+@app.route('/deleteCafedraSchool', methods=['POST'])
+def delCafedraSch():
+    info = json.loads(request.get_data())
+    work_id = info['id']
+    name = info['nameCafedra']
 
-    # teacher_schoolID = getTeacherID('Ибрагимова Лейсан Раисовная', cafedra_schoolID)
-    # print(addTeacherClassesClass(teacher_schoolID, class_schoolID, 'Русский язык'))
-    # print(addTeacherClassesClass(teacher_schoolID, class_schoolID, 'Литература'))
+    ans = deleteCafedra(work_id, name)
+    if(ans):
+        return json.dumps({'otv': 'ok'})
+    else:
+        return json.dumps({'otv': 'error'})
+
+@app.route('/editCafedraSchool', methods=['POST'])
+def editCafedraSchool():
+    info = json.loads(request.get_data())
+    work_id = info['id']
+    name = info['nameCafedra']
+    data = info['data']
+
+    dir = getDataCourseDirs(work_id)
+    ans = deleteCafedra(work_id, name)
+    if(ans == False):
+        return json.dumps({'otv': 'error'})
+
+    ans = addCafedra(name, work_id)
+    if(ans == False):
+        return json.dumps({'otv': 'error add name'})
+    
+    cafedra_ID = getCafedraID(name, work_id)
+
+    
+    sets = set()
+    arr = []
+    arr1 = []
+    arr2 = []
+    for i in range(1, len(data)):
+        if(data[i][1] not in sets):
+            ans = addTeacher(data[i][1], cafedra_ID)
+            arr.append(ans)
+            sets.add(data[i][1])
+        
+            dir_id = ''
+            for j in range(len(dir)):
+                if(dir[j][2] == data[i][2]):
+                    dir_id = dir[j][1]
+            if(dir_id):
+                class_ID = getClass(dir_id, data[i][3])
+                if(class_ID):
+                    teacher_ID = getTeacherID(data[i][1], cafedra_ID)
+                    ans = addTeacherClassesClass(teacher_ID, class_ID, data[i][0])
+                    arr2.append(ans)
+                else:
+                    return json.dumps({'otv': 'error class'})
+            else: 
+                return json.dumps({'otv': 'dir error'})
+
+    if(all(arr) == False):
+        return json.dumps({'otv': 'error teachers'})
+    
+    if(all(arr1) == False):
+        return json.dumps({'otv': 'error dirs'})
+    
+
+    if(all(arr) == False):
+        return json.dumps({'otv': 'error class'})
+
+    return json.dumps({'otv': 'ok'})
 
 if __name__ == '__main__':
     app.run(debug=True, host="127.0.0.1", port="5000")

@@ -46,5 +46,15 @@ export class ScheduleSchool extends Schedule{
         return ans
     }
 
+    public deleteCafedra(nameCafedra: string){
+        let ans = apiPos({'id': this.id, 'nameCafedra': nameCafedra}, '/deleteCafedraSchool')
+        return ans
+    }
+
+    public editCafedra(nameCafedra: string, data: any){
+        let ans = apiPos({'id': this.id, 'nameCafedra': nameCafedra, 'data': data}, '/editCafedraSchool')
+        return ans
+    }
+
     public addClass(classes: string, name_sub:string){}
 }
