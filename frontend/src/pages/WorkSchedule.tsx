@@ -180,20 +180,10 @@ export const WorkSchedule: React.FC<WorkSch> = (props) => {
         setUpd(up)
         switchBlock('newMessage')
     }
-
-    const messageYN = (mes:string, up:boolean) => {
-        setMes(mes)
-        setUpd(up)
-        switchBlock('newMessageConfirm')
-    }
-
     
     return (
         <div className="workScheduleMain">
             <SideBar login={props.user.login}/>
-            {/* (setUni || props.user.currentSchedule!.settings === undefined)  */}
-            {/* (setSchool || props.user.currentSchedule!.settings === undefined) */}
-
             
             {setUni && props.user.currentSchedule! instanceof ScheduleUni
              && (<ScheduleBlockSettingsUni onSettingsFalse={onSettingsFalse} sch={props.user.currentSchedule} mes={message} user={props.user}/>)}
@@ -227,7 +217,7 @@ export const WorkSchedule: React.FC<WorkSch> = (props) => {
                 </div>
                 <div className="workBodyShedules">
                     {props.user.currentSchedule && props.user.currentSchedule !== 'ERROR_CREATE' && (props.user.currentSchedule!.type === 'uni' ?
-                         (<WorkSchUni user={props.user} addPlan={addPlanUniTrue} editPlan={editPlanUniTrue} addTeachs={addTeachsUniTrue} editTeachs={editTeachsUniTrue}/>)
+                         (<WorkSchUni user={props.user} addPlan={addPlanUniTrue} editPlan={editPlanUniTrue} addTeachs={addTeachsUniTrue} editTeachs={editTeachsUniTrue} mes={message}/>)
                          :
                          (<WorkSchSchool user={props.user} addPlan={addPlanSchoolTrue} editPlan={editPlanSchoolTrue} addTeachs={addTeachsSchoolTrue} editTeachs={editTeachsSchoolTrue}/>)
                     )

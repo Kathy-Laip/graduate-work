@@ -6,6 +6,7 @@ import {User} from '../architecture/User'
 import { MenuSchSchool } from "./menuSchSchool";
 import { MenuPlanSchool } from "./menuPlansSchool";
 import { MenuTeachsSchool } from "./menuTeachsSchool";
+import { ScheduleSchool } from "../architecture/ScheduleSchool";
 
 type WorkSch = {
     user: User,
@@ -56,7 +57,7 @@ export const WorkSchSchool: React.FC<WorkSch> = (props) => {
                 <div className="btnGreen menuPos bdr5UP" id='teach' onClick={() => onToggle('teach')}>Учителя</div>
             </div>
             <div className="menuAndSchedule">
-                {sch && (<MenuSchSchool/>)}
+                {sch && props.user.currentSchedule instanceof ScheduleSchool && (<MenuSchSchool user={props.user} sch={props.user.currentSchedule}/>)}
                 {plan && (<MenuPlanSchool user={props.user} addPlan={props.addPlan} editPlan={props.editPlan}/>)}
                 {teach && (<MenuTeachsSchool user={props.user} addTeachs={props.addTeachs} editTeachs={props.editTeachs}/>)}
             </div>

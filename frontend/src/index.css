@@ -184,7 +184,9 @@ input::placeholder{
 #editProject input,
 #editProject select,
 .scrolls input,
-.scrolls select{
+.scrolls select,
+.planMenu select, 
+.planMenu input{
   width: 100%;
 
   padding: 0.5rem 1rem;
@@ -564,7 +566,9 @@ input::placeholder{
 .scrolls input,
 .scrolls select,
 #blockAddOrEdit select,
-#blockAddOrEdit input{
+#blockAddOrEdit input,
+.planMenu select, 
+.planMenu input{
   border: 0px solid #ccc;
   box-shadow: 0px 2px 10px  rgba(0, 0, 0, .2);
 }
@@ -942,3 +946,56 @@ form{
   padding-left: 40%;
 }
 
+.planMenu select{
+  margin-bottom: 1.5rem;
+}
+
+#chooseSch{
+  display: flex;
+  flex-direction: column;
+
+  width: 70%;
+}
+
+.sch{
+  display: flex;
+  flex-wrap: wrap;
+
+  position: relative;
+  padding-bottom: 2rem;
+}
+
+.lineH{
+  position: absolute;
+
+  height: 1.3px;
+  background-color: black;
+}
+
+.lineV{
+  position: absolute;
+
+  width: 1.3px;
+  background-color: black;
+}
+
+
+.timeSch,
+.weeks,
+.class{
+  position: absolute;
+}
+
+.class{
+  display: flex;
+  width: 180px;
+}
+
+.emptyBlock{
+  position: absolute;
+  display: block;
+  width: 100%;
+  height: 20px;
+
+  background-color: rgba(255, 255, 255, 1);
+}
