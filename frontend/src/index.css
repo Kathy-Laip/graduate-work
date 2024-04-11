@@ -108,8 +108,10 @@ input::placeholder{
 }
 
 
+
+
 .btn1:hover{
-  background-color: var(--main-dark-blue);
+  background-color: green;
 }
 
 .btnLightGreen{
@@ -186,7 +188,9 @@ input::placeholder{
 .scrolls input,
 .scrolls select,
 .planMenu select, 
-.planMenu input{
+.planMenu input,
+#blockAddLessUni select, 
+#blockAddLessUni input{
   width: 100%;
 
   padding: 0.5rem 1rem;
@@ -414,6 +418,7 @@ input::placeholder{
   left: 0;
 }
 
+
 #blockWithCloseSett,
 #blockWithCloseAddPlan,
 #blockWithCloseAddTeachs{
@@ -450,7 +455,8 @@ input::placeholder{
   background-color: white;
 }
 
-#blockWithCloseMESCONFIRMYN{
+#blockWithCloseMESCONFIRMYN,
+#blockWithCloseAddLessonUni{
   display: block;
 
   width: 100vw;
@@ -463,6 +469,7 @@ input::placeholder{
   left: 0;
   z-index: 11;
 }
+
 
 #mesBloackCONFIRMYN{
   margin: auto;
@@ -540,7 +547,8 @@ input::placeholder{
 #editProject #close,
 #mesBloack #close,
 #mesBloackCONFIRM #close,
-#settings #close{
+#settings #close,
+#blockAddLessUni #close{
   width: 1rem;
   height: 1rem;
 }
@@ -568,7 +576,9 @@ input::placeholder{
 #blockAddOrEdit select,
 #blockAddOrEdit input,
 .planMenu select, 
-.planMenu input{
+.planMenu input,
+#blockAddLessUni select,
+#blockAddLessUni input{
   border: 0px solid #ccc;
   box-shadow: 0px 2px 10px  rgba(0, 0, 0, .2);
 }
@@ -643,13 +653,29 @@ input::placeholder{
   padding: 1rem 1rem;
 
   flex-direction: column;
+  position: relative;
 }
 
 .navSchedule{
+  display: flex;
+  flex-wrap: wrap;
+
+  /* flex-direction:column; */
+
+  justify-content: space-between;
+  
+  overflow-y: hidden;
   overflow-x: auto;
   width: 100%;
 
   white-space: nowrap;
+}
+
+.buttons{
+  display: flex;
+  height: 100%;
+  white-space: nowrap;
+  width: 60%;
 }
 
 .navSchedule::-webkit-scrollbar,
@@ -660,7 +686,7 @@ input::placeholder{
 }
 
 .menuPos{
-  padding: 0.3rem 0.5rem;
+  padding: 0.5rem 0.5rem;
 
   display: inline-block;
   cursor: pointer;
@@ -670,10 +696,12 @@ input::placeholder{
   width: 100%;
   height: 100%;
 
-   overflow-y: auto;
-   overflow-x: auto;
+  overflow-y: auto;
+  overflow-x: auto;
 
   background-color: white;
+
+  /* position: relative; */
 }
 
 /* WORK SCHEDULE PAGE */
@@ -998,4 +1026,90 @@ form{
   height: 20px;
 
   background-color: rgba(255, 255, 255, 1);
+}
+
+#saveChanges{
+  position: absolute;
+
+  z-index: 20;
+  
+  right: 2rem;
+  bottom: 2rem;
+}
+
+.schBlockMenus{
+  width: 100%;
+  height: 100%;
+
+  position: relative;
+}
+
+.saveOrAdd{
+  display: flex;
+
+  /* position: absolute;
+  right: 10px; */
+  /* margin: 0.2rem auto; */
+}
+
+.saveOrAdd button{
+  padding: auto;
+}
+
+.lesson{
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+
+  position: relative;
+
+  width: 174px;
+  padding: 0.5rem;
+}
+
+.lesson span{
+  width: 100%;
+
+  font-size: 0.75rem;
+
+  padding: 0.1rem;
+
+  white-space: nowrap;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+}
+
+#blockAddLessUni{
+  display: flex;
+  flex-direction: column;
+
+  margin: auto;
+  height: 80vh;
+  max-height: 80vh;
+  width: 50%;
+  
+  margin-top: 10vh;
+  padding: 2.5rem 2.5rem 3.5rem 2.5rem;
+
+  background-color: white;
+  z-index: 12;
+
+  overflow-y: scroll;
+}
+
+#blockAddLessUni .datePeriod{
+  margin: 0.5rem 0;
+}
+
+#blockAddLessUni select{
+  margin: 0.5rem 0;
+}
+
+#blockAddLessUni #selectSubLesson{
+  margin: 2rem 0;
+}
+
+#blockAddLessUni #selectClassLesson,
+#blockAddLessUni #selectPeriodLesson{
+  margin: 1rem 0;
 }
