@@ -26,7 +26,7 @@ export const ScheduleBlockSettingsUni: React.FC<SchSetts> = (props) => {
     const [courses, setCourses] = useState<any[]>([])
     const [presCourses, setPresCourses] = useState<any>();
 
-    const [confirm, setConfirm] = useState(true)
+    const [confirm, setConfirm] = useState(false)
     const [mes, setMes] = useState('')
 
 

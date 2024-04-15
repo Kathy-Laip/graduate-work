@@ -2,6 +2,7 @@ from config import Config
 from flask import Flask, request
 from db_requests import *
 import json
+from algo import *
 
 
 app = Flask(__name__)
@@ -396,8 +397,9 @@ def addPlanUn():
             return json.dumps({'otv': 'false'})  
         else: 
             for i in range(1, len(data)):
-                ans = addPlanUni(direction_id, data[i][0], data[i][1], data[i][2], data[i][3], data[i][4], data[i][5])
-                arr.append(ans)
+                if(len(data[i]) > 0):
+                    ans = addPlanUni(direction_id, data[i][0], data[i][1], data[i][2], data[i][3], data[i][4], data[i][5])
+                    arr.append(ans)
     else:
         return json.dumps({'otv': 'error courses name'})   
 
@@ -442,8 +444,9 @@ def editPlanUni():
         ans = deleteWorkPlan(direction_id)
         if(ans):
             for i in range(1, len(data)):
-                ans = addPlanUni(direction_id, data[i][0], data[i][1], data[i][2], data[i][3], data[i][4], data[i][5])
-                arr.append(ans)
+                if(len(data[i]) > 0):
+                    ans = addPlanUni(direction_id, data[i][0], data[i][1], data[i][2], data[i][3], data[i][4], data[i][5])
+                    arr.append(ans)
             if(all(arr) == False):
                 return json.dumps({'otv': 'error courses name'})
             else :return json.dumps({'otv': 'ok'})
@@ -475,24 +478,25 @@ def addCaf():
     arr1 = []
     arr2 = []
     for i in range(1, len(data)):
-        if(data[i][1] not in sets):
-            ans = addTeacher(data[i][1], cafedra_ID)
-            arr.append(ans)
-            sets.add(data[i][1])
-        
-        if(data[i][6] == '-'):
-            course_id = getCourseID(int(data[i][4]), work_ID)
-            dir_id = getDirection(course_id, data[i][5])
-            teacher_ID = getTeacherID(data[i][1], cafedra_ID)
-            ans = addTeacherClassesDir(teacher_ID, dir_id, data[i][0])
-            arr1.append(ans)
-        else:
-            course_id = getCourseID(int(data[i][4]), work_ID)
-            dir_id = getDirection(course_id, data[i][5])
-            class_ID = getClass(dir_id, data[i][6])
-            teacher_ID = getTeacherID(data[i][1], cafedra_ID)
-            ans = addTeacherClassesClass(teacher_ID, class_ID, data[i][0])
-            arr2.append(ans)
+        if(len(data[i]) > 0):
+            if(data[i][1] not in sets):
+                ans = addTeacher(data[i][1], cafedra_ID)
+                arr.append(ans)
+                sets.add(data[i][1])
+
+            if(data[i][6] == '-'):
+                course_id = getCourseID(int(data[i][4]), work_ID)
+                dir_id = getDirection(course_id, data[i][5])
+                teacher_ID = getTeacherID(data[i][1], cafedra_ID)
+                ans = addTeacherClassesDir(teacher_ID, dir_id, data[i][0])
+                arr1.append(ans)
+            else:
+                course_id = getCourseID(int(data[i][4]), work_ID)
+                dir_id = getDirection(course_id, data[i][5])
+                class_ID = getClass(dir_id, data[i][6])
+                teacher_ID = getTeacherID(data[i][1], cafedra_ID)
+                ans = addTeacherClassesClass(teacher_ID, class_ID, data[i][0])
+                arr2.append(ans)
 
     if(all(arr) == False):
         return json.dumps({'otv': 'error teachers'})
@@ -541,24 +545,25 @@ def editCafedra():
     arr1 = []
     arr2 = []
     for i in range(1, len(data)):
-        if(data[i][1] not in sets):
-            ans = addTeacher(data[i][1], cafedra_ID)
-            arr.append(ans)
-            sets.add(data[i][1])
-        
-        if(data[i][6] == '-'):
-            course_id = getCourseID(int(data[i][4]), work_id)
-            dir_id = getDirection(course_id, data[i][5])
-            teacher_ID = getTeacherID(data[i][1], cafedra_ID)
-            ans = addTeacherClassesDir(teacher_ID, dir_id, data[i][0])
-            arr1.append(ans)
-        else:
-            course_id = getCourseID(int(data[i][4]), work_id)
-            dir_id = getDirection(course_id, data[i][5])
-            class_ID = getClass(dir_id, data[i][6])
-            teacher_ID = getTeacherID(data[i][1], cafedra_ID)
-            ans = addTeacherClassesClass(teacher_ID, class_ID, data[i][0])
-            arr2.append(ans)
+        if(len(data[i]) > 0):
+            if(data[i][1] not in sets):
+                ans = addTeacher(data[i][1], cafedra_ID)
+                arr.append(ans)
+                sets.add(data[i][1])
+
+            if(data[i][6] == '-'):
+                course_id = getCourseID(int(data[i][4]), work_id)
+                dir_id = getDirection(course_id, data[i][5])
+                teacher_ID = getTeacherID(data[i][1], cafedra_ID)
+                ans = addTeacherClassesDir(teacher_ID, dir_id, data[i][0])
+                arr1.append(ans)
+            else:
+                course_id = getCourseID(int(data[i][4]), work_id)
+                dir_id = getDirection(course_id, data[i][5])
+                class_ID = getClass(dir_id, data[i][6])
+                teacher_ID = getTeacherID(data[i][1], cafedra_ID)
+                ans = addTeacherClassesClass(teacher_ID, class_ID, data[i][0])
+                arr2.append(ans)
 
     if(all(arr) == False):
         return json.dumps({'otv': 'error teachers'})
@@ -928,8 +933,11 @@ def editCafedraSchool():
     return json.dumps({'otv': 'ok'})
 
 if __name__ == '__main__':
-    app.run(debug=True, host="127.0.0.1", port="5000")
-
+    # app.run(debug=True, host="127.0.0.1", port="5000")
+    work_id = 76
+    info ={'type': 'lect', 'groups': [{'courseNumber': 2, 'napr': 'ФИИТ'}, {'courseNumber': 3, 'napr': 'ИБ'}], 'sub': 'Математическая логика и теория алгоритмов'}
+    ans = algo(work_id, info, 'uni')
+    print(ans)
 
 
     # pass

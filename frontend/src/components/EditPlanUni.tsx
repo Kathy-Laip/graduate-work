@@ -116,7 +116,7 @@ export const EdiPlanUni: React.FC<AddType> = (props) => {
                         </select>
                         <form method="post" encType="multipart/form-data">
                             	<label className="input-file">
-                            	   	<span className="input-file-text shadowBlack"></span>
+                            	   	<span className="input-file-text shadowBlack">{namePlan}</span>
                             	   	<input type="file" name="file" accept=".xlsx" id='plan' onChange={fileChange} />        
                              	   	<span className="input-file-btn"><span>Выберите файл!</span></span>
                              	</label>
