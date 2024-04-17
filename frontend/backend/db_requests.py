@@ -307,13 +307,10 @@ def getSch(work_id):
 
 def getSchDir(work_id, dir_id):
     try:
-        data = connection.get_data_from_table('select schedules.schedule.grafic_id, schedules.schedule.place_id, schedules.weeks.week_day from schedules.schedule inner join schedules.weeks on schedules.weeks.id_week = schedules.schedule.week_day where schedules.schedule.work_id = {} and schedules.schedule.direction_id = {};'.format(work_id, dir_id))
+        data = connection.get_data_from_table('select schedules.schedule.grafic_id, schedules.schedule.place_id, schedules.weeks.week_day, schedules.schedule.period  from schedules.schedule inner join schedules.weeks on schedules.weeks.id_week = schedules.schedule.week_day where schedules.schedule.work_id = {} and schedules.schedule.direction_id = {};'.format(work_id, dir_id))
         if(data is not None):
             return data
     except: return False 
-
-# def getSchHalf(work_id):
-
 
 
 

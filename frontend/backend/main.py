@@ -3,6 +3,7 @@ from flask import Flask, request
 from db_requests import *
 import json
 from algo import *
+import pandas as pd
 
 
 app = Flask(__name__)
@@ -937,7 +938,12 @@ if __name__ == '__main__':
     work_id = 76
     info ={'type': 'lect', 'groups': [{'courseNumber': 2, 'napr': 'ФИИТ'}, {'courseNumber': 3, 'napr': 'ИБ'}], 'sub': 'Математическая логика и теория алгоритмов'}
     ans = algo(work_id, info, 'uni')
-    print(ans)
+    if('full' in ans):
+        print(pd.DataFrame(ans['full']))
+    if('half' in ans):
+        print(pd.DataFrame(ans['half']))
+    if('weeks' in ans):
+        print(pd.DataFrame(ans['weeks']))
 
 
     # pass

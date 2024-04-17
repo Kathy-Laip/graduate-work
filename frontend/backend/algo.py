@@ -2,31 +2,46 @@ from db_requests import *
 import datetime
 from datetime import datetime
 import pandas as pd
+import math
 
 
-# Как считать занятия
 # Лекция
-# Для каждого направления вычислить если этот предмет у всех и совпадают ли часы академические, а также проверить ведет ли у них общий преподаватель
-# А также проверить есть ли уже в расписании данное занятие
+# Для каждого направления вычислить если этот предмет у всех 
+# проверить ведет ли у них общий преподаватель
+# проверить что у всех одинаковые
+# проверить есть ли уже в расписании данное занятие
 
 # Посчитать занятия
-# И выявить сколько занятий в неделю требуются и полные ли они есть ли периодичность
+# вычислить сколько минут уходит на одно занятие
+# вычислить сколько академ часов уходит на одно занятие
+# вычислить сколько недель в данном периоде
+# вычисление количества занятий в неделю, если количество занятий больше, чем общее количество недель
+# если занятий меньше, вычислить сколько занятий неоюходимо тогда провести в данном периоде
 
-# В таблицы с расписаниями создать колонку с типом периодичности: каждую неделю/чет/нечет/1-6 неделя для каждого вставленного занятия 
 
-# Выявить аудитории по типу, которые нам подходят 
+# выявить аудитории по типу, которые нам подходят 
 
-# Если занятий на неделе несколько требуется
-# выявить когда вообще можно поставить занятие, в зависимости от того, что уже есть занятые аудитории
-# проверять ограничения по максимум пар в этот день, а также поставить так чтобы окон было максимум одно
-# Вывести с информацией все комбинации, отправить на клиент 
+# выявить свободные аудитории, в зависимости от расписания
+# проверять ограничения по максимум пар в этот день для каждого направления
+# проверять что для всех направлений данное аудитория в это время подходит, и нет пар
+def merge(intervals):
+    intervals = sorted(intervals, key=lambda x: x [0])
+    ans = []
+    for interval in intervals:
+        if not ans or ans[-1][1] < interval[0]:
+            ans.append(interval)
+        else:
+            ans[-1][1] = max(ans[-1][1], interval[1])
+    
+    return ans
 
 def is_room_available(room, schedule):
     # ['257', '1211', 'суббота', array(['203', '12:10', '13:40'], dtype='<U21')] room 
-    # [201, 'понедельник'] sch
+    # ['201' '63' 'вторник' 'каждую неделю'] sch
+
     time, week = room[3][0], room[2]
     for item in schedule:
-        if item[0] == time and item[1] == week:
+        if item[0] == time and item[2] == week:
             return False
     return True
 
@@ -36,9 +51,171 @@ def is_time_slot_available(room, schedule):
     week = room[2]
     count = 0
     for item in schedule:
-        if item[1] == week:
+        if item[2] == week:
             count += 1
     return count < 5
+
+def is_room_half_available(room, schedule):
+    # ['257', '1211', 'суббота', array(['203', '12:10', '13:40'], dtype='<U21'), 'нечет'] room 
+    # ['201' '63' 'вторник' 'каждую неделю'] sch
+    time, week, period = room[3][0][0], room[2], room[3][1]
+    for item in schedule:
+        if item[0] == time and item[2] == week and item[3] == 'каждую неделю':
+            return False
+        if item[0] == time and item[2] == week and item[3] == period:
+            return False
+    return True
+
+def is_time_room_half_slot_available(room, schedule):
+    # ['257', '1211', 'суббота', array(['203', '12:10', '13:40'], dtype='<U21', 'нечет'] room 
+    # ['201' '63' 'вторник' 'каждую неделю'] sch
+    week, period = room[2], room[3][1]
+    count = 0
+    for item in schedule:
+        if(period == 'чет'):
+            if item[1] == week and item[3] == 'нечет':
+                count += 0
+            elif item[1] == week and item[3] != period:
+                count += 1
+        elif(period == 'нечет'):
+            if item[1] == week and item[3] == 'чет':
+                count += 0
+            elif item[1] == week and item[3] != period:
+                count += 1
+    return count < 5
+
+def checkInt(arr, k):
+    for i in range(len(arr)):
+        if(arr[i][0] <= k and k <= arr[i][1]):
+            return False
+    return True
+
+
+def fullLessonLectWithSchs(grafic_place, schs, schs_napr):
+    global_places = []
+    available_places = []
+    for i in range(len(grafic_place)):
+        filtering = 0
+        for j in range(len(schs)):
+            if(grafic_place[i][3][0] == schs[j][0] and grafic_place[i][0] == schs[j][1] and grafic_place[i][2] == schs[j][2]):
+                filtering += 1
+        if(filtering == 0):
+            global_places.append(grafic_place[i])
+                    
+
+    for i in range(len(global_places)):
+        flag = True
+        for j in range(len(schs_napr)):
+            if(len(schs_napr[j]) != 0 and flag == True):
+                if is_room_available(global_places[i], schs_napr[j]) == False or is_time_slot_available(global_places[i], schs_napr[j]) == False:
+                    flag = False
+        if(flag):
+            available_places.append(global_places[i])
+    return available_places
+
+def halflessonLectWithSchs(schs, grafic_place, schs_napr):
+    sch_half = []
+    global_places = []
+    available_places = []
+
+    for i in range(len(schs)):
+        flag = False
+        if(schs[i][3] == 'каждую неделю'): 
+            sch_half.append(schs[i])
+        elif(schs[i][3] == 'чет' or schs[i][3] == 'нечет'):
+            for j in range(len(schs)):
+                if(i != j):
+                    if(schs[j][0] == schs[i][0] and schs[j][1] == schs[i][1] and schs[j][2] == schs[i][2]):
+                        flag = True
+            if(flag):
+                schs[i] = [schs[i][0],schs[i][1], schs[i][2], 'каждую неделю']
+                sch_half.append(schs[i])
+            else:
+                sch_half.append(schs[i])
+        else:
+            schs[i] = [schs[i][0],schs[i][1], schs[i][2], 'каждую неделю']
+            sch_half.append(schs[i])
+
+    for i in range(len(grafic_place)):
+        filtering = 0
+        for j in range(len(sch_half)):
+            if(grafic_place[i][3][0] == sch_half[j][0] and grafic_place[i][0] == sch_half[j][1] and grafic_place[i][2] == sch_half[j][2] and sch_half[j][3] == 'каждую неделю'):
+                filtering += 1
+            elif(grafic_place[i][3][0] == sch_half[j][0] and grafic_place[i][0] == sch_half[j][1] and grafic_place[i][2] == sch_half[j][2] and sch_half[j][3] == 'чет'):
+                global_places.append([grafic_place[i][0], grafic_place[i][1], grafic_place[i][2], [grafic_place[i][3], 'нечет']])
+                filtering += 1
+            elif(grafic_place[i][3][0] == sch_half[j][0] and grafic_place[i][0] == sch_half[j][1] and grafic_place[i][2] == sch_half[j][2] and sch_half[j][3] == 'нечет'):
+                global_places.append([grafic_place[i][0], grafic_place[i][1], grafic_place[i][2], [grafic_place[i][3], 'чет']])
+                filtering += 1
+        if(filtering == 0):
+            global_places.append([grafic_place[i][0], grafic_place[i][1], grafic_place[i][2], [grafic_place[i][3], 'нечет']])
+            global_places.append([grafic_place[i][0], grafic_place[i][1], grafic_place[i][2], [grafic_place[i][3], 'чет']])
+    
+    for i in range(len(global_places)):
+        flag = True
+        for j in range(len(schs_napr)):
+            if(len(schs_napr[j]) != 0 and flag == True):
+                if is_time_room_half_slot_available(global_places[i], schs_napr[j]) == False:
+                    flag = False
+        if(flag):
+            available_places.append(global_places[i])
+    return available_places
+
+def weeksLessonLectWithSchs(schs, grafic_place, weeks, count_weeks):
+    sch_busy = []
+    global_places = []
+
+    for i in range(len(schs)):
+        flag = False
+        if(schs[i][3] == 'каждую неделю'): 
+            sch_busy.append(schs[i])
+        elif(schs[i][3] == 'чет' or schs[i][3] == 'нечет'):
+            for j in range(len(schs)):
+                if(i != j):
+                    if(schs[j][0] == schs[i][0] and schs[j][1] == schs[i][1] and schs[j][2] == schs[i][2]):
+                        flag = True
+            if(flag):
+                schs[i] = [schs[i][0],schs[i][1], schs[i][2], 'каждую неделю']
+                sch_busy.append(schs[i])
+            else:
+                sch_busy.append(schs[i])
+        else:
+            flag = True
+            for j in range(len(sch_busy)):
+                if(sch_busy[j][0] == schs[i][0] and sch_busy[j][1] == schs[i][1] and sch_busy[j][2] == schs[i][2]):
+                    flag = False
+            if(flag):
+                weeks_true = schs[i][3].split(' ')[1]
+                if(weeks_true == 'неделя'):
+                    weeks_busy = [[int(schs[i][3].split(' ')[0].split('-')[0]), int(schs[i][3].split(' ')[0].split('-')[1])]]   
+                    for j in range(len(schs)):
+                        if(i != j):
+                            if(schs[j][0] == schs[i][0] and schs[j][1] == schs[i][1] and schs[j][2] == schs[i][2]):
+                                weeks_true = schs[j][3].split(' ')[1]
+                                if(weeks_true == 'неделя'):
+                                    weeks_busy.append([int(schs[j][3].split(' ')[0].split('-')[0]), int(schs[j][3].split(' ')[0].split('-')[1])])
+                    weeks_b = merge(weeks_busy)
+                    sch_busy.append([schs[i][0],schs[i][1], schs[i][2], weeks_b])
+    
+    for i in range(len(grafic_place)):
+        filtering = 0
+        for j in range(len(sch_busy)):
+            if(grafic_place[i][3][0] == sch_busy[j][0] and grafic_place[i][0] == sch_busy[j][1] and grafic_place[i][2] == sch_busy[j][2] and sch_busy[j][3] == 'каждую неделю'):
+                filtering += 1
+            elif(grafic_place[i][3][0] == sch_busy[j][0] and grafic_place[i][0] == sch_busy[j][1] and grafic_place[i][2] == sch_busy[j][2] and sch_busy[j][3] == 'чет'):
+                filtering += 1
+            elif(grafic_place[i][3][0] == sch_busy[j][0] and grafic_place[i][0] == sch_busy[j][1] and grafic_place[i][2] == sch_busy[j][2] and sch_busy[j][3] == 'нечет'):
+                filtering += 1
+            elif(grafic_place[i][3][0] == sch_busy[j][0] and grafic_place[i][0] == sch_busy[j][1] and grafic_place[i][2] == sch_busy[j][2] and sch_busy[j][3][0]):
+                filtering += 1
+                for k in range(1, weeks - count_weeks + 1):
+                    if(checkInt(sch_busy[j][3], k) and checkInt(sch_busy[j][3], k + count_weeks)):
+                        global_places.append([grafic_place[i][0], grafic_place[i][1], grafic_place[i][2], [grafic_place[i][3], [k, k + count_weeks]]])
+                
+        if(filtering == 0):
+            for j in range(1, weeks - count_weeks + 1):
+                global_places.append([grafic_place[i][0], grafic_place[i][1], grafic_place[i][2], [grafic_place[i][3], [j, j + count_weeks]]])
+    return global_places
 
 
 def algo(work_id, info, type_inst):
@@ -91,7 +268,6 @@ def algo(work_id, info, type_inst):
         datetime2 = datetime.strptime(grafic[0][2], '%H:%M')
         difference = datetime2 - datetime1
         minutes = difference.total_seconds() / 60 # сколько минут за занятие
-
         
         one_less = minutes/acc_hour # количество академ часов за один урок
         count_lessons = int(int(arr[0][1])/one_less) # количество занятий по уч плану
@@ -110,157 +286,68 @@ def algo(work_id, info, type_inst):
             getclass = getClasses(dir_id)
             count_seat += getclass[0][0]
         
-
         
         places = getPlaces(work_id, typeLess, count_seat)
         if(places == False or places == []):
             return 'нет аудиторий для данного занятия! возможно стоит перестроить расписание!'
-        if(len(places) > 0):
-            global_places = []
-            available_places = []
-
-            all_ava_place = []
+        elif(len(places) > 0):
+            all_ava_place = {}
             schs = getSch(work_id)
 
-            schs_napr = []
+            if(schs != False):
+                schs_napr = []
 
-            for i in range(len(info_groups)):
-                course_id = getCourseID(info_groups[i]['courseNumber'], work_id)
-                dir_id = getDirection(course_id, info_groups[i]['napr'])
-                ans = getSchDir(work_id, dir_id)
-                if(ans != False):
-                    schs_napr.append(ans)
-                elif (ans == False):
-                    return 'ошибка получения расписаний для направлений, попробуйте позже!'
+                for i in range(len(info_groups)):
+                    course_id = getCourseID(info_groups[i]['courseNumber'], work_id)
+                    dir_id = getDirection(course_id, info_groups[i]['napr'])
+                    ans = getSchDir(work_id, dir_id)
+                    print(course_id, dir_id, ans)
+                    if(ans != False):
+                        schs_napr.append(ans)
+                    elif (ans == False):
+                        return 'ошибка получения расписаний для направлений, попробуйте позже!'
+                print(schs_napr)
 
-            grafic_place = []
-            # преобразование, в какие пары работают какие аудитории
-            for i in range(len(places)):
-                place_start = datetime.strptime(places[i][5], '%H:%M')
-                place_end = datetime.strptime(places[i][6], '%H:%M')
-                for j in range(len(grafic)):
-                    grafic_start = datetime.strptime(grafic[j][1], '%H:%M')
-                    grafic_end = datetime.strptime(grafic[j][2], '%H:%M')
-                    if(place_start <= grafic_start and grafic_end <= place_end):
-                        grafic_place.append([places[i][0], places[i][1], places[i][2], grafic[j]])
+                grafic_place = []
+                # преобразование, в какие пары работают какие аудитории
+                for i in range(len(places)):
+                    place_start = datetime.strptime(places[i][5], '%H:%M')
+                    place_end = datetime.strptime(places[i][6], '%H:%M')
+                    for j in range(len(grafic)):
+                        grafic_start = datetime.strptime(grafic[j][1], '%H:%M')
+                        grafic_end = datetime.strptime(grafic[j][2], '%H:%M')
+                        if(place_start <= grafic_start and grafic_end <= place_end):
+                            grafic_place.append([places[i][0], places[i][1], places[i][2], grafic[j]])
+                    
 
                 if(count_weeks == -1 and count_times >= 1):
-                    count_int = count_times/10
+
+                    count_int = int(count_times)
                     count_else = count_times - count_int
 
-                     # выявление свободных аудиторий
-                    if(schs != False and schs != []):
-                        for i in range(len(grafic_place)):
-                            filtering = 0
-                            for j in range(len(schs)):
-                                if(grafic_place[i][3][0] == schs[j][0] and grafic_place[i][0] == schs[j][1] and grafic_place[i][2] == schs[j][2]):
-                                    filtering += 1
-                            if(filtering == 0):
-                                global_places.append(grafic_place[i])
-
-                        for i in range(len(global_places)):
-                            flag = True
-                            for j in range(len(schs_napr)):
-                                if(len(schs_napr[j]) != 0 and flag == True):
-                                    if is_room_available(global_places[i], schs_napr[j]) == False or is_time_slot_available(global_places[i], schs_napr[j]) == False:
-                                        flag = False
-                            if(flag):
-                                available_places.append(global_places[i])
-                        all_ava_place['full'] = available_places
-                    
-                        global_places = []
-                        available_places = [] 
-                        if(count_else == 0.5):
-                            sch_half = []
-                            for i in range(len(schs)):
-                                flag = True
-                                for j in range(len(schs)):
-                                    if(i != j):
-                                        if(schs[j][0] == schs[i][0] and schs[j][1] == schs[i][1] and schs[j][2] == schs[i][2]):
-                                            flag = False
-                                if(flag):
-                                    sch_half.append(schs[i])
-                            for i in range(len(grafic_place)):
-                                filtering = 0
-                                for j in range(len(sch_half)):
-                                    if(grafic_place[i][3][0] == sch_half[j][0] and grafic_place[i][0] == sch_half[j][1] and grafic_place[i][2] == sch_half[j][2]):
-                                        filtering += 1
-                                if(filtering == 0):
-                                    global_places.append(grafic_place[i])
-                            for i in range(len(global_places)):
-                                flag = True
-                                for j in range(len(schs_napr)):
-                                    if(len(schs_napr[j]) != 0 and flag == True):
-                                        if is_room_available(global_places[i], schs_napr[j]) == False or is_time_slot_available(global_places[i], schs_napr[j]) == False:
-                                            flag = False
-                                if(flag):
-                                    available_places.append(global_places[i])
-                            all_ava_place['half'] = available_places
-                        return all_ava_place
-
-                    elif(schs == []):
-                        global_places = global_places
-                        return global_places
-                    else:
-                        return 'ошибка получения расписания, попробуйте позже!'
-
+                    all_ava_place['full'] = fullLessonLectWithSchs(grafic_place, schs, schs_napr)
+                
+                    if(count_else == 0.5 and count_else != 0):
+                        all_ava_place['half'] = halflessonLectWithSchs(schs, grafic_place, schs_napr)
+                    if(count_else != 0.5 and count_else != 0):
+                        count_les = math.ceil(count_else * weeks)
+                        all_ava_place['weeks'] = weeksLessonLectWithSchs(schs, grafic_place, weeks, count_les)
+                    return all_ava_place
 
                 if(count_weeks != -1 and count_times == -1):
-                    if(count_weeks//weeks == 0.5):
-                        if(schs != False and schs != []):
-                            sch_half = []
-                            for i in range(len(schs)):
-                                flag = True
-                                for j in range(len(schs)):
-                                    if(i != j):
-                                        if(schs[j][0] == schs[i][0] and schs[j][1] == schs[i][1] and schs[j][2] == schs[i][2]):
-                                            flag = False
-                                if(flag):
-                                    sch_half.append(schs[i])
-
-                            for i in range(len(grafic_place)):
-                                filtering = 0
-                                for j in range(len(sch_half)):
-                                    if(grafic_place[i][3][0] == sch_half[j][0] and grafic_place[i][0] == sch_half[j][1] and grafic_place[i][2] == sch_half[j][2]):
-                                        filtering += 1
-                                if(filtering == 0):
-                                    global_places.append(grafic_place[i])
-
-                            for i in range(len(global_places)):
-                                flag = True
-                                for j in range(len(schs_napr)):
-                                    if(len(schs_napr[j]) != 0 and flag == True):
-                                        if is_room_available(global_places[i], schs_napr[j]) == False or is_time_slot_available(global_places[i], schs_napr[j]) == False:
-                                            flag = False
-                                if(flag):
-                                    available_places.append(global_places[i])
-                            all_ava_place['half'] = available_places
-                            return all_ava_place
-                    elif(schs == []):
-                        global_places = global_places
-                        return global_places
+                    if(count_weeks/weeks == 0.5):
+                        all_ava_place['half'] = halflessonLectWithSchs(schs, grafic_place, schs_napr)
                     else:
-                        return 'ошибка получения расписания, попробуйте позже!'
-
-            
-
-            
-
-
-
-        # sch = getSchedule()
-
-        # return places
-        
-        # return [weeks, acc_hour, count_lessons, one_less, count_weeks, count_times]
-        
+                        all_ava_place['weeks'] = weeksLessonLectWithSchs(schs, grafic_place, weeks, count_weeks)
+                    return all_ava_place
+                else: 
+                    return 'ошибка подсчета периодичности занятий, попробуйте еще раз позже!'
+            else:
+                return 'ошибка получения расписания для фильтрации свободных аудиторий'
+        else:
+            return 'ошибка получения расписания аудиторий'
 
 
-
-    # return 'ok'
-
-    # grafic = getGrafic(work_id)
-
-    # type_ID = getType(type_less)
-    # places = getPlaces(work_id, type_ID)
+    else:
+        return 'ошибка введенных данных! попробуйте позже'
     
