@@ -223,6 +223,8 @@ def algo(work_id, info, type_inst):
     info_groups = info['groups']
     subj = info['sub']
     typeLess = 1
+    typePractic = 2
+    typeLab = 3
 
     if(type_inst == 'uni' and type_less == 'lect'):
         arr = []
@@ -231,14 +233,18 @@ def algo(work_id, info, type_inst):
         for i in range(len(info_groups)):
             course_id = getCourseID(info_groups[i]['courseNumber'], work_id)
             dir_id = getDirection(course_id, info_groups[i]['napr'])
-            ans = getSubjLect(dir_id, subj)
-            if(ans == False or len(ans) == 0):
-                return 'не у всех направлений есть данный предмет'
-            else: arr.append(ans[0])
-            ans2 = getTeach(dir_id, subj)
-            if(all(ans2)):
-                tech_id.append(ans2[0])
-            else: return 'нет преподавателя для одного из направлений! пожалуйста, перепроверьте данные о преподавателях!'
+            if(dir_id == False): return 'нет информации про все направления, перепроверьте всю информацию о направлениях!'
+            else:
+                ans = getSubjLect(dir_id, subj)
+                if(ans == False or len(ans) == 0):
+                    return 'не у всех направлений есть данный предмет'
+                else:
+                    arr.append(ans[0])
+                        
+                ans2 = getTeach(dir_id, subj)
+                if(all(ans2)):
+                    tech_id.append(ans2[0])
+                else: return 'нет преподавателя для одного из направлений! пожалуйста, перепроверьте данные о преподавателях!'
 
         if(len(arr) > 1):
             for i in range(1, len(arr)):
@@ -254,7 +260,7 @@ def algo(work_id, info, type_inst):
         for i in range(len(info_groups)):
             course_id = getCourseID(info_groups[i]['courseNumber'], work_id)
             dir_id = getDirection(course_id, info_groups[i]['napr'])
-            hasLect = getHasLessonLect(dir_id, subj, work_id)
+            hasLect = getHasLesson(dir_id, subj, work_id)
             if(len(hasLect) > 0):
                 return 'для направлений уже существует занятие!'
 
@@ -270,6 +276,7 @@ def algo(work_id, info, type_inst):
         minutes = difference.total_seconds() / 60 # сколько минут за занятие
         
         one_less = minutes/acc_hour # количество академ часов за один урок
+        if(int(arr[0][1]) == 0): return 'невозможно поставить занятие, количество часов равно нулю'
         count_lessons = int(int(arr[0][1])/one_less) # количество занятий по уч плану
 
         count_weeks = -1
@@ -346,6 +353,262 @@ def algo(work_id, info, type_inst):
                 return 'ошибка получения расписания для фильтрации свободных аудиторий'
         else:
             return 'ошибка получения расписания аудиторий'
+    if(type_inst == 'uni' and type_less == 'practic'):
+        # 'type': 'practic', 'groups': {'courseNumber': 1, 'napr': 'ФИИТ', 'groups': ['09-331', '09-332']}, 'sub': 'Информационные технологии'
+
+        arr = []
+        arr_class = []
+        teach_arr = []
+        course_id = getCourseID(info_groups['courseNumber'], work_id)
+        dir_id = getDirection(course_id, info_groups['napr'])
+        ans = getSubjPractic(dir_id, subj)
+        print(ans)
+        if(ans == False or len(ans[0]) == 0):
+            return 'у данного направления нет практических занятий по данному предмету'
+        else: 
+            arr.append(ans[0])
+
+            for i in range(len(info_groups['groups'])):
+                ans = getClass(dir_id, info_groups['groups'][i])
+                if(ans != False):
+                    arr_class.append(ans)
+                else:
+                    return 'данные о группах неполные, перепроверьте информацию!'
+
+            for i in range(len(arr_class)):
+                ans = getTeachsAndPractic(arr_class[i], subj)
+                if(all(ans) and len(ans) > 0):
+                    teach_arr.append(ans)
+                else:
+                    return 'не у всех групп есть преподаватели по практике, перепроверьте информацию!'
+            
+        
+            if(len(teach_arr) > 1):
+                for i in range(1, len(teach_arr)):
+                    if(teach_arr[i][0] != teach_arr[i-1][0]):
+                        return 'не у всех групп один и тот же преподаватель, чтобы объединить занятия'
+
+
+        course_id = getCourseID(info_groups['courseNumber'], work_id)
+        dir_id = getDirection(course_id, info_groups['napr'])
+        hasLect = []
+        for i in range(len(arr_class)):
+            ans = getHasLessonGroup(arr_class[i], subj, work_id)
+            if(len(ans) > 0):
+                hasLect.append(ans)
+        if(len(hasLect) > 0):
+            return 'для групп/группы уже существует занятие!'
+
+        infoWorkID = getDataInfo(work_id)
+        start, end, acc_hour = infoWorkID[0]
+        delta = end - start
+        weeks = delta.days//7
+
+        grafic = getGrafic(work_id)
+        datetime1 = datetime.strptime(grafic[0][1], '%H:%M')
+        datetime2 = datetime.strptime(grafic[0][2], '%H:%M')
+        difference = datetime2 - datetime1
+        minutes = difference.total_seconds() / 60 # сколько минут за занятие
+        
+        one_less = minutes/acc_hour # количество академ часов за один урок
+        if(int(arr[0][1]) == 0): return 'невозможно поставить занятие, количество часов равно нулю'
+        count_lessons = int(int(arr[0][1])/one_less) # количество занятий по уч плану
+
+        count_weeks = -1
+        count_times = -1
+        if(count_lessons < weeks):
+            count_weeks = count_lessons 
+        else:
+            count_times = count_lessons/weeks
+
+        count_seat = getClasses(dir_id)
+    
+        
+        places = getPlaces(work_id, typePractic, count_seat[0][0])
+        if(places == False or places == []):
+            return 'нет аудиторий для данного занятия! возможно стоит перестроить расписание!'
+        elif(len(places) > 0):
+            all_ava_place = {}
+            schs = getSch(work_id)
+
+            if(schs != False):
+                schs_napr = []
+
+                course_id = getCourseID(info_groups['courseNumber'], work_id)
+                dir_id = getDirection(course_id, info_groups['napr'])
+                ans = getSchDir(work_id, dir_id)
+                if(ans != False):
+                    schs_napr = ans
+                elif (ans == False):
+                    return 'ошибка получения расписаний для направлений, попробуйте позже!'
+
+                grafic_place = []
+                # преобразование, в какие пары работают какие аудитории
+                for i in range(len(places)):
+                    place_start = datetime.strptime(places[i][5], '%H:%M')
+                    place_end = datetime.strptime(places[i][6], '%H:%M')
+                    for j in range(len(grafic)):
+                        grafic_start = datetime.strptime(grafic[j][1], '%H:%M')
+                        grafic_end = datetime.strptime(grafic[j][2], '%H:%M')
+                        if(place_start <= grafic_start and grafic_end <= place_end):
+                            grafic_place.append([places[i][0], places[i][1], places[i][2], grafic[j]])
+
+                if(count_weeks == -1 and count_times >= 1):
+
+                    count_int = int(count_times)
+                    count_else = count_times - count_int
+
+                    all_ava_place['full'] = fullLessonLectWithSchs(grafic_place, schs, schs_napr)
+                
+                    if(count_else == 0.5 and count_else != 0):
+                        all_ava_place['half'] = halflessonLectWithSchs(schs, grafic_place, schs_napr)
+                    if(count_else != 0.5 and count_else != 0):
+                        count_les = math.ceil(count_else * weeks)
+                        all_ava_place['weeks'] = weeksLessonLectWithSchs(schs, grafic_place, weeks, count_les)
+                    return all_ava_place
+
+                if(count_weeks != -1 and count_times == -1):
+                    if(count_weeks/weeks == 0.5):
+                        all_ava_place['half'] = halflessonLectWithSchs(schs, grafic_place, schs_napr)
+                    else:
+                        all_ava_place['weeks'] = weeksLessonLectWithSchs(schs, grafic_place, weeks, count_weeks)
+                    return all_ava_place
+                else: 
+                    return 'ошибка подсчета периодичности занятий, попробуйте еще раз позже!'
+                
+            else:
+                return 'ошибка получения расписания для фильтрации свободных аудиторий'
+        else:
+            return 'ошибка получения расписания аудиторий'
+
+    if(type_inst == 'uni' and type_less == 'lab'):
+        # 'type': 'practic', 'groups': {'courseNumber': 1, 'napr': 'ФИИТ', 'groups': ['09-331', '09-332']}, 'sub': 'Информационные технологии'
+
+        arr = []
+        arr_class = []
+        teach_arr = []
+        course_id = getCourseID(info_groups['courseNumber'], work_id)
+        dir_id = getDirection(course_id, info_groups['napr'])
+        ans = getSubjLab(dir_id, subj)
+        print(ans)
+        if(ans == False or len(ans[0]) == 0):
+            return 'у данного направления нет практических занятий по данному предмету'
+        else: 
+            arr.append(ans[0])
+
+            for i in range(len(info_groups['groups'])):
+                ans = getClass(dir_id, info_groups['groups'][i])
+                if(ans != False):
+                    arr_class.append(ans)
+                else:
+                    return 'данные о группах неполные, перепроверьте информацию!'
+
+            for i in range(len(arr_class)):
+                ans = getTeachsAndPractic(arr_class[i], subj)
+                if(all(ans) and len(ans) > 0):
+                    teach_arr.append(ans)
+                else:
+                    return 'не у всех групп есть преподаватели по практике, перепроверьте информацию!'
+            
+        
+            if(len(teach_arr) > 1):
+                for i in range(1, len(teach_arr)):
+                    if(teach_arr[i][0] != teach_arr[i-1][0]):
+                        return 'не у всех групп один и тот же преподаватель, чтобы объединить занятия'
+
+
+        course_id = getCourseID(info_groups['courseNumber'], work_id)
+        dir_id = getDirection(course_id, info_groups['napr'])
+        hasLect = []
+        for i in range(len(arr_class)):
+            ans = getHasLessonGroup(arr_class[i], subj, work_id)
+            if(len(ans) > 0):
+                hasLect.append(ans)
+        if(len(hasLect) > 0):
+            return 'для групп/группы уже существует занятие!'
+
+        infoWorkID = getDataInfo(work_id)
+        start, end, acc_hour = infoWorkID[0]
+        delta = end - start
+        weeks = delta.days//7
+
+        grafic = getGrafic(work_id)
+        datetime1 = datetime.strptime(grafic[0][1], '%H:%M')
+        datetime2 = datetime.strptime(grafic[0][2], '%H:%M')
+        difference = datetime2 - datetime1
+        minutes = difference.total_seconds() / 60 # сколько минут за занятие
+        
+        one_less = minutes/acc_hour # количество академ часов за один урок
+        if(int(arr[0][1]) == 0): return 'невозможно поставить занятие, количество часов равно нулю'
+        count_lessons = int(int(arr[0][1])/one_less) # количество занятий по уч плану
+
+        count_weeks = -1
+        count_times = -1
+        if(count_lessons < weeks):
+            count_weeks = count_lessons 
+        else:
+            count_times = count_lessons/weeks
+
+        count_seat = getClasses(dir_id)
+    
+        
+        places = getPlaces(work_id, typeLab, count_seat[0][0])
+        if(places == False or places == []):
+            return 'нет аудиторий для данного занятия! возможно стоит перестроить расписание!'
+        elif(len(places) > 0):
+            all_ava_place = {}
+            schs = getSch(work_id)
+
+            if(schs != False):
+                schs_napr = []
+
+                course_id = getCourseID(info_groups['courseNumber'], work_id)
+                dir_id = getDirection(course_id, info_groups['napr'])
+                ans = getSchDir(work_id, dir_id)
+                if(ans != False):
+                    schs_napr = ans
+                elif (ans == False):
+                    return 'ошибка получения расписаний для направлений, попробуйте позже!'
+
+                grafic_place = []
+                # преобразование, в какие пары работают какие аудитории
+                for i in range(len(places)):
+                    place_start = datetime.strptime(places[i][5], '%H:%M')
+                    place_end = datetime.strptime(places[i][6], '%H:%M')
+                    for j in range(len(grafic)):
+                        grafic_start = datetime.strptime(grafic[j][1], '%H:%M')
+                        grafic_end = datetime.strptime(grafic[j][2], '%H:%M')
+                        if(place_start <= grafic_start and grafic_end <= place_end):
+                            grafic_place.append([places[i][0], places[i][1], places[i][2], grafic[j]])
+
+                if(count_weeks == -1 and count_times >= 1):
+
+                    count_int = int(count_times)
+                    count_else = count_times - count_int
+
+                    all_ava_place['full'] = fullLessonLectWithSchs(grafic_place, schs, schs_napr)
+                
+                    if(count_else == 0.5 and count_else != 0):
+                        all_ava_place['half'] = halflessonLectWithSchs(schs, grafic_place, schs_napr)
+                    if(count_else != 0.5 and count_else != 0):
+                        count_les = math.ceil(count_else * weeks)
+                        all_ava_place['weeks'] = weeksLessonLectWithSchs(schs, grafic_place, weeks, count_les)
+                    return all_ava_place
+
+                if(count_weeks != -1 and count_times == -1):
+                    if(count_weeks/weeks == 0.5):
+                        all_ava_place['half'] = halflessonLectWithSchs(schs, grafic_place, schs_napr)
+                    else:
+                        all_ava_place['weeks'] = weeksLessonLectWithSchs(schs, grafic_place, weeks, count_weeks)
+                    return all_ava_place
+                else: 
+                    return 'ошибка подсчета периодичности занятий, попробуйте еще раз позже!'
+                
+            else:
+                return 'ошибка получения расписания для фильтрации свободных аудиторий'
+        else:
+            return 'ошибка получения расписания аудиторий'
+
 
 
     else:

@@ -277,12 +277,33 @@ def getSubjLect(dir_id, sub):
             return subj
     except: return False   
 
+def getSubjPractic(dir_id, sub):
+    try: 
+        subj = connection.get_data_from_table('select schedules.plan_direction.name_sub, schedules.plan_direction.practic from schedules.plan_direction where schedules.plan_direction.direction_id = {} and schedules.plan_direction.name_sub="{}";'.format(dir_id, sub))
+        if(subj is not None):
+            return subj
+    except: return False   
+
+def getSubjLab(dir_id, sub):
+    try: 
+        subj = connection.get_data_from_table('select schedules.plan_direction.name_sub, schedules.plan_direction.lab from schedules.plan_direction where schedules.plan_direction.direction_id = {} and schedules.plan_direction.name_sub="{}";'.format(dir_id, sub))
+        if(subj is not None):
+            return subj
+    except: return False  
+
 def getTeach(dir_id, sub):
     try:
         teach_id = connection.get_data_from_table('select schedules.teacher_classes.id_teacher from schedules.teacher_classes where schedules.teacher_classes.name_sub = "{}" and schedules.teacher_classes.direction_id = {};'.format(sub, dir_id)) 
         if(teach_id is not None):
             return teach_id
     except: return False
+
+def getTeachsAndPractic(class_id, name_sub):
+    try: 
+        data = connection.get_data_from_table('select schedules.teacher_classes.id_teacher, schedules.teacher_classes.classes_id from schedules.teacher_classes where schedules.teacher_classes.classes_id = {} and schedules.teacher_classes.name_sub = "{}";'.format(class_id, name_sub))
+        if(data is not None):
+            return data[0]
+    except: return []
 
 def getDataInfo(work_id):
     try:
@@ -291,12 +312,19 @@ def getDataInfo(work_id):
             return data
     except: return False
 
-def getHasLessonLect(dir_id, sub, work_id):
+def getHasLesson(class_id, sub, work_id):
+    try:
+        data = connection.get_data_from_table('select schedules.schedule.sch_id from schedules.schedule where schedules.schedule.name_sub = "{}" and schedules.schedule.classes_id= {} and schedules.schedule.work_id={};'.format(sub, class_id, work_id))
+        if(data is not None):
+            return data
+    except: return False
+
+def getHasLessonGroup(dir_id, sub, work_id):
     try:
         data = connection.get_data_from_table('select schedules.schedule.sch_id from schedules.schedule where schedules.schedule.name_sub = "{}" and schedules.schedule.direction_id = {} and schedules.schedule.work_id={};'.format(sub, dir_id, work_id))
         if(data is not None):
             return data
-    except: return False
+    except: return []
 
 def getSch(work_id):
     try:
