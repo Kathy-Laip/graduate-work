@@ -934,8 +934,8 @@ def editCafedraSchool():
     return json.dumps({'otv': 'ok'})
 
 if __name__ == '__main__':
-    # app.run(debug=True, host="127.0.0.1", port="5000")
-    work_id = 76
+    app.run(debug=True, host="127.0.0.1", port="5000")
+    # work_id = 76
     # info ={'type': 'lect', 'groups': [{'courseNumber': 2, 'napr': 'ФИИТ'}, {'courseNumber': 3, 'napr': 'ИБ'}], 'sub': 'Математическая логика и теория алгоритмов'}
     # ans = algo(work_id, info, 'uni')
     # if('full' in ans):
@@ -969,9 +969,9 @@ if __name__ == '__main__':
     # ans = algo(work_id, info, 'uni')
     # print(ans)
 
-    info = {'type': 'min_exam', 'groups': {'courseNumber': 1, 'napr': 'ФИИТ', 'groups': '09-331'}, 'sub': 'Информационные технологии'}
-    ans = algo(work_id, info, 'uni')
-    print(pd.DataFrame(ans))
+    # info = {'type': 'min_exam', 'groups': {'courseNumber': 1, 'napr': 'ФИИТ', 'groups': '09-331'}, 'sub': 'Информационные технологии'}
+    # ans = algo(work_id, info, 'uni')
+    # print(pd.DataFrame(ans))
 
 
 

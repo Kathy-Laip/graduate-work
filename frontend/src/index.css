@@ -1084,11 +1084,10 @@ form{
   flex-direction: column;
 
   margin: auto;
-  height: 80vh;
-  max-height: 80vh;
+  max-height: 60vh;
   width: 50%;
   
-  margin-top: 10vh;
+  margin-top: 22vh;
   padding: 2.5rem 2.5rem 3.5rem 2.5rem;
 
   background-color: white;
