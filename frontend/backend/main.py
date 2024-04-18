@@ -955,15 +955,28 @@ if __name__ == '__main__':
     # if('weeks' in ans):
     #     print(pd.DataFrame(ans['weeks']))
 
-    info = {'type': 'lab', 'groups': {'courseNumber': 1, 'napr': 'ФИИТ', 'groups': ['09-331', '09-332']}, 'sub': 'Дискретная математика'}
+    # info = {'type': 'lab', 'groups': {'courseNumber': 1, 'napr': 'ФИИТ', 'groups': ['09-331', '09-332']}, 'sub': 'Дискретная математика'}
+    # ans = algo(work_id, info, 'uni')
+    # print(ans)
+    # if('full' in ans):
+    #     print(pd.DataFrame(ans['full']))
+    # if('half' in ans):
+    #     print(pd.DataFrame(ans['half']))
+    # if('weeks' in ans):
+    #     print(pd.DataFrame(ans['weeks']))
+
+    info = {'type': 'exam', 'groups': {'courseNumber': 1, 'napr': 'ФИИТ', 'groups': '09-331'}, 'sub': 'Алгебра и геометрия'}
     ans = algo(work_id, info, 'uni')
     print(ans)
-    if('full' in ans):
-        print(pd.DataFrame(ans['full']))
-    if('half' in ans):
-        print(pd.DataFrame(ans['half']))
-    if('weeks' in ans):
-        print(pd.DataFrame(ans['weeks']))
+    # print(ans)
+    # if('full' in ans):
+    #     print(pd.DataFrame(ans['full']))
+    # if('half' in ans):
+    #     print(pd.DataFrame(ans['half']))
+    # if('weeks' in ans):
+    #     print(pd.DataFrame(ans['weeks']))
+
+
 
 
 

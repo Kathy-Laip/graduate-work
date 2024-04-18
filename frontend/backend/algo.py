@@ -1,6 +1,7 @@
 from db_requests import *
 import datetime
-from datetime import datetime
+from datetime import datetime,  timedelta
+from datetime import date
 import pandas as pd
 import math
 
@@ -608,6 +609,98 @@ def algo(work_id, info, type_inst):
                 return 'ошибка получения расписания для фильтрации свободных аудиторий'
         else:
             return 'ошибка получения расписания аудиторий'
+
+    if(type_inst == 'uni' and type_less == 'exam'):
+        # {'type': 'exam', 'groups': {'courseNumber': 1, 'napr': 'ФИИТ', 'groups': '09-331'}, 'sub': 'Дискретная математика'}
+        course_id = getCourseID(info_groups['courseNumber'], work_id)
+        dir_id = getDirection(course_id, info_groups['napr'])
+        class_id = getClass(dir_id, info_groups['groups'])
+
+        weeks_day = ['понедельник', 'вторник', 'среда', 'четверг', 'пятница', 'суббота']
+
+        examFlag = getExamSub(dir_id, subj)
+        if(len(examFlag) > 0 and examFlag[0] == '+'):
+            schs = getSchDate(work_id)
+            if(schs != False):
+                for i in range(len(schs)):
+                    # or (schs[i][3].split(' ')[1] and schs[i][3].split(' ')[1]== 'неделя')
+                    if(schs[i][3] != 'экзамен'):
+                        return 'для составления расписания экзаменов, необходимо, чтобы не было никаких занятий в этот период'
+
+                schs_class = getSchClass(work_id, class_id)
+                if(schs_class != False):                
+                    infoWorkID = getDataInfo(work_id)
+                    start, end, acc_hour = infoWorkID[0]
+
+                    date_range = [start + timedelta(days=x) for x in range((end - start).days + 1)]
+                    print(schs_class)
+                    busy_date = []
+                    for i in range(len(schs_class)):
+                        if(schs_class[i][4] not in busy_date):
+                            busy_date.append(schs_class[i][4])
+                    for i in range(len(busy_date)):
+                        busy_date[i] = date.fromisoformat(busy_date[i])
+
+                    free_date = []
+
+                    for i in range(len(date_range)):
+                        flag = True
+                        if(date_range[i].weekday() == 6): flag = False
+                        if(flag):
+                            for j in range(len(busy_date)):
+                                if(abs(date_range[i] - busy_date[j]).days <= 2):
+                                    flag = False
+                        if(flag):
+                            free_date.append(date_range[i])
+
+                    count_seat = getClasses(dir_id)
+
+                    places = getPlacesExam(work_id, count_seat[0][0])
+
+                    if(places == False or places == []):
+                        return 'нет аудиторий для данного занятия! возможно стоит перестроить расписание!'
+                    elif(len(places) > 0):
+                        grafic_place = []
+                        grafic = getGrafic(work_id)
+                        # преобразование, в какие пары работают какие аудитории
+                        for i in range(len(places)):
+                            place_start = datetime.strptime(places[i][5], '%H:%M')
+                            place_end = datetime.strptime(places[i][6], '%H:%M')
+                            for j in range(len(grafic)):
+                                grafic_start = datetime.strptime(grafic[j][1], '%H:%M')
+                                grafic_end = datetime.strptime(grafic[j][2], '%H:%M')
+                                if(place_start <= grafic_start and grafic_end <= place_end):
+                                    grafic_place.append([places[i][0], places[i][1], places[i][2], grafic[j]])
+
+                        mb_date_time = []
+
+                        for i in range(len(free_date)):
+                            for j in range(len(grafic_place)):
+                                if(free_date[i].weekday() == weeks_day.index(grafic_place[j][2])):
+                                    mb_date_time.append([free_date[i], grafic_place[j][0], grafic_place[j][1], grafic_place[j][2], grafic_place[j][3]])
+    
+                        mb_date_free = []
+                        for i in range(len(mb_date_time)):
+                            flag = True
+                            for j in range(len(schs)):
+                                if(mb_date_time[i][0] == date.fromisoformat(schs[j][4]) and mb_date_time[i][3] == schs[j][2] and mb_date_time[i][1] == schs[j][1] and mb_date_time[i][4][0] == schs[j][0]):
+                                    flag = False
+                            if(flag):
+                                mb_date_free.append(mb_date_time[i])
+
+                        return mb_date_free
+                    else:
+                        return 'ошибка получения расписания аудиторий'
+
+                else: return 'ошибка получения расписания для группы, попробуйте позже'
+
+            else:
+                return 'ошибка получения расписания для фильтрации свободных аудиторий'
+
+
+        else: 
+            return 'для данного предмета по плану не предусмотрена сдача экзамена'
+
 
 
 
