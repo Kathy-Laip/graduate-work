@@ -161,6 +161,14 @@ def getClasses(directionID):
     except:
         return False
 
+def getClasseCount(directionID, initial_class):
+    try:
+        id_class = connection.get_data_from_table('select count from classes where direction_id={} and initial_class = {}'.format(directionID, initial_class))
+        if(id_class is not None):
+            return id_class[0][0]
+    except:
+        return False
+
 def getCoursesClasses(work_ID):
     try:
         courses = connection.get_data_from_table('select schedules.courses.course_number, schedules.direction.name_course, schedules.classes.initial_class, schedules.classes.count from schedules.classes inner join schedules.direction on schedules.classes.direction_id = schedules.direction.direction_id inner join schedules.courses on schedules.direction.course_id = schedules.courses.course_id where schedules.courses.work_id = {};'.format(work_ID))
@@ -365,6 +373,13 @@ def getSchDir(work_id, dir_id):
 def getExamSub(dir_id, sub):
     try: 
         data = connection.get_data_from_table('select schedules.plan_direction.exam from schedules.plan_direction where schedules.plan_direction.direction_id = {} and schedules.plan_direction.name_sub = "{}" ;'.format(dir_id, sub))
+        if(data is not None):
+            return data[0]
+    except: return []
+
+def getMinExamSub(dir_id, sub):
+    try: 
+        data = connection.get_data_from_table('select schedules.plan_direction.min_exam from schedules.plan_direction where schedules.plan_direction.direction_id = {} and schedules.plan_direction.name_sub = "{}" ;'.format(dir_id, sub))
         if(data is not None):
             return data[0]
     except: return []

@@ -965,16 +965,14 @@ if __name__ == '__main__':
     # if('weeks' in ans):
     #     print(pd.DataFrame(ans['weeks']))
 
-    info = {'type': 'exam', 'groups': {'courseNumber': 1, 'napr': 'ФИИТ', 'groups': '09-331'}, 'sub': 'Алгебра и геометрия'}
-    ans = algo(work_id, info, 'uni')
-    print(ans)
+    # info = {'type': 'exam', 'groups': {'courseNumber': 1, 'napr': 'ФИИТ', 'groups': '09-331'}, 'sub': 'Алгебра и геометрия'}
+    # ans = algo(work_id, info, 'uni')
     # print(ans)
-    # if('full' in ans):
-    #     print(pd.DataFrame(ans['full']))
-    # if('half' in ans):
-    #     print(pd.DataFrame(ans['half']))
-    # if('weeks' in ans):
-    #     print(pd.DataFrame(ans['weeks']))
+
+    info = {'type': 'min_exam', 'groups': {'courseNumber': 1, 'napr': 'ФИИТ', 'groups': '09-331'}, 'sub': 'Информационные технологии'}
+    ans = algo(work_id, info, 'uni')
+    print(pd.DataFrame(ans))
+
 
 
 
