@@ -18,7 +18,7 @@ export const MenuSchSchool: React.FC<Menu> = (props) => {
     const [countCoursese, setCountCourses] = useState<Array<number>|undefined>(props.sch.settings !== undefined ? Array.from({length: props.sch.settings!.count_class || -1}, (_, ind) => ind + 1) : undefined)
     const [course, setCourse] = useState(0)
 
-    const [dirs, setDirs] = useState<Array<Array<[string, string, string]>>>(Object.values(props.sch.settings!.arr_courses) as any)
+    const [dirs, setDirs] = useState<Array<Array<[string, string, string]>>>(props.sch.settings?.arr_courses ? Object.values(props.sch.settings!.arr_courses) as any : [])
 
     const [arrHours, setArrHours] = useState<Array<number>|0>()
 
@@ -31,7 +31,6 @@ export const MenuSchSchool: React.FC<Menu> = (props) => {
         }
     }
 
-    console.log(dirs.map(el => el[0][0]))
 
     const next = () => {
         if(!course){
@@ -91,7 +90,8 @@ export const MenuSchSchool: React.FC<Menu> = (props) => {
         ):(
             <div className="planMenu">
                 Настройте расписание! А также добавьте информацию по учебному плану и преподавателям!
-                ВНИМАНИЕ! Чтобы избежать утери данных, перед началом составления расписания добавьте в настройках всю необходимую информацию! Далее перейдите в поле "учебный план".
+                <br></br>
+                <span style={{color: 'red'}}>ВНИМАНИЕ!</span> Чтобы избежать утери данных, перед началом составления расписания добавьте в настройках всю необходимую информацию! Далее перейдите в поле "учебный план".
                 Загрузите для всех направлений учебный план, далее перейдите в поле "преподаватели" и загрузите информацию с преподавателями!
             </div>
         )}

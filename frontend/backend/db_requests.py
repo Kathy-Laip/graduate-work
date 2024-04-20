@@ -363,6 +363,20 @@ def getSchClass(work_id, class_id):
             return data
     except: return False
 
+def getSchClassSchool(work_id, class_id):
+    try:
+        data = connection.get_data_from_table('select schedules.schedule.grafic_id, schedules.schedule.place_id, schedules.weeks.week_day from schedules.schedule inner join schedules.weeks on schedules.weeks.id_week = schedules.schedule.week_day where schedules.schedule.work_id={} and schedules.schedule.classes_id={};'.format(work_id, class_id))
+        if(data is not None):
+            return data
+    except: return []
+
+def getSchTeacherSchool(work_id, teacher_id):
+    try:
+        data = connection.get_data_from_table('select schedules.schedule.grafic_id, schedules.schedule.place_id, schedules.weeks.week_day from schedules.schedule inner join schedules.weeks on schedules.weeks.id_week = schedules.schedule.week_day where schedules.schedule.work_id={} and schedules.schedule.teacher_id={};'.format(work_id, teacher_id))
+        if(data is not None):
+            return data
+    except: return []
+
 def getSchDir(work_id, dir_id):
     try:
         data = connection.get_data_from_table('select schedules.schedule.grafic_id, schedules.schedule.place_id, schedules.weeks.week_day, schedules.schedule.period  from schedules.schedule inner join schedules.weeks on schedules.weeks.id_week = schedules.schedule.week_day where schedules.schedule.work_id = {} and schedules.schedule.direction_id = {};'.format(work_id, dir_id))
@@ -384,6 +398,34 @@ def getMinExamSub(dir_id, sub):
             return data[0]
     except: return []
 
+
+def getSubjectSchool(class_id, name_sub):
+    try:
+        data = connection.get_data_from_table('select schedules.plan_direction.name_sub, schedules.plan_direction.academ_count_classes from schedules.plan_direction where schedules.plan_direction.class_id = {} and schedules.plan_direction.name_sub = "{}";'.format(class_id, name_sub))
+        if(data is not None):
+            return data
+    except: return []
+
+def getTeacherSchool(classes_id, name_sub):
+    try:
+        data = connection.get_data_from_table('select schedules.teacher_classes.id_teacher from schedules.teacher_classes where schedules.teacher_classes.classes_id = {} and schedules.teacher_classes.name_sub = "{}";'.format(classes_id, name_sub))
+        if(data is not None):
+            return data[0]
+    except: return []
+
+def getTeacherName(teacher_id):
+    try: 
+        data = connection.get_data_from_table('select schedules.teacher.fio from schedules.teacher where schedules.teacher.teacher_id = {};'.format(teacher_id))
+        if(data is not None):
+            return data[0]
+    except: return []
+
+def getPlaceTeacher(fio_teach):
+    try:
+        data = connection.get_data_from_table('select schedules.place.place_id, schedules.place.place_name from schedules.place where schedules.place.fio_teacher = "{}"'.format(fio_teach))
+        if(data is not None):
+            return data[0]
+    except: return []
 
 
 

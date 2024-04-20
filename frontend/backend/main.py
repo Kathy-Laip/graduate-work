@@ -278,13 +278,14 @@ def setFirst():
     for i in range(len(courses)):
         course_ID = getCourseID(courses[i]["courseNumber"], workID)
         for j in range(1, len(courses[i]['st'])):
-            dir_ID = getDirection(course_ID, courses[i]['st'][j][0])
-            if(dir_ID == False):
-                ans = addDirection(course_ID, courses[i]['st'][j][0])
-                arr.append(ans)
-            dir_ID = getDirection(course_ID, courses[i]['st'][j][0])
-            ans = addClass(dir_ID, courses[i]['st'][j][1], courses[i]['st'][j][2])
-            arr2.append(ans)
+            if(len(courses[i]['st'][j]) > 0):
+                dir_ID = getDirection(course_ID, courses[i]['st'][j][0])
+                if(dir_ID == False):
+                    ans = addDirection(course_ID, courses[i]['st'][j][0])
+                    arr.append(ans)
+                dir_ID = getDirection(course_ID, courses[i]['st'][j][0])
+                ans = addClass(dir_ID, courses[i]['st'][j][1], courses[i]['st'][j][2])
+                arr2.append(ans)
 
     if(all(arr) == False):
         return json.dumps({'otv': 'error courses name'})
@@ -360,13 +361,15 @@ def setSecond():
     for i in range(len(courses)):
         course_ID = getCourseID(courses[i]["courseNumber"], workID)
         for j in range(1, len(courses[i]['st'])):
-            dir_ID = getDirection(course_ID, courses[i]['st'][j][0])
-            if(dir_ID == False):
-                ans = addDirection(course_ID, courses[i]['st'][j][0])
-                arr.append(ans)
-            dir_ID = getDirection(course_ID, courses[i]['st'][j][0])
-            ans = addClass(dir_ID, courses[i]['st'][j][1], courses[i]['st'][j][2])
-            arr2.append(ans)
+            if(len(courses[i]['st'][j]) > 0):
+                print(courses[i]['st'][j])
+                dir_ID = getDirection(course_ID, courses[i]['st'][j][0])
+                if(dir_ID == False):
+                    ans = addDirection(course_ID, courses[i]['st'][j][0])
+                    arr.append(ans)
+                dir_ID = getDirection(course_ID, courses[i]['st'][j][0])
+                ans = addClass(dir_ID, courses[i]['st'][j][1], courses[i]['st'][j][2])
+                arr2.append(ans)
 
     if(all(arr) == False):
         return json.dumps({'otv': 'error courses name'})
@@ -625,13 +628,14 @@ def setFirstSchool():
     for i in range(len(courses)):
         courseID = getCourseID(courses[i]['courseNumber'], workID)
         for j in range(1, len(courses[i]['st'])):
-            dir_id = getDirection(courseID, courses[i]['st'][j][0])
-            if(dir_id == False):
-                ans = addDirection(courseID, courses[i]['st'][j][0])
-                arr.append(ans)
-            dir_id = getDirection(courseID, courses[i]['st'][j][0])
-            ans = addClass(dir_id, courses[i]['st'][j][1], courses[i]['st'][j][2])
-            arr2.append(ans)
+            if(len(courses[i]['st'][j])> 0):
+                dir_id = getDirection(courseID, courses[i]['st'][j][0])
+                if(dir_id == False):
+                    ans = addDirection(courseID, courses[i]['st'][j][0])
+                    arr.append(ans)
+                dir_id = getDirection(courseID, courses[i]['st'][j][0])
+                ans = addClass(dir_id, courses[i]['st'][j][1], courses[i]['st'][j][2])
+                arr2.append(ans)
 
     if(all(arr) == False):
         return json.dumps({'otv': 'error courses name'})
@@ -643,6 +647,7 @@ def setFirstSchool():
 @app.route('/settingsSecondSchool', methods=['POST'])
 def setSecondSchool():
     info = json.loads(request.get_data())
+    
     
     workID = info['id']
     semester = info['semester']
@@ -700,17 +705,19 @@ def setSecondSchool():
     
     arr = []
     arr2 = []
+
     # # добавление информации про курсы
     for i in range(len(courses)):
         course_ID = getCourseID(courses[i]["courseNumber"], workID)
         for j in range(1, len(courses[i]['st'])):
-            dir_ID = getDirection(course_ID, courses[i]['st'][j][0])
-            if(dir_ID == False):
-                ans = addDirection(course_ID, courses[i]['st'][j][0])
-                arr.append(ans)
-            dir_ID = getDirection(course_ID, courses[i]['st'][j][0])
-            ans = addClass(dir_ID, courses[i]['st'][j][1], courses[i]['st'][j][2])
-            arr2.append(ans)
+            if(len(courses[i]['st'][j])> 0):
+                dir_ID = getDirection(course_ID, courses[i]['st'][j][0])
+                if(dir_ID == False):
+                    ans = addDirection(course_ID, courses[i]['st'][j][0])
+                    arr.append(ans)
+                dir_ID = getDirection(course_ID, courses[i]['st'][j][0])
+                ans = addClass(dir_ID, courses[i]['st'][j][1], courses[i]['st'][j][2])
+                arr2.append(ans)
 
     if(all(arr) == False):
         return json.dumps({'otv': 'error courses name'})
@@ -827,16 +834,14 @@ def addCafSchool():
     
     cafedra_ID = getCafedraID(nameCafedra, work_ID)
 
-    sets = set()
     arr = []
     arr1 = []
     arr2 = []
     for i in range(1, len(data)):
-        if(data[i][1] not in sets):
+        if(len(data[i]) > 0):
             ans = addTeacher(data[i][1], cafedra_ID)
             arr.append(ans)
-            sets.add(data[i][1])
-        
+            
             dir_id = ''
             for j in range(len(dir)):
                 if(dir[j][2] == data[i][2]):
@@ -896,16 +901,13 @@ def editCafedraSchool():
     cafedra_ID = getCafedraID(name, work_id)
 
     
-    sets = set()
     arr = []
     arr1 = []
     arr2 = []
     for i in range(1, len(data)):
-        if(data[i][1] not in sets):
+        if(len(data[i]) > 0):
             ans = addTeacher(data[i][1], cafedra_ID)
             arr.append(ans)
-            sets.add(data[i][1])
-        
             dir_id = ''
             for j in range(len(dir)):
                 if(dir[j][2] == data[i][2]):
@@ -934,7 +936,7 @@ def editCafedraSchool():
     return json.dumps({'otv': 'ok'})
 
 if __name__ == '__main__':
-    app.run(debug=True, host="127.0.0.1", port="5000")
+    # app.run(debug=True, host="127.0.0.1", port="5000")
     # work_id = 76
     # info ={'type': 'lect', 'groups': [{'courseNumber': 2, 'napr': 'ФИИТ'}, {'courseNumber': 3, 'napr': 'ИБ'}], 'sub': 'Математическая логика и теория алгоритмов'}
     # ans = algo(work_id, info, 'uni')
@@ -974,7 +976,10 @@ if __name__ == '__main__':
     # print(pd.DataFrame(ans))
 
 
-
+    work_id = 71
+    info = {'courseNum': 9, 'initial_class': 'В', 'subj': 'Алгебра'}
+    ans = algoSchool(work_id, info)
+    print(ans)
 
 
 

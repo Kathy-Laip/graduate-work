@@ -814,3 +814,78 @@ def algo(work_id, info, type_inst):
     else:
         return 'ошибка введенных данных! попробуйте позже'
     
+
+def algoSchool(work_id, info):    
+    subj = info['subj']
+    course = str(info['courseNum'])
+    initial_class = info['initial_class']
+    weeks_name = ['понедельник','вторник','среда','четверг','пятнциа','суббота']
+
+    dir = getDataCourseDirs(work_id)
+    dir_id = ''
+    for i in range(len(dir)):
+        if(dir[i][2] == course):
+            dir_id = dir[i][1]
+    if(dir_id == ''):
+        return 'ошибка получения направления, перепроверьте даннные о параллелях'
+    class_ID = getClass(dir_id, initial_class)
+    if class_ID == False:
+        return 'ошибка получения класса, перепроверьте данные о классх'
+    
+    subj_info = getSubjectSchool(class_ID, subj)
+    if(len(subj_info) == 0):
+        return 'для данного класса нет в учебном плане введенного вами предмета'
+
+    # sch_has = getHasLessonGroup(class_ID, subj, work_id)
+    # if(len(sch_has) > 0):
+    #     return 'для данного класса уже сущевтует занятие!'
+
+    teacher_id = getTeacherSchool(class_ID, subj)
+    if(len(teacher_id) == 0):
+        return 'для данного класса нет преподавателя для проведения занятия'
+    
+    teacher_id = teacher_id[0]
+
+    fio_teach = getTeacherName(teacher_id)
+    if(len(fio_teach) == 0):
+        return 'для данного класса нет преподавателя для проведения занятия'
+    fio_teach = fio_teach[0]
+
+    grafic = getGrafic(work_id)
+    place = getPlaceTeacher(fio_teach)
+    if(len(place) == 0):
+        return 'у учителя нет кабинета для проведения занятия, проверьте данные'
+
+    sch_napr = getSchClassSchool(work_id, class_ID)
+    teach_sch = getSchTeacherSchool(work_id, teacher_id)
+
+    sch_grafic = []
+    sch_free_time = []
+    sch_full = []
+    for i in range(len(weeks_name)):
+        for j in range(len(grafic)):
+            sch_grafic.append([place[0], place[1], weeks_name[i], grafic[j][0], grafic[j][1], grafic[j][2]])
+    #  540  302  понедельник  306   8:30   9:15 sch_grafic
+    # 306  540  понедельник sch_napr
+
+    for i in range(len(sch_grafic)):
+        flag = True
+        for j in range(len(sch_napr)):
+            if(sch_grafic[i][2] == sch_napr[j][2] and sch_grafic[i][3] == sch_napr[j][0]):
+                flag = False
+        if(flag):
+            sch_free_time.append(sch_grafic[i])
+
+    for i in range(len(sch_free_time)):
+        flag = True
+        for j in range(len(teach_sch)):
+            if(sch_free_time[i][2] == teach_sch[j][2] and sch_free_time[i][3] == teach_sch[j][0]):
+                flag = False
+        if(flag):
+            sch_full.append(sch_free_time[i])
+
+
+
+    return sch_full
+
+
