@@ -11,7 +11,7 @@ export class Schedule{
     public settings?: ScheduleSettings
     public cafedras?: []
 
-    public listOfClasses?: IClass[]
+    public listOfClasses?: []
     public newClasses?: IClass[]
 
     public suggestion?: IClass[]
@@ -24,7 +24,6 @@ export class Schedule{
         this.settings = settings
     }
 
-    public getClasses(){}
     public getStudyPlan(){}
     public getTeachers(){}
     public getCourse() {}
@@ -56,4 +55,7 @@ export class Schedule{
     public addNewClasses(classes: IClass[]){}
 
     public saveChanges(){}
+
+    public getClasses(data: any){
+    }
 }

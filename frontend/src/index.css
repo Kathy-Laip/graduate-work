@@ -24,6 +24,7 @@ body{
   --main-dar-dar-blue: #0f171c;
 
   --main-blue-blue: #5fa9cb;
+  --main-green-grand: #A8E4A0;
 }
 
 code {
@@ -1111,4 +1112,9 @@ form{
 #blockAddLessUni #selectClassLesson,
 #blockAddLessUni #selectPeriodLesson{
   margin: 1rem 0;
+}
+
+.sch .divLoad{
+  margin: 20% 45%;
+
 }

@@ -935,8 +935,29 @@ def editCafedraSchool():
 
     return json.dumps({'otv': 'ok'})
 
+@app.route('/getScheduleUni', methods=['POST'])
+def getSchUni():
+    info = json.loads(request.get_data())
+    work_id = info['work_id']
+    course = info['data']['course']
+    name_napr = info['data']['napr']
+
+    course = getCourseID(course, work_id)
+    dirID = getDirection(course, name_napr)
+
+    sch = getScheUniDir(work_id, dirID)
+ 
+    sch_new = []
+    for i in range(len(sch)):
+        sch_new.append([sch[i][2], sch[i][3], sch[i][4], sch[i][5], sch[i][6], sch[i][7], sch[i][8], sch[i][9], sch[i][10], sch[i][11], sch[i][12]])
+
+    if(len(sch) == 0):
+        return json.dumps({'otv': 'error'})
+
+    return json.dumps({'otv': 'OK','info': sch_new})
+
 if __name__ == '__main__':
-    # app.run(debug=True, host="127.0.0.1", port="5000")
+    app.run(debug=True, host="127.0.0.1", port="5000")
     # work_id = 76
     # info ={'type': 'lect', 'groups': [{'courseNumber': 2, 'napr': 'ФИИТ'}, {'courseNumber': 3, 'napr': 'ИБ'}], 'sub': 'Математическая логика и теория алгоритмов'}
     # ans = algo(work_id, info, 'uni')
@@ -976,10 +997,10 @@ if __name__ == '__main__':
     # print(pd.DataFrame(ans))
 
 
-    work_id = 71
-    info = {'courseNum': 9, 'initial_class': 'В', 'subj': 'Алгебра'}
-    ans = algoSchool(work_id, info)
-    print(ans)
+    # work_id = 71
+    # info = {'courseNum': 9, 'initial_class': 'В', 'subj': 'Алгебра'}
+    # ans = algoSchool(work_id, info)
+    # print(ans)
 
 
 
