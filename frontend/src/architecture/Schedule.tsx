@@ -11,7 +11,7 @@ export class Schedule{
     public settings?: ScheduleSettings
     public cafedras?: []
 
-    public listOfClasses?: []
+    public listOfClasses? = Array.from({length: 10}, () => '')
     public newClasses?: IClass[]
 
     public suggestion?: IClass[]

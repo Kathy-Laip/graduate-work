@@ -15,7 +15,8 @@ type WorkSch = {
     addTeachs: Function,
     editTeachs: Function,
     mes: Function,
-    addLessTrue: Function
+    addLessTrue: Function,
+    changeInfo: Function
 }
 
 export const WorkSchUni: React.FC<WorkSch> = (props) => {
@@ -59,6 +60,7 @@ export const WorkSchUni: React.FC<WorkSch> = (props) => {
     const changeAdd = () => {
         setAdd(true)
     }
+
     
     return (
         <div className="workSchedule bdR5">        
@@ -77,7 +79,7 @@ export const WorkSchUni: React.FC<WorkSch> = (props) => {
                 </div>
             </div>
             <div className="menuAndSchedule">
-                {sch && props.user.currentSchedule instanceof ScheduleUni && (<MenuSchUni user={props.user} sch={props.user.currentSchedule} mes={props.mes} add={changeAdd}/>)}
+                {sch && props.user.currentSchedule instanceof ScheduleUni && (<MenuSchUni user={props.user} sch={props.user.currentSchedule} mes={props.mes} add={changeAdd} changeI={props.changeInfo}/>)}
                 {plan && (<MenuPlanUni user={props.user} addPlan={props.addPlan} editPlan={props.editPlan}/>)}
                 {teach && (<MenuTeachsUni user={props.user} addTeachs={props.addTeachs} editTeachs={props.editTeachs}/>)}
             </div>

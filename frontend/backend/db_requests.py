@@ -286,6 +286,13 @@ def getPlansSchool(class_id):
             return plans
     except: return False
 
+def getPlanDir(dir_id):
+    try: 
+        plan_sub = connection.get_data_from_table('select schedules.plan_direction.name_sub from schedules.plan_direction where schedules.plan_direction.direction_id = {};'.format(dir_id))
+        if(plan_sub is not None):
+            return plan_sub
+    except: return []
+    
 def getSubjLect(dir_id, sub):
     try: 
         subj = connection.get_data_from_table('select schedules.plan_direction.name_sub, schedules.plan_direction.lect from schedules.plan_direction where schedules.plan_direction.direction_id = {} and schedules.plan_direction.name_sub="{}";'.format(dir_id, sub))

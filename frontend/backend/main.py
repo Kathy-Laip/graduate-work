@@ -952,9 +952,58 @@ def getSchUni():
         sch_new.append([sch[i][2], sch[i][3], sch[i][4], sch[i][5], sch[i][6], sch[i][7], sch[i][8], sch[i][9], sch[i][10], sch[i][11], sch[i][12]])
 
     if(len(sch) == 0):
-        return json.dumps({'otv': 'error'})
+        return json.dumps({'otv': 'empty'})
 
     return json.dumps({'otv': 'OK','info': sch_new})
+
+@app.route('/getSubjectUni', methods=['POST'])
+def getSubjUni():
+    info = json.loads(request.get_data())
+    work_id = info['work_id']
+    course = info['data']['course']
+    name_napr = info['data']['napr']
+
+    course = getCourseID(course, work_id)
+    dirID = getDirection(course, name_napr)
+
+    subj = getPlanDir(dirID)
+    subs = []
+    for i in range(len(subj)):
+        subs.append(subj[i][0])
+    
+    if(len(subj) == 0):
+        return json.dumps({'otv': 'empty'})
+    
+    return json.dumps({'otv': 'OK', 'data': subs})
+
+@app.route('/addLessonLectUni', methods=['POST'])
+def addLessonLectUni():
+    info = json.loads(request.get_data())
+    work_id = info['work_id']
+    subj = info['data']['subj']
+    napr = info['data']['napr']
+
+    groups = []
+
+    for i in range(len(napr)):
+        gr = napr[i].split(' ')
+        groups.append({'courseNumber': int(gr[0]), 'napr': gr[1]})
+    ans = algo(work_id, {'type': 'lect', 'groups': groups, 'sub': subj}, 'uni')
+    if(ans['otv'] == 'OK'):
+        # arr_list = {}
+        # for k in ans['data']['info'].keys():
+        #     print(ans['data']['info'][k])
+        #     less = []
+        #     for i in range(len(ans['data']['info'][k])):
+        #         print(ans['data']['info'][k][i])
+        #         less.append(ans['data']['info'][k][i].tolist())
+        #     arr_list[k] = less
+        # print(arr_list)
+        # return json.dumps({'otv': 'OK', 'data': {'count': ans['data']['count'], 'info': arr_list}})
+        return json.dumps({'otv': 'OK', 'data': ans['data']})
+    else:
+        return json.dumps({'otv': 'error', 'mes': ans['mes']})
+
 
 if __name__ == '__main__':
     app.run(debug=True, host="127.0.0.1", port="5000")

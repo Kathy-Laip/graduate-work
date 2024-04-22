@@ -24,6 +24,7 @@ export const WorkSchSchool: React.FC<WorkSch> = (props) => {
     const [teach, setTeach] = useState(false)
 
     const [add, setAdd] = useState(false)
+    
 
     const onToggle = (flag:string) => {
         if(flag === 'sch'){
@@ -56,6 +57,8 @@ export const WorkSchSchool: React.FC<WorkSch> = (props) => {
     const changeAdd = () => {
         setAdd(true)
     }
+
+
     
     return (
         <div className="workSchedule bdR5">        

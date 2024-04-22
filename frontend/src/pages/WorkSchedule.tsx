@@ -24,6 +24,7 @@ import { switchBlock } from "../constants/const";
 import {Schedule} from '../architecture/Schedule'
 import { AddLesonUni } from "../components/AddLessonUni";
 import { AddLesonSchool } from "../components/AddLessonSchool";
+import { Offers } from "../components/Offers";
 
 type WorkSch = {
     user: User
@@ -53,6 +54,11 @@ export const WorkSchedule: React.FC<WorkSch> = (props) => {
 
     const [mes, setMes] = useState<string>('')
     const [upd, setUpd] = useState<boolean>(false)
+
+    const [info, setInfo] = useState<Array<string|number>>([])
+    const [offsInfo, setOffsInfo] = useState<any>({})
+
+    const [offs, setOffs] = useState(false)
 
     
     const onSettings = () => {
@@ -137,6 +143,14 @@ export const WorkSchedule: React.FC<WorkSch> = (props) => {
         setAddLessUni(false)
     }
 
+    const closeOffersTrue = () => {
+        setOffs(true)
+    }
+
+    const closeOffersFalse = () => {
+        setOffs(false)
+    }
+
     const updateSchs = (schs:any) => {
         let ans = props.user.getListOfSchedules()
         ans.then(answer => {
@@ -201,6 +215,17 @@ export const WorkSchedule: React.FC<WorkSch> = (props) => {
         setUpd(up)
         switchBlock('newMessage')
     }
+
+    const changeInfo = (data: Array<string|number>) => {
+        setInfo(data)
+    }
+
+    const addOffers = (data: any) => {
+        setOffsInfo(data)
+        closeAddLesson()
+        closeOffersTrue()
+    }
+
     
     return (
         <div className="workScheduleMain">
@@ -238,15 +263,17 @@ export const WorkSchedule: React.FC<WorkSch> = (props) => {
                 </div>
                 <div className="workBodyShedules">
                     {props.user.currentSchedule && props.user.currentSchedule !== 'ERROR_CREATE' && (props.user.currentSchedule!.type === 'uni' ?
-                         (<WorkSchUni user={props.user} addPlan={addPlanUniTrue} editPlan={editPlanUniTrue} addTeachs={addTeachsUniTrue} editTeachs={editTeachsUniTrue} mes={message} addLessTrue={closeAddLessonTrue}/>)
+                         (<WorkSchUni user={props.user} addPlan={addPlanUniTrue} editPlan={editPlanUniTrue} addTeachs={addTeachsUniTrue} editTeachs={editTeachsUniTrue} mes={message} addLessTrue={closeAddLessonTrue} changeInfo={changeInfo}/>)
                          :
                          (<WorkSchSchool user={props.user} addPlan={addPlanSchoolTrue} editPlan={editPlanSchoolTrue} addTeachs={addTeachsSchoolTrue} editTeachs={editTeachsSchoolTrue}  mes={message} addLessTrue={closeAddLessonTrueSch}/>)
                     )
                     }
                 </div>
             </div>
-            {props.user.currentSchedule! instanceof ScheduleUni && addLessUni && (<AddLesonUni close={closeAddLesson}/>)}
+            {props.user.currentSchedule! instanceof ScheduleUni && addLessUni && (<AddLesonUni close={closeAddLesson} info={info} sch={props.user.currentSchedule} add={addOffers} mes={message}/>)}
             {props.user.currentSchedule! instanceof ScheduleSchool && addLessUni && (<AddLesonSchool close={closeAddLessonSch}/>)}
+
+            {props.user.currentSchedule! instanceof ScheduleUni && offs && (<Offers close={closeOffersFalse} data={offsInfo} sch={props.user.currentSchedule} mes={message}/>)}
             <Message mess={mes} update={upd}/>
             {/* <MessageConfirmYN mess={mes} update={upd} change={changeYON}/> */}
         </div>

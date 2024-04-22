@@ -28,7 +28,6 @@ export class User{
     }
 
     public async getListOfSchedules(){ 
-        console.log(this.login, this.password)
         let ans = apiPos({'login': this.login, 'password': this.password}, '/getSchedules')
         return ans
     }

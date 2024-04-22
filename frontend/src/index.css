@@ -108,6 +108,10 @@ input::placeholder{
   background-color: var(--main-orange);
 }
 
+.btnGreenGrand{
+  background-color: var( --main-green-grand);
+}
+
 
 
 
@@ -1032,7 +1036,7 @@ form{
 #saveChanges{
   position: absolute;
 
-  z-index: 20;
+  z-index: 10;
   
   right: 2rem;
   bottom: 2rem;
@@ -1062,10 +1066,13 @@ form{
   flex-direction: column;
   flex-wrap: wrap;
 
-  position: relative;
+  position: absolute;
 
-  width: 174px;
-  padding: 0.5rem;
+  overflow-y: hidden;
+
+  width: 178px;
+  padding: 0.2rem 0.6rem;
+
 }
 
 .lesson span{
@@ -1102,11 +1109,11 @@ form{
 }
 
 #blockAddLessUni select{
-  margin: 0.5rem 0;
+  margin: 0.2rem 0;
 }
 
 #blockAddLessUni #selectSubLesson{
-  margin: 2rem 0;
+  margin: 1rem 0;
 }
 
 #blockAddLessUni #selectClassLesson,
@@ -1114,7 +1121,8 @@ form{
   margin: 1rem 0;
 }
 
-.sch .divLoad{
+.sch .divLoad,
+.scrolls .divLoad{
   margin: 20% 45%;
 
 }

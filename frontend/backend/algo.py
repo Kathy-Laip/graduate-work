@@ -234,28 +234,28 @@ def algo(work_id, info, type_inst):
         for i in range(len(info_groups)):
             course_id = getCourseID(info_groups[i]['courseNumber'], work_id)
             dir_id = getDirection(course_id, info_groups[i]['napr'])
-            if(dir_id == False): return 'нет информации про все направления, перепроверьте всю информацию о направлениях!'
+            if(dir_id == False): return {'otv': 'error', 'mes': 'нет информации про все направления, перепроверьте всю информацию о направлениях!'}
             else:
                 ans = getSubjLect(dir_id, subj)
                 if(ans == False or len(ans) == 0):
-                    return 'не у всех направлений есть данный предмет'
+                    return {'otv': 'error', 'mes':'не у всех направлений есть данный предмет'}
                 else:
                     arr.append(ans[0])
                         
                 ans2 = getTeach(dir_id, subj)
                 if(all(ans2)):
                     tech_id.append(ans2[0])
-                else: return 'нет преподавателя для одного из направлений! пожалуйста, перепроверьте данные о преподавателях!'
+                else: return {'otv': 'error', 'mes':'нет преподавателя для одного из направлений! пожалуйста, перепроверьте данные о преподавателях!'}
 
         if(len(arr) > 1):
             for i in range(1, len(arr)):
                 if(arr[i][1] != arr[i-1][1]):
-                    return 'не у всех направлений совпадают часы по лекциям'
+                    return {'otv': 'error', 'mes':'не у всех направлений совпадают часы по лекциям'}
         
         if(len(tech_id) > 1):
             for i in range(1, len(tech_id)):
                 if(tech_id[i][0] != tech_id[i][0]):
-                    return 'не у всех направлений один и тот же преподаватель, чтобы объединить занятия'
+                    return {'otv': 'error', 'mes':'не у всех направлений один и тот же преподаватель, чтобы объединить занятия'}
 
 
         for i in range(len(info_groups)):
@@ -263,7 +263,7 @@ def algo(work_id, info, type_inst):
             dir_id = getDirection(course_id, info_groups[i]['napr'])
             hasLect = getHasLesson(dir_id, subj, work_id)
             if(len(hasLect) > 0):
-                return 'для направлений уже существует занятие!'
+                return {'otv': 'error', 'mes':'для направлений уже существует занятие!'}
 
         infoWorkID = getDataInfo(work_id)
         start, end, acc_hour = infoWorkID[0]
@@ -277,7 +277,7 @@ def algo(work_id, info, type_inst):
         minutes = difference.total_seconds() / 60 # сколько минут за занятие
         
         one_less = minutes/acc_hour # количество академ часов за один урок
-        if(int(arr[0][1]) == 0): return 'невозможно поставить занятие, количество часов равно нулю'
+        if(int(arr[0][1]) == 0): return {'otv': 'error', 'mes':'невозможно поставить занятие, количество часов равно нулю'}
         count_lessons = int(int(arr[0][1])/one_less) # количество занятий по уч плану
 
         count_weeks = -1
@@ -297,7 +297,7 @@ def algo(work_id, info, type_inst):
         
         places = getPlaces(work_id, typeLess, count_seat)
         if(places == False or places == []):
-            return 'нет аудиторий для данного занятия! возможно стоит перестроить расписание!'
+            return {'otv': 'error', 'mes':'нет аудиторий для данного занятия! возможно стоит перестроить расписание!'}
         elif(len(places) > 0):
             all_ava_place = {}
             schs = getSch(work_id)
@@ -313,7 +313,7 @@ def algo(work_id, info, type_inst):
                     if(ans != False):
                         schs_napr.append(ans)
                     elif (ans == False):
-                        return 'ошибка получения расписаний для направлений, попробуйте позже!'
+                        return {'otv': 'error', 'mes':'ошибка получения расписаний для направлений, попробуйте позже!'}
                 print(schs_napr)
 
                 grafic_place = []
@@ -325,7 +325,7 @@ def algo(work_id, info, type_inst):
                         grafic_start = datetime.strptime(grafic[j][1], '%H:%M')
                         grafic_end = datetime.strptime(grafic[j][2], '%H:%M')
                         if(place_start <= grafic_start and grafic_end <= place_end):
-                            grafic_place.append([places[i][0], places[i][1], places[i][2], grafic[j]])
+                            grafic_place.append([places[i][0], places[i][1], places[i][2], [grafic[j][0], grafic[j][1], grafic[j][2]]])
                     
 
                 if(count_weeks == -1 and count_times >= 1):
@@ -340,20 +340,20 @@ def algo(work_id, info, type_inst):
                     if(count_else != 0.5 and count_else != 0):
                         count_les = math.ceil(count_else * weeks)
                         all_ava_place['weeks'] = weeksLessonLectWithSchs(schs, grafic_place, weeks, count_les)
-                    return all_ava_place
+                    return {'otv':'OK','data': {'count': [count_int, count_else], 'info':all_ava_place}}
 
                 if(count_weeks != -1 and count_times == -1):
                     if(count_weeks/weeks == 0.5):
                         all_ava_place['half'] = halflessonLectWithSchs(schs, grafic_place, schs_napr)
                     else:
                         all_ava_place['weeks'] = weeksLessonLectWithSchs(schs, grafic_place, weeks, count_weeks)
-                    return all_ava_place
+                    return {'otv':'OK','data':{'count': [count_weeks, weeks], 'info': all_ava_place}}
                 else: 
-                    return 'ошибка подсчета периодичности занятий, попробуйте еще раз позже!'
+                    return {'otv': 'error', 'mes':'ошибка подсчета периодичности занятий, попробуйте еще раз позже!'}
             else:
-                return 'ошибка получения расписания для фильтрации свободных аудиторий'
+                return {'otv': 'error', 'mes':'ошибка получения расписания для фильтрации свободных аудиторий'}
         else:
-            return 'ошибка получения расписания аудиторий'
+            return {'otv': 'error', 'mes':'ошибка получения расписания аудиторий'}
     if(type_inst == 'uni' and type_less == 'practic'):
         # 'type': 'practic', 'groups': {'courseNumber': 1, 'napr': 'ФИИТ', 'groups': ['09-331', '09-332']}, 'sub': 'Информационные технологии'
 
