@@ -88,6 +88,14 @@ input::placeholder{
   padding: 0.5rem 1rem;
 }
 
+.btn2{
+  border: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 0.4rem 0.6rem;
+}
+
 .btnBlue{
   background-color: var(--main-blue);
 }
@@ -115,7 +123,8 @@ input::placeholder{
 
 
 
-.btn1:hover{
+.btn1:hover,
+.btn2:hover{
   background-color: green;
 }
 
@@ -1126,3 +1135,42 @@ form{
   margin: 20% 45%;
 
 }
+
+.scrolls .infoPeriod{
+  margin: 0.2rem 0;
+}
+
+.suggestions{
+  display: flex;
+  flex-wrap: wrap;
+
+  overflow-y:hidden;
+  width: 100%;
+  margin-top: 1rem;
+
+  padding: 0.5rem 0;
+}
+
+.suggestions .countLessons{
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+
+  width: 35%;
+  overflow-y: scroll;
+}
+
+.suggestions #suggs{
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+
+  width: 65%;
+  overflow-y: scroll;
+  padding: 0 0.8rem;
+}
+
+.suggestions .countLessons .btn2{
+  margin-bottom: 0.5rem;
+}
+

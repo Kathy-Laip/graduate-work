@@ -282,6 +282,7 @@ def algo(work_id, info, type_inst):
 
         count_weeks = -1
         count_times = -1
+        print(count_lessons, weeks)
         if(count_lessons < weeks):
             count_weeks = count_lessons 
         else:
@@ -340,14 +341,14 @@ def algo(work_id, info, type_inst):
                     if(count_else != 0.5 and count_else != 0):
                         count_les = math.ceil(count_else * weeks)
                         all_ava_place['weeks'] = weeksLessonLectWithSchs(schs, grafic_place, weeks, count_les)
-                    return {'otv':'OK','data': {'count': [count_int, count_else], 'info':all_ava_place}}
+                    return {'otv':'OK','data': {'count': {'full': count_int, 'ost': count_else, 'weeks': weeks}, 'info':all_ava_place}}
 
                 if(count_weeks != -1 and count_times == -1):
                     if(count_weeks/weeks == 0.5):
                         all_ava_place['half'] = halflessonLectWithSchs(schs, grafic_place, schs_napr)
                     else:
                         all_ava_place['weeks'] = weeksLessonLectWithSchs(schs, grafic_place, weeks, count_weeks)
-                    return {'otv':'OK','data':{'count': [count_weeks, weeks], 'info': all_ava_place}}
+                    return {'otv':'OK','data':{'count': {'countLess':count_weeks, 'weeks': weeks}, 'info': all_ava_place}}
                 else: 
                     return {'otv': 'error', 'mes':'ошибка подсчета периодичности занятий, попробуйте еще раз позже!'}
             else:
@@ -812,7 +813,7 @@ def algo(work_id, info, type_inst):
 
 
     else:
-        return 'ошибка введенных данных! попробуйте позже'
+        return {'otv': 'error', 'mes':'ошибка введенных данных! попробуйте позже'}
     
 
 def algoSchool(work_id, info):    
