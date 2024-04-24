@@ -51,6 +51,8 @@ def is_time_slot_available(room, schedule):
     # [201, 'понедельник'] sch
     week = room[2]
     count = 0
+    
+    print(schedule)
     for item in schedule:
         if item[2] == week:
             count += 1
@@ -103,7 +105,7 @@ def fullLessonLectWithSchs(grafic_place, schs, schs_napr):
         if(filtering == 0):
             global_places.append(grafic_place[i])
                     
-
+    # print(schs_napr, 'napr')
     for i in range(len(global_places)):
         flag = True
         for j in range(len(schs_napr)):
@@ -366,7 +368,7 @@ def algo(work_id, info, type_inst):
         ans = getSubjPractic(dir_id, subj)
         print(ans)
         if(ans == False or len(ans[0]) == 0):
-            return 'у данного направления нет практических занятий по данному предмету'
+            return {'otv': 'error', 'mes':'у данного направления нет практических занятий по данному предмету'}
         else: 
             arr.append(ans[0])
 
@@ -375,20 +377,20 @@ def algo(work_id, info, type_inst):
                 if(ans != False):
                     arr_class.append(ans)
                 else:
-                    return 'данные о группах неполные, перепроверьте информацию!'
+                    return {'otv': 'error', 'mes':'данные о группах неполные, перепроверьте информацию!'}
 
             for i in range(len(arr_class)):
                 ans = getTeachsAndPractic(arr_class[i], subj)
                 if(all(ans) and len(ans) > 0):
                     teach_arr.append(ans)
                 else:
-                    return 'не у всех групп есть преподаватели по практике, перепроверьте информацию!'
+                    return {'otv': 'error', 'mes':'не у всех групп есть преподаватели по практике, перепроверьте информацию!'}
             
         
             if(len(teach_arr) > 1):
                 for i in range(1, len(teach_arr)):
                     if(teach_arr[i][0] != teach_arr[i-1][0]):
-                        return 'не у всех групп один и тот же преподаватель, чтобы объединить занятия'
+                        return {'otv': 'error', 'mes':'не у всех групп один и тот же преподаватель, чтобы объединить занятия'}
 
 
         course_id = getCourseID(info_groups['courseNumber'], work_id)
@@ -399,7 +401,7 @@ def algo(work_id, info, type_inst):
             if(len(ans) > 0):
                 hasLect.append(ans)
         if(len(hasLect) > 0):
-            return 'для групп/группы уже существует занятие!'
+            return {'otv': 'error', 'mes':'для групп/группы уже существует занятие!'}
 
         infoWorkID = getDataInfo(work_id)
         start, end, acc_hour = infoWorkID[0]
@@ -413,7 +415,7 @@ def algo(work_id, info, type_inst):
         minutes = difference.total_seconds() / 60 # сколько минут за занятие
         
         one_less = minutes/acc_hour # количество академ часов за один урок
-        if(int(arr[0][1]) == 0): return 'невозможно поставить занятие, количество часов равно нулю'
+        if(int(arr[0][1]) == 0): return {'otv': 'error', 'mes':'невозможно поставить занятие, количество часов равно нулю'}
         count_lessons = int(int(arr[0][1])/one_less) # количество занятий по уч плану
 
         count_weeks = -1
@@ -430,7 +432,7 @@ def algo(work_id, info, type_inst):
         
         places = getPlaces(work_id, typePractic, count_seat)
         if(places == False or places == []):
-            return 'нет аудиторий для данного занятия! возможно стоит перестроить расписание!'
+            return {'otv': 'error', 'mes':'нет аудиторий для данного занятия! возможно стоит перестроить расписание!'}
         elif(len(places) > 0):
             all_ava_place = {}
             schs = getSch(work_id)
@@ -442,9 +444,9 @@ def algo(work_id, info, type_inst):
                 dir_id = getDirection(course_id, info_groups['napr'])
                 ans = getSchDir(work_id, dir_id)
                 if(ans != False):
-                    schs_napr = ans
+                    schs_napr.append(ans)
                 elif (ans == False):
-                    return 'ошибка получения расписаний для направлений, попробуйте позже!'
+                    return {'otv': 'error', 'mes':'ошибка получения расписаний для направлений, попробуйте позже!'}
 
                 grafic_place = []
                 # преобразование, в какие пары работают какие аудитории
@@ -455,12 +457,14 @@ def algo(work_id, info, type_inst):
                         grafic_start = datetime.strptime(grafic[j][1], '%H:%M')
                         grafic_end = datetime.strptime(grafic[j][2], '%H:%M')
                         if(place_start <= grafic_start and grafic_end <= place_end):
-                            grafic_place.append([places[i][0], places[i][1], places[i][2], grafic[j]])
+                            grafic_place.append([places[i][0], places[i][1], places[i][2], [grafic[j][0], grafic[j][1], grafic[j][2]]])
 
                 if(count_weeks == -1 and count_times >= 1):
 
                     count_int = int(count_times)
                     count_else = count_times - count_int
+
+                    print(schs_napr)
 
                     all_ava_place['full'] = fullLessonLectWithSchs(grafic_place, schs, schs_napr)
                 
@@ -469,21 +473,21 @@ def algo(work_id, info, type_inst):
                     if(count_else != 0.5 and count_else != 0):
                         count_les = math.ceil(count_else * weeks)
                         all_ava_place['weeks'] = weeksLessonLectWithSchs(schs, grafic_place, weeks, count_les)
-                    return all_ava_place
+                    return {'otv':'OK','data': {'count': {'full': count_int, 'ost': count_else, 'weeks': weeks}, 'info':all_ava_place}}
 
                 if(count_weeks != -1 and count_times == -1):
                     if(count_weeks/weeks == 0.5):
                         all_ava_place['half'] = halflessonLectWithSchs(schs, grafic_place, schs_napr)
                     else:
                         all_ava_place['weeks'] = weeksLessonLectWithSchs(schs, grafic_place, weeks, count_weeks)
-                    return all_ava_place
+                    return {'otv':'OK','data':{'count': {'countLess':count_weeks, 'weeks': weeks}, 'info':all_ava_place}}
                 else: 
-                    return 'ошибка подсчета периодичности занятий, попробуйте еще раз позже!'
+                    return {'otv': 'error', 'mes':'ошибка подсчета периодичности занятий, попробуйте еще раз позже!'}
                 
             else:
-                return 'ошибка получения расписания для фильтрации свободных аудиторий'
+                return {'otv': 'error', 'mes':'ошибка получения расписания для фильтрации свободных аудиторий'}
         else:
-            return 'ошибка получения расписания аудиторий'
+            return {'otv': 'error', 'mes':'ошибка получения расписания аудиторий'}
 
     if(type_inst == 'uni' and type_less == 'lab'):
         # 'type': 'practic', 'groups': {'courseNumber': 1, 'napr': 'ФИИТ', 'groups': ['09-331', '09-332']}, 'sub': 'Информационные технологии'
@@ -494,31 +498,32 @@ def algo(work_id, info, type_inst):
         course_id = getCourseID(info_groups['courseNumber'], work_id)
         dir_id = getDirection(course_id, info_groups['napr'])
         ans = getSubjLab(dir_id, subj)
-        print(ans)
+        
         if(ans == False or len(ans[0]) == 0):
-            return 'у данного направления нет практических занятий по данному предмету'
+            return {'otv': 'error', 'mes':'у данного направления нет практических занятий по данному предмету'}
         else: 
             arr.append(ans[0])
-
+            
             for i in range(len(info_groups['groups'])):
                 ans = getClass(dir_id, info_groups['groups'][i])
+                
                 if(ans != False):
                     arr_class.append(ans)
                 else:
-                    return 'данные о группах неполные, перепроверьте информацию!'
+                    return {'otv': 'error', 'mes':'данные о группах неполные, перепроверьте информацию!'}
 
             for i in range(len(arr_class)):
                 ans = getTeachsAndPractic(arr_class[i], subj)
                 if(all(ans) and len(ans) > 0):
                     teach_arr.append(ans)
                 else:
-                    return 'не у всех групп есть преподаватели по практике, перепроверьте информацию!'
+                    return {'otv': 'error', 'mes':'не у всех групп есть преподаватели по практике, перепроверьте информацию!'}
             
         
             if(len(teach_arr) > 1):
                 for i in range(1, len(teach_arr)):
                     if(teach_arr[i][0] != teach_arr[i-1][0]):
-                        return 'не у всех групп один и тот же преподаватель, чтобы объединить занятия'
+                        return {'otv': 'error', 'mes':'не у всех групп один и тот же преподаватель, чтобы объединить занятия'}
 
 
         course_id = getCourseID(info_groups['courseNumber'], work_id)
@@ -529,7 +534,7 @@ def algo(work_id, info, type_inst):
             if(len(ans) > 0):
                 hasLect.append(ans)
         if(len(hasLect) > 0):
-            return 'для групп/группы уже существует занятие!'
+            return {'otv': 'error', 'mes':'для групп/группы уже существует занятие!'}
 
         infoWorkID = getDataInfo(work_id)
         start, end, acc_hour = infoWorkID[0]
@@ -543,7 +548,7 @@ def algo(work_id, info, type_inst):
         minutes = difference.total_seconds() / 60 # сколько минут за занятие
         
         one_less = minutes/acc_hour # количество академ часов за один урок
-        if(int(arr[0][1]) == 0): return 'невозможно поставить занятие, количество часов равно нулю'
+        if(int(arr[0][1]) == 0): return {'otv': 'error', 'mes':'невозможно поставить занятие, количество часов равно нулю'}
         count_lessons = int(int(arr[0][1])/one_less) # количество занятий по уч плану
 
         count_weeks = -1
@@ -560,7 +565,7 @@ def algo(work_id, info, type_inst):
         
         places = getPlaces(work_id, typeLab, count_seat)
         if(places == False or places == []):
-            return 'нет аудиторий для данного занятия! возможно стоит перестроить расписание!'
+            return {'otv': 'error', 'mes':'нет аудиторий для данного занятия! возможно стоит перестроить расписание!'}
         elif(len(places) > 0):
             all_ava_place = {}
             schs = getSch(work_id)
@@ -572,9 +577,9 @@ def algo(work_id, info, type_inst):
                 dir_id = getDirection(course_id, info_groups['napr'])
                 ans = getSchDir(work_id, dir_id)
                 if(ans != False):
-                    schs_napr = ans
+                    schs_napr.append(ans)
                 elif (ans == False):
-                    return 'ошибка получения расписаний для направлений, попробуйте позже!'
+                    return {'otv': 'error', 'mes':'ошибка получения расписаний для направлений, попробуйте позже!'}
 
                 grafic_place = []
                 # преобразование, в какие пары работают какие аудитории
@@ -585,7 +590,7 @@ def algo(work_id, info, type_inst):
                         grafic_start = datetime.strptime(grafic[j][1], '%H:%M')
                         grafic_end = datetime.strptime(grafic[j][2], '%H:%M')
                         if(place_start <= grafic_start and grafic_end <= place_end):
-                            grafic_place.append([places[i][0], places[i][1], places[i][2], grafic[j]])
+                            grafic_place.append([places[i][0], places[i][1], places[i][2], [grafic[j][0], grafic[j][1], grafic[j][2]]])
 
                 if(count_weeks == -1 and count_times >= 1):
 
@@ -599,21 +604,21 @@ def algo(work_id, info, type_inst):
                     if(count_else != 0.5 and count_else != 0):
                         count_les = math.ceil(count_else * weeks)
                         all_ava_place['weeks'] = weeksLessonLectWithSchs(schs, grafic_place, weeks, count_les)
-                    return all_ava_place
+                    return {'otv':'OK','data': {'count': {'full': count_int, 'ost': count_else, 'weeks': weeks}, 'info':all_ava_place}}
 
                 if(count_weeks != -1 and count_times == -1):
                     if(count_weeks/weeks == 0.5):
                         all_ava_place['half'] = halflessonLectWithSchs(schs, grafic_place, schs_napr)
                     else:
                         all_ava_place['weeks'] = weeksLessonLectWithSchs(schs, grafic_place, weeks, count_weeks)
-                    return all_ava_place
+                    return {'otv':'OK','data':{'count': {'countLess':count_weeks, 'weeks': weeks}, 'info':all_ava_place}}
                 else: 
-                    return 'ошибка подсчета периодичности занятий, попробуйте еще раз позже!'
+                    return {'otv': 'error', 'mes':'ошибка подсчета периодичности занятий, попробуйте еще раз позже!'}
                 
             else:
-                return 'ошибка получения расписания для фильтрации свободных аудиторий'
+                return {'otv': 'error', 'mes':'ошибка получения расписания для фильтрации свободных аудиторий'}
         else:
-            return 'ошибка получения расписания аудиторий'
+            return {'otv': 'error', 'mes':'ошибка получения расписания аудиторий'}
 
     if(type_inst == 'uni' and type_less == 'exam'):
         # {'type': 'exam', 'groups': {'courseNumber': 1, 'napr': 'ФИИТ', 'groups': '09-331'}, 'sub': 'Дискретная математика'}
@@ -621,18 +626,22 @@ def algo(work_id, info, type_inst):
         dir_id = getDirection(course_id, info_groups['napr'])
         class_id = getClass(dir_id, info_groups['groups'])
 
+        print(dir_id, class_id)
+
         weeks_day = ['понедельник', 'вторник', 'среда', 'четверг', 'пятница', 'суббота']
 
         examFlag = getExamSub(dir_id, subj)
         if(len(examFlag) > 0 and examFlag[0] == '+'):
             schs = getSchDate(work_id)
-            if(schs != False):
+            print(schs)
+            if(schs != []):
                 for i in range(len(schs)):
                     # or (schs[i][3].split(' ')[1] and schs[i][3].split(' ')[1]== 'неделя')
                     if(schs[i][3] != 'экзамен'):
-                        return 'для составления расписания экзаменов, необходимо, чтобы не было никаких занятий в этот период'
+                        return {'otv': 'error', 'mes':'для составления расписания экзаменов, необходимо, чтобы не было никаких занятий в этот период'}
 
                 schs_class = getSchClass(work_id, class_id)
+                print(schs_class)
                 if(schs_class != False):                
                     infoWorkID = getDataInfo(work_id)
                     start, end, acc_hour = infoWorkID[0]
@@ -665,7 +674,7 @@ def algo(work_id, info, type_inst):
                     places = getPlacesExam(work_id, count_seat)
 
                     if(places == False or places == []):
-                        return 'нет аудиторий для данного занятия! возможно стоит перестроить расписание!'
+                        return {'otv': 'error', 'mes':'нет аудиторий для данного занятия! возможно стоит перестроить расписание!'}
                     elif(len(places) > 0):
                         grafic_place = []
                         grafic = getGrafic(work_id)
@@ -695,18 +704,18 @@ def algo(work_id, info, type_inst):
                             if(flag):
                                 mb_date_free.append(mb_date_time[i])
 
-                        return mb_date_free
+                        return {'otv':'OK','data':mb_date_free}
                     else:
-                        return 'ошибка получения расписания аудиторий'
+                        return {'otv': 'error', 'mes':'ошибка получения расписания аудиторий'}
 
-                else: return 'ошибка получения расписания для группы, попробуйте позже'
+                else: return {'otv': 'error', 'mes':'ошибка получения расписания для группы, попробуйте позже'}
 
             else:
-                return 'ошибка получения расписания для фильтрации свободных аудиторий'
+                return {'otv': 'error', 'mes':'ошибка получения расписания для фильтрации свободных аудиторий'}
 
 
         else: 
-            return 'для данного предмета по плану не предусмотрена сдача экзамена'
+            return {'otv': 'error', 'mes':'для данного предмета по плану не предусмотрена сдача экзамена'}
 
     if(type_inst == 'uni' and type_less == 'min_exam'):
         # {'type': 'exam', 'groups': {'courseNumber': 1, 'napr': 'ФИИТ', 'groups': '09-331'}, 'sub': 'Дискретная математика'}
@@ -719,10 +728,10 @@ def algo(work_id, info, type_inst):
         examFlag = getMinExamSub(dir_id, subj)
         if(len(examFlag) > 0 and examFlag[0] == '+'):
             schs = getSchDate(work_id)
-            if(schs != False):
+            if(schs != []):
                 for i in range(len(schs)):
                     if(schs[i][3] != 'зачет'):
-                        return 'для составления расписания зачетов, необходимо, чтобы не было никаких занятий в этот период'
+                        return {'otv': 'error', 'mes':'для составления расписания зачетов, необходимо, чтобы не было никаких занятий в этот период'}
 
                 schs_class = getSchClass(work_id, class_id)
                 if(schs_class != False):                
@@ -766,7 +775,7 @@ def algo(work_id, info, type_inst):
                     places = getPlacesExam(work_id, count_seat)
                     
                     if(places == False or places == []):
-                        return 'нет аудиторий для данного занятия! возможно стоит перестроить расписание!'
+                        return {'otv': 'error', 'mes':'нет аудиторий для данного занятия! возможно стоит перестроить расписание!'}
                     elif(len(places) > 0):
                         grafic_place = []
                         grafic = getGrafic(work_id)
@@ -796,18 +805,18 @@ def algo(work_id, info, type_inst):
                             if(flag):
                                 mb_date_free.append(mb_date_time[i])
 
-                        return mb_date_free
+                        return {'otv':'OK','data':mb_date_free}
                     else:
-                        return 'ошибка получения расписания аудиторий'
+                        return {'otv': 'error', 'mes':'ошибка получения расписания аудиторий'}
 
-                else: return 'ошибка получения расписания для группы, попробуйте позже'
+                else: return {'otv': 'error', 'mes':'ошибка получения расписания для группы, попробуйте позже'}
 
             else:
-                return 'ошибка получения расписания для фильтрации свободных аудиторий'
+                return {'otv': 'error', 'mes':'ошибка получения расписания для фильтрации свободных аудиторий'}
 
 
         else: 
-            return 'для данного предмета по плану не предусмотрена сдача экзамена'
+            return {'otv': 'error', 'mes':'для данного предмета по плану не предусмотрена сдача зачета'}
 
 
 

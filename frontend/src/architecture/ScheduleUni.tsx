@@ -60,9 +60,24 @@ export class ScheduleUni extends Schedule{
         return ans
     }
 
-    public addClassPractic(group: string, period: string, name_sub: string){}
-    public addClassLab(group: string, period: string, name_sub: string){}
-    public addClassExam(group: string, name_sub: string){}
+    public addClassPractic(data: any){
+        let ans = apiPos({'work_id': this.id, 'data': data}, '/getLessonPracticUni')
+        return ans
+    }
+    public addClassLab(data: any){
+        let ans = apiPos({'work_id': this.id, 'data': data}, '/getLessonLabUni')
+        return ans
+    }
+
+    public addClassExam(data: any){
+        let ans = apiPos({'work_id': this.id, 'data': data}, '/getLessonExamUni')
+        return ans
+    }
+
+    public addClassMinExam(data:any){
+        let ans = apiPos({'work_id': this.id, 'data': data}, '/getLessonMinExamUni')
+        return ans
+    }
 
     public getClasses(data: any){
         let ans = apiPos({'work_id': this.id, 'data': data}, '/getScheduleUni')

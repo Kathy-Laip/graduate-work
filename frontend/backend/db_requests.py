@@ -361,7 +361,7 @@ def getSchDate(work_id):
         data = connection.get_data_from_table('select schedules.schedule.grafic_id, schedules.schedule.place_id, schedules.weeks.week_day, schedules.schedule.period, schedules.schedule.start_date from schedules.schedule inner join schedules.weeks on schedules.weeks.id_week = schedules.schedule.week_day where schedules.schedule.work_id={};'.format(work_id))
         if(data is not None):
             return data
-    except: return False
+    except: return []
 
 def getSchClass(work_id, class_id):
     try:

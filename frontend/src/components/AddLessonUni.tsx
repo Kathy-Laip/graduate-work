@@ -2,6 +2,7 @@ import React, {useState} from 'react'
 import { ScheduleUni } from '../architecture/ScheduleUni'
 import close from '../pictures/Close.svg'
 import { Direction } from './Direction'
+import { Groups } from './Groups'
 
 type AddLess = {
     close: Function,
@@ -28,6 +29,13 @@ export const AddLesonUni: React.FC<AddLess> = (props) => {
     const [dir, setdir] = useState<number[]>([]);
     const [dirs, setdirs] = useState<string[]>([`${props.info[0]} ${props.info[1]}`])
 
+    const [countGr, setCountGr] = useState<number>(1)
+    const [group, setGroups] = useState<string[]>([''])
+
+    const [selectLab, setSelectLab] = useState('')
+    const [selectExam, setSelectExam] = useState('')
+    const [selectMinExam, setSelectMinExam] = useState('')
+
     const handleChange = (event: React.ChangeEvent<HTMLInputElement|HTMLSelectElement>) => {
         if(event.target.id === 'count'){
             setCount(Number(event.target.value))
@@ -36,6 +44,17 @@ export const AddLesonUni: React.FC<AddLess> = (props) => {
             newdir[0] = `${props.info[0]} ${props.info[1]}`
             setdirs(newdir)
             setdir(dirses);
+        }
+        else if(event.target.id === 'countGr'){
+            setCountGr(Number(event.target.value))
+            const groups = Array.from({length: Number(event.target.value)}, () => '')
+            setGroups(groups)
+        }else if(event.target.id === 'selectLabLesson'){
+            setSelectLab(event.target.value)
+        }else if(event.target.id === 'selectExamLesson'){
+            setSelectExam(event.target.value)
+        }else if(event.target.id === 'selecMintExamLesson'){
+            setSelectMinExam(event.target.value)
         }
         else if(event.target.id === 'selectAddLesson'){
             if(event.target.value === 'lect'){
@@ -79,6 +98,7 @@ export const AddLesonUni: React.FC<AddLess> = (props) => {
             setSelectSub(event.target.value)
         }
     }
+    
 
     const getSubj = () => {
         let ans = props.sch.getSubject({'course': props.info[0], 'napr': props.info[1]})
@@ -104,7 +124,14 @@ export const AddLesonUni: React.FC<AddLess> = (props) => {
         })
     }
 
-    // console.log(dirs)
+    const addGroup = (num: number, data: string) => {
+        setGroups(prev => {
+            const ds = [...prev]
+            ds[num] = data
+            return ds
+        })
+    }
+
 
     const addLesson = () => {
         if(typeLect){
@@ -125,6 +152,46 @@ export const AddLesonUni: React.FC<AddLess> = (props) => {
                         }
                     }
                 }
+            }
+        }
+        if(typePractic){
+            if(selectSub === ''){
+                props.mes('Выберите предмет!', false)
+            }else{
+                let empty = group.filter(el => el === '')
+                if(empty.length > 0) props.mes('Пожалуйста, выберите группы для добавления занятия!', false)
+                else{
+                    let sets = new Set(group)
+                    if(sets.size !== countGr) props.mes('Пожалуйста, выберите разные группы для добавления занятия!', false)
+                    else{
+                        // {'courseNumber': 1, 'napr': 'ФИИТ', 'groups': ['09-331', '09-332']}
+                        props.add({type: 'practic', napr: {'courseNumber': props.info[0], 'napr': props.info[1], 'groups': group}, subj: selectSub})
+                    }
+                }
+            }
+        }
+        if(typePracticLab){
+            if(selectSub === ''){
+                props.mes('Выберите предмет!', false)
+            }else{
+                if(selectLab === '') props.mes('Пожалуйста, выберите группу для добавления занятия!', false)
+                else props.add({type: 'lab', napr : {'courseNumber': props.info[0], 'napr': props.info[1], 'groups': [selectLab]}, subj: selectSub})
+            }
+        }
+        if(typeExam){
+            if(selectSub === ''){
+                props.mes('Выберите предмет!', false)
+            }else{
+                if(selectExam === '') props.mes('Пожалуйста, выберите группу для добавления занятия!', false)
+                else props.add({type: 'exam', napr : {'courseNumber': props.info[0], 'napr': props.info[1], 'groups': selectExam}, subj: selectSub})
+            }
+        }
+        if(typeMinExam){
+            if(selectSub === ''){
+                props.mes('Выберите предмет!', false)
+            }else{
+                if(selectMinExam === '') props.mes('Пожалуйста, выберите группу для добавления занятия!', false)
+                else props.add({type: 'min_exam', napr : {'courseNumber': props.info[0], 'napr': props.info[1], 'groups': selectMinExam}, subj: selectSub})
             }
         }
     }
@@ -177,77 +244,84 @@ export const AddLesonUni: React.FC<AddLess> = (props) => {
                     )}
                     {typePractic && (
                         <>
-                            <select className="shadowBlack" id='selectClassLesson'
-                            onChange={handleChange}
-                            >
-                                <option value={''}>Выберите группу</option>
-                                <option value={''}>09-032</option>
-                            </select>
                             <select className="shadowBlack" id='selectSubLesson'
                             onChange={handleChange}
                             >
                                 <option value={''}>Выберите предмет</option>
-                                <option value={''}>Алгебра и геометрия</option>
+                                {sub.map(el => (<option value={`${el}`}>{el}</option>))}
                             </select>
+                            <div className="datePeriod">
+                                <span>Кол-во групп на занятии</span>
+                                <input type='number' min={1} max={Object.values(props.sch.settings!.arr_courses).map(el => Object.values(el))[Number(props.info[0]) - 1].filter(el => el[0] === props.info[1]).length} id='countGr' value={countGr} onChange={handleChange}></input>
+                            </div>
+                            {group.map((el, ind ) => (
+                                    <Groups number={ind} arr={Object.values(props.sch.settings!.arr_courses).map(el => Object.values(el))[Number(props.info[0]) - 1].filter(el => el[0] === props.info[1])} add={addGroup}/>
+                                ))}
                             <div className="onebtn">
-                                <button className="btn1 btnYellow"><span>Добавить</span></button>
+                                <button className="btn1 btnYellow" onClick={addLesson}><span>Добавить</span></button>
                             </div>
                         </>
                     )}
                     {typePracticLab && (
                         <>
-                            <select className="shadowBlack" id='selectClassLesson'
-                            onChange={handleChange}
-                            >
-                                <option value={''}>Выберите группу</option>
-                                <option value={''}>09-032</option>
-                            </select>
                             <select className="shadowBlack" id='selectSubLesson'
                             onChange={handleChange}
                             >
                                 <option value={''}>Выберите предмет</option>
-                                <option value={''}>Алгебра и геометрия</option>
+                                {sub.map(el => (<option value={`${el}`}>{el}</option>))}
+                            </select>
+                            <select className="shadowBlack" id='selectLabLesson'
+                            onChange={handleChange}
+                            >
+                                <option value={''}>Выберите группу</option>
+                                {Object.values(props.sch.settings!.arr_courses).map(el => Object.values(el))[Number(props.info[0]) - 1].filter(el => el[0] === props.info[1]).map(el => (
+                                    <option value={`${el[1]}`}>{el[1]}</option>
+                                ))}
                             </select>
                             <div className="onebtn">
-                                <button className="btn1 btnYellow"><span>Добавить</span></button>
+                                <button className="btn1 btnYellow" onClick={addLesson}><span>Добавить</span></button>
                             </div>
                         </>
                     )}
                     {typeExam && (
                         <>
-                            <select className="shadowBlack" id='selectClassLesson'
-                            onChange={handleChange}
-                            >
-                                <option value={''}>Выберите группу</option>
-                                <option value={''}>09-032</option>
-                            </select>
                             <select className="shadowBlack" id='selectSubLesson'
                             onChange={handleChange}
                             >
                                 <option value={''}>Выберите предмет</option>
-                                <option value={''}>Алгебра и геометрия</option>
+                                {sub.map(el => (<option value={`${el}`}>{el}</option>))}
+                            </select>
+                            <select className="shadowBlack" id='selectExamLesson'
+                            onChange={handleChange}
+                            >
+                                <option value={''}>Выберите группу</option>
+                                {Object.values(props.sch.settings!.arr_courses).map(el => Object.values(el))[Number(props.info[0]) - 1].filter(el => el[0] === props.info[1]).map(el => (
+                                    <option value={`${el[1]}`}>{el[1]}</option>
+                                ))}
                             </select>
                             <div className="onebtn">
-                                <button className="btn1 btnYellow"><span>Добавить</span></button>
+                                <button className="btn1 btnYellow" onClick={addLesson}><span>Добавить</span></button>
                             </div>
                         </>
                     )}
                     {typeMinExam && (
                         <>
-                            <select className="shadowBlack" id='selectClassLesson'
-                            onChange={handleChange}
-                            >
-                                <option value={''}>Выберите группу</option>
-                                <option value={''}>09-032</option>
-                            </select>
                             <select className="shadowBlack" id='selectSubLesson'
                             onChange={handleChange}
                             >
                                 <option value={''}>Выберите предмет</option>
-                                <option value={''}>Алгебра и геометрия</option>
+                                {sub.map(el => (<option value={`${el}`}>{el}</option>))}
+                            </select>
+                            <select className="shadowBlack" id='selecMintExamLesson'
+                            onChange={handleChange}
+                            >
+                                <option value={''}>Выберите группу</option>
+                                {Object.values(props.sch.settings!.arr_courses).map(el => Object.values(el))[Number(props.info[0]) - 1].filter(el => el[0] === props.info[1]).map(el => (
+                                    <option value={`${el[1]}`}>{el[1]}</option>
+                                ))}
                             </select>
                             <div className="onebtn">
-                                <button className="btn1 btnYellow"><span>Добавить</span></button>
+                                <button className="btn1 btnYellow" onClick={addLesson}><span>Добавить</span></button>
                             </div>
                         </>
                     )}

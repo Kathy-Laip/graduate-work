@@ -990,16 +990,68 @@ def addLessonLectUni():
         groups.append({'courseNumber': int(gr[0]), 'napr': gr[1]})
     ans = algo(work_id, {'type': 'lect', 'groups': groups, 'sub': subj}, 'uni')
     if(ans['otv'] == 'OK'):
-        # arr_list = {}
-        # for k in ans['data']['info'].keys():
-        #     print(ans['data']['info'][k])
-        #     less = []
-        #     for i in range(len(ans['data']['info'][k])):
-        #         print(ans['data']['info'][k][i])
-        #         less.append(ans['data']['info'][k][i].tolist())
-        #     arr_list[k] = less
-        # print(arr_list)
-        # return json.dumps({'otv': 'OK', 'data': {'count': ans['data']['count'], 'info': arr_list}})
+
+        return json.dumps({'otv': 'OK', 'data': ans['data']})
+    else:
+        return json.dumps({'otv': 'error', 'mes': ans['mes']})
+
+@app.route('/getLessonPracticUni', methods=['POST'])
+def getLessonPracticUni():
+    info = json.loads(request.get_data())
+    work_id = info['work_id']
+    subj = info['data']['subj']
+    napr = info['data']['napr']
+
+
+    ans = algo(work_id, {'type': 'practic', 'groups': napr, 'sub': subj}, 'uni')
+    if(ans['otv'] == 'OK'):
+
+        return json.dumps({'otv': 'OK', 'data': ans['data']})
+    else:
+        return json.dumps({'otv': 'error', 'mes': ans['mes']})
+
+@app.route('/getLessonLabUni', methods=['POST'])
+def getLessonLabUni():
+    info = json.loads(request.get_data())
+    work_id = info['work_id']
+    subj = info['data']['subj']
+    napr = info['data']['napr']
+
+
+    ans = algo(work_id, {'type': 'lab', 'groups': napr, 'sub': subj}, 'uni')
+    if(ans['otv'] == 'OK'):
+        return json.dumps({'otv': 'OK', 'data': ans['data']})
+    else:
+        return json.dumps({'otv': 'error', 'mes': ans['mes']})
+
+@app.route('/getLessonExamUni', methods=['POST'])
+def getLessonExamUni():
+    info = json.loads(request.get_data())
+    work_id = info['work_id']
+    subj = info['data']['subj']
+    napr = info['data']['napr']
+
+    print(info)
+
+
+    ans = algo(work_id, {'type': 'exam', 'groups': napr, 'sub': subj}, 'uni')
+    if(ans['otv'] == 'OK'):
+        return json.dumps({'otv': 'OK', 'data': ans['data']})
+    else:
+        return json.dumps({'otv': 'error', 'mes': ans['mes']})
+
+@app.route('/getLessonMinExamUni', methods=['POST'])
+def getLessonMinExamUni():
+    info = json.loads(request.get_data())
+    work_id = info['work_id']
+    subj = info['data']['subj']
+    napr = info['data']['napr']
+
+    print(info)
+
+
+    ans = algo(work_id, {'type': 'min_exam', 'groups': napr, 'sub': subj}, 'uni')
+    if(ans['otv'] == 'OK'):
         return json.dumps({'otv': 'OK', 'data': ans['data']})
     else:
         return json.dumps({'otv': 'error', 'mes': ans['mes']})
@@ -1017,7 +1069,7 @@ if __name__ == '__main__':
     # if('weeks' in ans):
     #     print(pd.DataFrame(ans['weeks']))
 
-    # info = {'type': 'practic', 'groups': {'courseNumber': 1, 'napr': 'ФИИТ', 'groups': ['09-331', '09-332']}, 'sub': 'Информационные технологии'}
+    # info = {'type': 'practic', 'groups': {'courseNumber': 2, 'napr': 'ФИИТ', 'groups': ['09-231']}, 'sub': 'Математическая логика и теория алгоритмов'}
     # ans = algo(work_id, info, 'uni')
     # print(ans)
     # if('full' in ans):
