@@ -1,11 +1,14 @@
 import React from "react";
+import { User } from "../architecture/User";
 import acc from '../pictures/Vector.svg'
 
 type SideType = {
-    login: string
+    login: string,
+    user: User
 }
 
 export const SideBar: React.FC<SideType> = (props) => {
+    console.log(props.user.openSchedules)
     return(
         <div className="sideBar">
             <img src={acc}/>
@@ -13,9 +16,9 @@ export const SideBar: React.FC<SideType> = (props) => {
             <div className="openWorks bdR5">
                 <h3 className="h3">Рабочие вкладки:</h3>
                 <div className="openWorksBlock">
-                    <div className="theme">
-                        <span>Расписание 1 семестр 2023-2024, ИВМиИТ КФУ</span>
-                    </div>
+                    {props.user.openSchedules ? (
+                        props.user.openSchedules.map(el => (<div className="theme"><span>{el.name}</span></div>))
+                    ): (<></>)}
                 </div>
             </div>
         </div>

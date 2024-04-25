@@ -229,7 +229,7 @@ export const WorkSchedule: React.FC<WorkSch> = (props) => {
     
     return (
         <div className="workScheduleMain">
-            <SideBar login={props.user.login}/>
+            <SideBar login={props.user.login} user={props.user}/>
             
             {setUni && props.user.currentSchedule! instanceof ScheduleUni
              && (<ScheduleBlockSettingsUni onSettingsFalse={onSettingsFalse} sch={props.user.currentSchedule} mes={message} user={props.user}/>)}

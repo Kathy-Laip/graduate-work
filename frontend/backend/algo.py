@@ -52,7 +52,6 @@ def is_time_slot_available(room, schedule):
     week = room[2]
     count = 0
     
-    print(schedule)
     for item in schedule:
         if item[2] == week:
             count += 1
@@ -284,7 +283,7 @@ def algo(work_id, info, type_inst):
 
         count_weeks = -1
         count_times = -1
-        print(count_lessons, weeks)
+        
         if(count_lessons < weeks):
             count_weeks = count_lessons 
         else:
@@ -312,12 +311,12 @@ def algo(work_id, info, type_inst):
                     course_id = getCourseID(info_groups[i]['courseNumber'], work_id)
                     dir_id = getDirection(course_id, info_groups[i]['napr'])
                     ans = getSchDir(work_id, dir_id)
-                    print(course_id, dir_id, ans)
+                    
                     if(ans != False):
                         schs_napr.append(ans)
                     elif (ans == False):
                         return {'otv': 'error', 'mes':'ошибка получения расписаний для направлений, попробуйте позже!'}
-                print(schs_napr)
+                
 
                 grafic_place = []
                 # преобразование, в какие пары работают какие аудитории
@@ -366,7 +365,7 @@ def algo(work_id, info, type_inst):
         course_id = getCourseID(info_groups['courseNumber'], work_id)
         dir_id = getDirection(course_id, info_groups['napr'])
         ans = getSubjPractic(dir_id, subj)
-        print(ans)
+        
         if(ans == False or len(ans[0]) == 0):
             return {'otv': 'error', 'mes':'у данного направления нет практических занятий по данному предмету'}
         else: 
@@ -464,7 +463,6 @@ def algo(work_id, info, type_inst):
                     count_int = int(count_times)
                     count_else = count_times - count_int
 
-                    print(schs_napr)
 
                     all_ava_place['full'] = fullLessonLectWithSchs(grafic_place, schs, schs_napr)
                 
@@ -626,28 +624,27 @@ def algo(work_id, info, type_inst):
         dir_id = getDirection(course_id, info_groups['napr'])
         class_id = getClass(dir_id, info_groups['groups'])
 
-        print(dir_id, class_id)
 
         weeks_day = ['понедельник', 'вторник', 'среда', 'четверг', 'пятница', 'суббота']
 
         examFlag = getExamSub(dir_id, subj)
         if(len(examFlag) > 0 and examFlag[0] == '+'):
             schs = getSchDate(work_id)
-            print(schs)
-            if(schs != []):
+
+            if(len(schs) >= 0):
                 for i in range(len(schs)):
                     # or (schs[i][3].split(' ')[1] and schs[i][3].split(' ')[1]== 'неделя')
                     if(schs[i][3] != 'экзамен'):
                         return {'otv': 'error', 'mes':'для составления расписания экзаменов, необходимо, чтобы не было никаких занятий в этот период'}
 
                 schs_class = getSchClass(work_id, class_id)
-                print(schs_class)
-                if(schs_class != False):                
+                
+                if(len(schs_class) >= 0):                
                     infoWorkID = getDataInfo(work_id)
                     start, end, acc_hour = infoWorkID[0]
 
                     date_range = [start + timedelta(days=x) for x in range((end - start).days + 1)]
-                    print(schs_class)
+                    
                     busy_date = []
                     for i in range(len(schs_class)):
                         if(schs_class[i][4] not in busy_date):
@@ -680,13 +677,14 @@ def algo(work_id, info, type_inst):
                         grafic = getGrafic(work_id)
                         # преобразование, в какие пары работают какие аудитории
                         for i in range(len(places)):
+                            
                             place_start = datetime.strptime(places[i][5], '%H:%M')
                             place_end = datetime.strptime(places[i][6], '%H:%M')
                             for j in range(len(grafic)):
                                 grafic_start = datetime.strptime(grafic[j][1], '%H:%M')
                                 grafic_end = datetime.strptime(grafic[j][2], '%H:%M')
                                 if(place_start <= grafic_start and grafic_end <= place_end):
-                                    grafic_place.append([places[i][0], places[i][1], places[i][2], grafic[j]])
+                                    grafic_place.append([places[i][0], places[i][1], places[i][2], [grafic[j][0], grafic[j][1], grafic[j][2]]])
 
                         mb_date_time = []
 
@@ -728,13 +726,13 @@ def algo(work_id, info, type_inst):
         examFlag = getMinExamSub(dir_id, subj)
         if(len(examFlag) > 0 and examFlag[0] == '+'):
             schs = getSchDate(work_id)
-            if(schs != []):
+            if(len(schs) >= 0):
                 for i in range(len(schs)):
                     if(schs[i][3] != 'зачет'):
                         return {'otv': 'error', 'mes':'для составления расписания зачетов, необходимо, чтобы не было никаких занятий в этот период'}
 
                 schs_class = getSchClass(work_id, class_id)
-                if(schs_class != False):                
+                if(len(schs_class) >= 0):                
                     infoWorkID = getDataInfo(work_id)
                     start, end, acc_hour = infoWorkID[0]
 
@@ -781,13 +779,14 @@ def algo(work_id, info, type_inst):
                         grafic = getGrafic(work_id)
                         # преобразование, в какие пары работают какие аудитории
                         for i in range(len(places)):
+                            
                             place_start = datetime.strptime(places[i][5], '%H:%M')
                             place_end = datetime.strptime(places[i][6], '%H:%M')
                             for j in range(len(grafic)):
                                 grafic_start = datetime.strptime(grafic[j][1], '%H:%M')
                                 grafic_end = datetime.strptime(grafic[j][2], '%H:%M')
                                 if(place_start <= grafic_start and grafic_end <= place_end):
-                                    grafic_place.append([places[i][0], places[i][1], places[i][2], grafic[j]])
+                                    grafic_place.append([places[i][0], places[i][1], places[i][2], [grafic[j][0], grafic[j][1], grafic[j][2]]])
 
                         mb_date_time = []
 

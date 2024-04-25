@@ -4,6 +4,7 @@ from db_requests import *
 import json
 from algo import *
 import pandas as pd
+import datetime
 
 
 app = Flask(__name__)
@@ -1031,11 +1032,12 @@ def getLessonExamUni():
     subj = info['data']['subj']
     napr = info['data']['napr']
 
-    print(info)
 
 
     ans = algo(work_id, {'type': 'exam', 'groups': napr, 'sub': subj}, 'uni')
     if(ans['otv'] == 'OK'):
+        for i in range(len(ans['data'])):
+            ans['data'][i][0] = ans['data'][i][0].strftime("%Y-%m-%d")
         return json.dumps({'otv': 'OK', 'data': ans['data']})
     else:
         return json.dumps({'otv': 'error', 'mes': ans['mes']})
@@ -1047,11 +1049,12 @@ def getLessonMinExamUni():
     subj = info['data']['subj']
     napr = info['data']['napr']
 
-    print(info)
 
 
     ans = algo(work_id, {'type': 'min_exam', 'groups': napr, 'sub': subj}, 'uni')
     if(ans['otv'] == 'OK'):
+        for i in range(len(ans['data'])):
+            ans['data'][i][0] = ans['data'][i][0].strftime("%Y-%m-%d")
         return json.dumps({'otv': 'OK', 'data': ans['data']})
     else:
         return json.dumps({'otv': 'error', 'mes': ans['mes']})

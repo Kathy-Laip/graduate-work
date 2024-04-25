@@ -4,6 +4,8 @@ import {Link, useNavigate} from 'react-router-dom'
 import {ISCH} from '../interfaces/interface'
 import {User} from '../architecture/User'
 import { ScheduleFabrica } from "../architecture/ScheduleFabrica"
+import { ScheduleUni } from "../architecture/ScheduleUni";
+import { ScheduleSchool } from "../architecture/ScheduleSchool";
 
 
 type BlockSchedule = {
@@ -20,28 +22,14 @@ export const ScheduleBlock: React.FC<BlockSchedule> = (props) => {
 
     const linkScheduleWork = () => {
         props.user.currentSchedule = props.user.listOfSchedules.filter(el => el !== 'ERROR_CREATE' ? el.id === props.id : [])[0]
+        if(props.user.currentSchedule !== undefined && props.user.currentSchedule !== "ERROR_CREATE") {
+            let has = props.user.openSchedules.filter(el => el.id === props.id)
+            if(has.length === 0) props.user.openSchedules.push(props.user.currentSchedule)
+        } 
+        
         localStorage.setItem('user', JSON.stringify(props.user))
         navigate('/workBook/workSchedule')
     }
-
-    // useEffect(() => {
-    //     const saved = JSON.parse(localStorage.getItem('user')!)
-        
-    //     props.user.login = saved.login
-    //     props.user.password = saved.password
-    //     let schFabrica = new ScheduleFabrica()
-    //     console.log(saved)
-    //     let type = saved.currentSchedule !== undefined ? saved.currentSchedule.type === 'университет' ? 'uni' : 'school' : ''
-    //     if(saved.currentSchedule){
-    //         props.user.currentSchedule = schFabrica.create(saved.currentSchedule.id, saved.currentSchedule.theme, type, saved.currentSchedule.date)
-    //     }
-    //     console.log(props.user)
-    //   }, [])
-
-    // useEffect(() => {
-    //     localStorage.setItem('user', JSON.stringify(props.user))
-    //     console.log(props.user)
-    // }, [props.user.currentSchedule])
 
 
     return (

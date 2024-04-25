@@ -22,6 +22,9 @@ export const Offers: React.FC<Offs> = (props) => {
     const [half, setHalf] = useState([])
     const [weeks, setWeeks] = useState([])
 
+    const [exam, setExam] = useState([])
+    const [minExam, setMinExam] = useState([])
+
     const getLesson = () => {
         if(props.data.type === 'lect'){
             let ans = props.sch.addClassLect(props.data)
@@ -29,6 +32,7 @@ export const Offers: React.FC<Offs> = (props) => {
                 if(answer.otv === 'OK'){
                     setIsLoading(true)
                     setDataLess(answer.data.count)
+                    console.log(answer.data)
                     if(answer.data.info.full) setFull(answer.data.info.full)
                     if(answer.data.info.half) setHalf(answer.data.info.half)
                     if(answer.data.info.weeks) setWeeks(answer.data.info.weeks)
@@ -50,10 +54,11 @@ export const Offers: React.FC<Offs> = (props) => {
                         setTypeLess(arr)
                         setSelectedLessons(arr[0])
                     }
-                    if(answer.data.countLess){
+                    if(answer.data.count.countLess){
                         let arr = []
                         if(answer.data.info.half) arr.push(['half', 1, ''])
                         if(answer.data.info.weeks) arr.push(['weeks', 1, ''])
+                        setTypeLess(arr)
                         setSelectedLessons(arr[0])
                     }
                     setIsLoading(false)
@@ -89,10 +94,11 @@ export const Offers: React.FC<Offs> = (props) => {
                         setTypeLess(arr)
                         setSelectedLessons(arr[0])
                     }
-                    if(answer.data.countLess){
+                    if(answer.data.count.countLess){
                         let arr = []
                         if(answer.data.info.half) arr.push(['half', 1, ''])
                         if(answer.data.info.weeks) arr.push(['weeks', 1, ''])
+                        setTypeLess(arr)
                         setSelectedLessons(arr[0])
                     }
                     setIsLoading(false)
@@ -128,10 +134,11 @@ export const Offers: React.FC<Offs> = (props) => {
                         setTypeLess(arr)
                         setSelectedLessons(arr[0])
                     }
-                    if(answer.data.countLess){
+                    if(answer.data.count.countLess){
                         let arr = []
                         if(answer.data.info.half) arr.push(['half', 1, ''])
                         if(answer.data.info.weeks) arr.push(['weeks', 1, ''])
+                        setTypeLess(arr)
                         setSelectedLessons(arr[0])
                     }
                     setIsLoading(false)
@@ -148,7 +155,8 @@ export const Offers: React.FC<Offs> = (props) => {
                     setFull([])
                     setHalf([])
                     setWeeks([])
-                    console.log(answer.data)
+                    
+                    setDataLess({'exam': '0'})
                     setIsLoading(false)
                 }else if(answer.otv === 'error'){
                     props.mes(answer.mes, false)
@@ -163,7 +171,9 @@ export const Offers: React.FC<Offs> = (props) => {
                     setFull([])
                     setHalf([])
                     setWeeks([])
-                    console.log(answer.data)
+                    
+                    setDataLess({'minExam': '0'})
+                    setMinExam(answer.data)
                     setIsLoading(false)
                 }else if(answer.otv === 'error'){
                     props.mes(answer.mes, false)
@@ -184,6 +194,10 @@ export const Offers: React.FC<Offs> = (props) => {
     const selectLess = (el: Array<string|number>) => {
         setSelectedLessons(el)
     }
+
+    console.log(typeLess,selectedLessons)
+
+    
     
     return (
         <>
@@ -204,9 +218,13 @@ export const Offers: React.FC<Offs> = (props) => {
                                     ): dataLess.full ? (
                                         <span>Необходимо разместить {dataLess.full == 1? (<span>{dataLess.full} занятие</span>) : (<span>{dataLess.full} занятия</span>)} на неделе.
                                         Посмотрите на предлагаемые варианты размещения ниже и выберите наиболее удобные.</span>
-                                    ): (<></>)}
-                                    {dataLess.countLess ? (
+                                    ): 
+                                    dataLess.countLess ? (
                                         <span>Необходимо разместить {dataLess.countLess} занятий в течение семестра. Посмотрите на предлагаемые варианты размещения ниже и выберите наиболее удобные.</span>
+                                    ):dataLess.exam ? (
+                                        <span>Необходимо поставить экзамен. Посмотрите на предлагаемые варианты размещения ниже и выберите наиболее удобный.</span>
+                                    ):dataLess.minExam ? (
+                                        <span>Необходимо поставить экзамен. Посмотрите на предлагаемые варианты размещения ниже и выберите наиболее удобный.</span>
                                     ): (
                                         <></>
                                     )}
@@ -216,13 +234,14 @@ export const Offers: React.FC<Offs> = (props) => {
                         {isLoading === false && (
                             <div className='suggestions'>
                                 <div className='countLessons'>
-                                    {typeLess.map((el, ind) =>{
+                                    {typeLess.length > 0 && typeLess.map((el, ind) =>{
                                         if(el[0] === 'full') return (<div className='btn1 btnBlue bdR5' id={`${ind}`} onClick={() => selectLess(el)}>{el[1]} занятие на неделе</div>)
                                         else if(el[0] == 'half') return (<div className='btn1 btnBlue bdR5' id={`${ind}`} onClick={() => selectLess(el)}>Занятие с периодичностью чет/нечет</div>)
                                         else if(el[0] == 'weeks') return (<div className='btn1 btnBlue bdR5' id={`${ind}`} onClick={() => selectLess(el)}>Занятие с особой периодичностью</div>)
                                         } 
                                     )}
-                                    
+                                    {exam.length > 0 && (<div className='btn1 btnBlue bdR5' id='exam' >Экзамен</div>)}
+                                    {minExam.length > 0 && (<div className='btn1 btnBlue bdR5' id='exam' >Зачет</div>)}
                                 </div>
                                 <div id='suggs'>
                                     {selectedLessons[0] && selectedLessons[0] === 'full' ? (
@@ -261,8 +280,35 @@ export const Offers: React.FC<Offs> = (props) => {
                                             </label>
                                         </div>)) }
                                         </form>
-                                    ):                                    
+                                    ): exam.length > 0 ?                                 
                                      (
+                                        <form>
+                                        {/* // ['2024-07-26', '765', '1211', 'пятница', ['315', '12:10', '13:40']] */}
+                                        {exam?.map((el, ind) => (<div className='checkboxSugs bdR5 btnYellow'>
+                                            <input type='radio' name='exam' id={`${ind}`}/>
+                                            <label htmlFor={`${ind}`}>
+                                                <span>Дата: {el[0]}</span>
+                                                <span>Аудитория: {el[2]}</span>
+                                                <span>Время: {el[4][1]} - {el[4][2]}</span>
+                                                <span>{el[3]}</span>
+                                            </label>
+                                        </div>)) }
+                                        </form>
+                                    ): minExam.length > 0 ?                                 
+                                    (
+                                       <form>
+                                       {/* // ['2024-07-26', '765', '1211', 'пятница', ['315', '12:10', '13:40']] */}
+                                       {minExam?.map((el, ind) => (<div className='checkboxSugs bdR5 btnYellow'>
+                                           <input type='radio' name='minExam' id={`${ind}`}/>
+                                           <label htmlFor={`${ind}`}>
+                                               <span>Дата: {el[0]}</span>
+                                               <span>Аудитория: {el[2]}</span>
+                                               <span>Время: {el[4][1]} - {el[4][2]}</span>
+                                               <span>{el[3]}</span>
+                                           </label>
+                                       </div>)) }
+                                       </form>
+                                   ):(
                                         <></>
                                     )}
                                 </div>

@@ -72,7 +72,7 @@ export const WorkPlace: React.FC<WorkPlaceProps> = (props) => {
     
     return (
        <div className="workMain">
-        <SideBar login={props.user.login}/>
+        <SideBar login={props.user.login} user={props.user}/>
         <div className="bodyWork">
             <div className="nav">
                 <div className="leftNav">

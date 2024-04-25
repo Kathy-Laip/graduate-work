@@ -131,23 +131,62 @@ export const MenuSchUni: React.FC<Menu> = (props) => {
                                 ))}
                             </>
                         ))}
-                        {/* ['8:30', '10:00', '216', 'Гайнуллина А.Р.', 'Алгебра и геометрия', 'вторник', null, 'каждую неделю', 'lect', 'ФИИТ', null] */}
-                        {/* {el[8] === 'lect' ? 'var(--main-blue)' : el[8] === 'practic' ? '--main-green-grand': '--main-yellow'} */}
+                        
                         {props.sch.listOfClasses!.map(el => {
-                            if(el[10] === null && el[9] !== null && el[8] == 'lect'){
-                                return coutGroups.map((gr, ind) => (
-                                    <Lesson key={ind} color={'var(--main-blue)'} text={{'name': el[4], 'place': el[2], 'teach': el[3], 'period': el[7]}} top={typeof(el[0]) === 'string' ? getTop(arrHours, el[0]) : '0px'} left={72 + (week_small.indexOf(el[5])*coutGroups.length*180) + ind*180 +'px'} height={minss + 'px'}/>
-                                ))
+                            if(el[10] !== null && el[9] !== null && (el[7] === 'зачет' || el[7] === 'экзамен')){
+                                return coutGroups.map((gr, ind) => {if(gr[1] == el[10]) return (
+                                    <Lesson key={ind} color={'var(--main-yellow)'} text={{'name': el[4], 'place': el[2], 'teach': el[3], 'period': el[7]}} top={typeof(el[0]) === 'string' ? getTop(arrHours, el[0]) : '0px'} left={72 + (week_small.indexOf(el[5])*coutGroups.length*180) + ind*180 +'px'} height={minss + 'px'} data={el[6]}/>
+                                )})
+                            }
+                            else if(el[10] === null && el[9] !== null && el[8] == 'lect'){
+                                if(el[7] == 'чет'){ // 89
+                                    return coutGroups.map((gr, ind) => (
+                                        <Lesson key={ind} color={'var(--main-blue)'} text={{'name': el[4], 'place': el[2], 'teach': el[3], 'period': el[7]}} top={typeof(el[0]) === 'string' ? getTop(arrHours, el[0]) : '0px'} left={72 + (week_small.indexOf(el[5])*coutGroups.length*180) + ind*180 +'px'} height={minss + 'px'} width={'89px'}/>
+                                    ))
+                                }
+                                else if(el[7] == 'нечет'){ // 89
+                                    return coutGroups.map((gr, ind) => (
+                                        <Lesson key={ind} color={'var(--main-blue)'} text={{'name': el[4], 'place': el[2], 'teach': el[3], 'period': el[7]}} top={typeof(el[0]) === 'string' ? getTop(arrHours, el[0]) : '0px'} left={72 + (week_small.indexOf(el[5])*coutGroups.length*180) + ind*180 + 89 +'px'} height={minss + 'px'} width={'89px'}/>
+                                    ))
+                                } else{
+                                    return coutGroups.map((gr, ind) => (
+                                        <Lesson key={ind} color={'var(--main-blue)'} text={{'name': el[4], 'place': el[2], 'teach': el[3], 'period': el[7]}} top={typeof(el[0]) === 'string' ? getTop(arrHours, el[0]) : '0px'} left={72 + (week_small.indexOf(el[5])*coutGroups.length*180) + ind*180 +'px'} height={minss + 'px'}/>
+                                    ))
+
+                                }
                             }
                             else if(el[10] !== null && el[9] !== null && el[8] == 'lab'){
-                                return coutGroups.map((gr, ind) => {if(gr[1] == el[10]) return (
-                                    <Lesson key={ind} color={'var(--main-orange)'} text={{'name': el[4], 'place': el[2], 'teach': el[3], 'period': el[7]}} top={typeof(el[0]) === 'string' ? getTop(arrHours, el[0]) : '0px'} left={72 + (week_small.indexOf(el[5])*coutGroups.length*180) + ind*180 +'px'} height={minss + 'px'}/>
-                                )})
+                                if(el[7] == 'чет'){ // 89
+                                    return coutGroups.map((gr, ind) => (
+                                        <Lesson key={ind} color={'var(--main-orange)'} text={{'name': el[4], 'place': el[2], 'teach': el[3], 'period': el[7]}} top={typeof(el[0]) === 'string' ? getTop(arrHours, el[0]) : '0px'} left={72 + (week_small.indexOf(el[5])*coutGroups.length*180) + ind*180 +'px'} height={minss + 'px'} width={'89px'}/>
+                                    ))
+                                }
+                                else if(el[7] == 'нечет'){ // 89
+                                    return coutGroups.map((gr, ind) => (
+                                        <Lesson key={ind} color={'var(--main-orange)'} text={{'name': el[4], 'place': el[2], 'teach': el[3], 'period': el[7]}} top={typeof(el[0]) === 'string' ? getTop(arrHours, el[0]) : '0px'} left={72 + (week_small.indexOf(el[5])*coutGroups.length*180) + ind*180 + 89 +'px'} height={minss + 'px'} width={'89px'}/>
+                                    ))
+                                } else{
+                                    return coutGroups.map((gr, ind) => {if(gr[1] == el[10]) return (
+                                        <Lesson key={ind} color={'var(--main-orange)'} text={{'name': el[4], 'place': el[2], 'teach': el[3], 'period': el[7]}} top={typeof(el[0]) === 'string' ? getTop(arrHours, el[0]) : '0px'} left={72 + (week_small.indexOf(el[5])*coutGroups.length*180) + ind*180 +'px'} height={minss + 'px'}/>
+                                    )})
+                                }
                             }
                             else if(el[10] !== null && el[9] !== null && el[8] == 'practic'){
-                                return coutGroups.map((gr, ind) => {if(gr[1] == el[10]) return (
-                                    <Lesson key={ind} color={'var(--main-yellow)'} text={{'name': el[4], 'place': el[2], 'teach': el[3], 'period': el[7]}} top={typeof(el[0]) === 'string' ? getTop(arrHours, el[0]) : '0px'} left={72 + (week_small.indexOf(el[5])*coutGroups.length*180) + ind*180 +'px'} height={minss + 'px'}/>
-                                )})
+                                if(el[7] == 'чет'){ // 89
+                                    return coutGroups.map((gr, ind) => (
+                                        <Lesson key={ind} color={'var(--main-yellow)'} text={{'name': el[4], 'place': el[2], 'teach': el[3], 'period': el[7]}} top={typeof(el[0]) === 'string' ? getTop(arrHours, el[0]) : '0px'} left={72 + (week_small.indexOf(el[5])*coutGroups.length*180) + ind*180 +'px'} height={minss + 'px'} width={'89px'}/>
+                                    ))
+                                }
+                                else if(el[7] == 'нечет'){ // 89
+                                    return coutGroups.map((gr, ind) => (
+                                        <Lesson key={ind} color={'var(--main-yellow)'} text={{'name': el[4], 'place': el[2], 'teach': el[3], 'period': el[7]}} top={typeof(el[0]) === 'string' ? getTop(arrHours, el[0]) : '0px'} left={72 + (week_small.indexOf(el[5])*coutGroups.length*180) + ind*180 + 89 +'px'} height={minss + 'px'} width={'89px'}/>
+                                    ))
+                                }else{
+                                    return coutGroups.map((gr, ind) => {if(gr[1] == el[10]) return (
+                                        <Lesson key={ind} color={'var(--main-yellow)'} text={{'name': el[4], 'place': el[2], 'teach': el[3], 'period': el[7]}} top={typeof(el[0]) === 'string' ? getTop(arrHours, el[0]) : '0px'} left={72 + (week_small.indexOf(el[5])*coutGroups.length*180) + ind*180 +'px'} height={minss + 'px'}/>
+                                    )})
+
+                                }
                             }
                         })}
                     </>}

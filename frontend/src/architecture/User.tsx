@@ -9,7 +9,7 @@ export class User{
     public password: string
 
     public currentSchedule?: ScheduleSchool | ScheduleUni | 'ERROR_CREATE'
-    public openSchedules?: Schedule[]
+    public openSchedules: (ScheduleSchool|ScheduleUni)[] = []
 
     public listOfSchedules: (ScheduleSchool|ScheduleUni|'ERROR_CREATE')[] = []
     
