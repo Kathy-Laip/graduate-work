@@ -40,6 +40,7 @@ export const Exit: React.FC<Exits> = (props) => {
         console.log(saved)
         props.user.login = saved.login
         props.user.password = saved.password
+        props.user.openSchedules = []
       }, [])
 
     useEffect(() => {

@@ -28,6 +28,7 @@ export const ScheduleBlock: React.FC<BlockSchedule> = (props) => {
         } 
         
         localStorage.setItem('user', JSON.stringify(props.user))
+        
         navigate('/workBook/workSchedule')
     }
 

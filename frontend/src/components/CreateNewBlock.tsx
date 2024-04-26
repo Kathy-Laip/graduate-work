@@ -77,7 +77,11 @@ export const CreateNewBlock: React.FC<Message> = (props) => {
                 if(answer.otv === 'error_data' || answer.otv === 'error_add'){
                     setMes('Ошибка добавления расписания! Попробуйте позже...')
                     switchBlock('newMessage')
-                }else if(answer.otv === 'OK'){
+                }else if(answer.otv === 'error_theme'){
+                    setMes('Расписание с такой темой уже есть! Выберите другую тему для расписания!')
+                    switchBlock('newMessage')
+                }
+                else if(answer.otv === 'OK'){
                     setMes('Новое расписание успешно добавлено!')
                     document.getElementById('addProject')!.style.display = 'none'
                     isUpdate(true)

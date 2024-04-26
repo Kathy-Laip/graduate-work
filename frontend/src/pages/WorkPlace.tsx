@@ -9,6 +9,8 @@ import { ScheduleFabrica } from "../architecture/ScheduleFabrica"
 import { ScheduleSettings } from "../architecture/ScheduleSettings";
 import {ISCH} from '../interfaces/interface'
 import { Schedule } from "../architecture/Schedule";
+import { ScheduleSchool } from "../architecture/ScheduleSchool";
+import { ScheduleUni } from "../architecture/ScheduleUni";
 
 type WorkPlaceProps = {
     user: User
@@ -18,13 +20,14 @@ export const WorkPlace: React.FC<WorkPlaceProps> = (props) => {
     const [isLoading, setIsLoading] = useState(true);
     const [get, setGet] = useState(true)
     const [dataCurSch, setDataCurSch] = useState<ISCH>({theme: '', type: '', date: ''})
+    const [openSCH, setOpenSCH] = useState<(ScheduleUni|ScheduleSchool)[]>([])
 
     const change = (theme: string, type: string, date: string) => {
         setDataCurSch({theme: theme, type: type, date: date})
     }
 
     
-    const updateSchs = () => {
+    const updateSchs = (saved:any) => {
         let ans = props.user.getListOfSchedules()
         ans.then(answer => {
             if(answer.otv === 'OK'){
@@ -41,6 +44,16 @@ export const WorkPlace: React.FC<WorkPlaceProps> = (props) => {
                         if(curSCH instanceof Schedule){
                             props.user.listOfSchedules.push(curSCH)
                         }
+                        if(saved.openSchedules !== undefined){
+                            for(let openSch of saved.openSchedules){
+                                if(curSCH instanceof Schedule && curSCH.id === openSch.id){
+                                    let has = props.user.openSchedules.filter(el => el.id === openSch.id)
+                                    if(has.length === 0) props.user.openSchedules.push(curSCH)
+                                    // props.user.openSchedules.push(curSCH)
+                                }
+                            }
+                            setOpenSCH(props.user.openSchedules)
+                        }
                     }else{
                         let curSCH = schFabrica.create(sch.id, sch.theme, type, sch.date)
                         if(sch.cafedras &&  curSCH instanceof Schedule){
@@ -48,6 +61,15 @@ export const WorkPlace: React.FC<WorkPlaceProps> = (props) => {
                         }
                         if(curSCH instanceof Schedule){
                             props.user.listOfSchedules.push(curSCH)
+                        }
+                        if(saved.openSchedules !== undefined){
+                            for(let openSch of saved.openSchedules){
+                                if(curSCH instanceof Schedule && curSCH.id === openSch.id){
+                                    let has = props.user.openSchedules.filter(el => el.id === openSch.id)
+                                    if(has.length === 0) props.user.openSchedules.push(curSCH)
+                                }
+                            }
+                            setOpenSCH(props.user.openSchedules)
                         }
                     }
                 }
@@ -57,22 +79,32 @@ export const WorkPlace: React.FC<WorkPlaceProps> = (props) => {
             }
         })
     }
+
     (async () => {
         if(get){
             const saved = JSON.parse(localStorage.getItem('user')!)
             props.user.login = saved.login
             props.user.password = saved.password
-            updateSchs()
+            props.user.openSchedules = []
+            updateSchs(saved)
             setGet(false)
         }
     })()
 
-    // console.log(props.user.listOfSchedules)
+    const deleteId = (id: number) => {
+        setOpenSCH(prev => {
+            let ans = [...prev]
+            ans = ans.filter(el => el.id !== id)
+            props.user.openSchedules = ans
+            localStorage.setItem('user', JSON.stringify(props.user))    
+            return ans
+        })    
+    }
 
     
     return (
        <div className="workMain">
-        <SideBar login={props.user.login} user={props.user}/>
+        <SideBar login={props.user.login} user={props.user} open={openSCH} deleteId={deleteId}/>
         <div className="bodyWork">
             <div className="nav">
                 <div className="leftNav">

@@ -61,6 +61,8 @@ def addSchedule():
     userID = getUser(login, password)
 
     if(typeID and userID):
+        if(len(checkTheme(userID, theme)) > 0):
+            return json.dumps({'otv': 'error_theme'})
         if(addProject(userID, theme, date, typeID)):
             return json.dumps({'otv': 'OK'})
         else:

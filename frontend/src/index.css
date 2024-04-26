@@ -152,6 +152,21 @@ input::placeholder{
   margin-bottom: 1rem;
 }
 
+.theme .underSpan{
+  margin-bottom: 0.2rem;
+  width: 50%;
+}
+
+.themeClose #close{
+  margin: 0;
+  position: relative;
+  right: -5%;
+}
+
+.theme .underSpan:hover{
+  color: var(--main-blue-blue);
+}
+
 .exitSignUnderLine{
   width: 100%;
 }
@@ -301,7 +316,7 @@ input::placeholder{
 
 .openWorksBlock .theme{
   width: 80%;
-  margin: 0.7rem 0.7rem;
+  margin: 0.7rem 0rem 0.7rem 0.5rem;
   white-space: nowrap;
   overflow-x: hidden;
   text-overflow: ellipsis;
@@ -573,14 +588,31 @@ input::placeholder{
   width: 55%;
 }
 
+.themeClose{
+  display: flex;
+  flex-direction: row;
+}
+
 #addProject #close,
 #editProject #close,
 #mesBloack #close,
 #mesBloackCONFIRM #close,
 #settings #close,
-#blockAddLessUni #close{
+#blockAddLessUni #close, 
+.themeClose #close{
   width: 1rem;
   height: 1rem;
+}
+
+.themeClose #close{
+  width: 1rem;
+  height: 1rem;
+  margin: auto 0;
+  transition: top ease-in 0.5ms;
+}
+
+.themeClose #close:hover{
+  top: -5px;
 }
 
 #addProject #close:hover,
@@ -963,6 +995,43 @@ form{
   visibility: visible;
 }
 
+
+.theme .tool-text{
+  display: inline-block;
+  flex-wrap: wrap;
+  flex-direction: column;
+  white-space: wrap;
+
+  visibility: hidden;
+
+  position: absolute;
+  
+  z-index: 2;
+  width: 100%;
+  color: white;
+  font-size: 12px;
+  background-color: #192733;
+  border-radius: 10px;
+  padding: 10px 15px 10px 15px;
+
+  width: 15%;
+}
+
+#dow:hover .tool-text,
+.theme:hover .tool-text{
+  visibility: visible;
+}
+
+
+.theme #top {
+  left: 15%;
+}
+
+.theme #top::before {
+  left: 20%;
+}
+
+
 .rightNav #bottom {
   top: 45px;
   left: -43%;
@@ -1003,6 +1072,9 @@ form{
 .que img{
   padding-left: 40%;
 }
+
+
+
 
 .planMenu select{
   margin-bottom: 1.5rem;
@@ -1242,4 +1314,8 @@ input[type='radio'] {
   width: 100%;
   position: absolute;
   bottom: 0;
+}
+
+.theme{
+  width: 50%;
 }

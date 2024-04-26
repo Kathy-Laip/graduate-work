@@ -68,5 +68,9 @@ export class User{
         return ans
     }
 
+    public deleteFromOpenScheulds(id: number){
+        this.openSchedules = this.openSchedules.filter(el => el.id !== id)
+    }
+
     public uploasSchedule(){}
 }

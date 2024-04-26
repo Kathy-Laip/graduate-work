@@ -60,6 +60,8 @@ export const WorkSchedule: React.FC<WorkSch> = (props) => {
 
     const [offs, setOffs] = useState(false)
 
+    const [openSCH, setOpenSCH] = useState<(ScheduleUni|ScheduleSchool)[]>([])
+
     
     const onSettings = () => {
         if(props.user.currentSchedule !== 'ERROR_CREATE' && props.user.currentSchedule!.type === 'uni') isSetUni(true)
@@ -151,7 +153,8 @@ export const WorkSchedule: React.FC<WorkSch> = (props) => {
         setOffs(false)
     }
 
-    const updateSchs = (schs:any) => {
+
+    const updateSchs = (schs:any, open:any) => {
         let ans = props.user.getListOfSchedules()
         ans.then(answer => {
             if(answer.otv === 'OK'){
@@ -171,6 +174,15 @@ export const WorkSchedule: React.FC<WorkSch> = (props) => {
                         if(curSCH instanceof Schedule){
                             props.user.listOfSchedules.push(curSCH)
                         }
+                        if(open !== undefined){
+                            for(let openSch of open){
+                                if(curSCH instanceof Schedule && curSCH.id === openSch.id){
+                                    let has = props.user.openSchedules.filter(el => el.id === openSch.id)
+                                    if(has.length === 0) props.user.openSchedules.push(curSCH)
+                                }
+                            }
+                            setOpenSCH(props.user.openSchedules)
+                        }
                     }else{
                         let curSCH = schFabrica.create(sch.id, sch.theme, type, sch.date)
                         if(schs.id === sch.id &&  curSCH instanceof Schedule){
@@ -181,6 +193,15 @@ export const WorkSchedule: React.FC<WorkSch> = (props) => {
                         }
                         if(curSCH instanceof Schedule){
                             props.user.listOfSchedules.push(curSCH)
+                        }
+                        if(open !== undefined){
+                            for(let openSch of open){
+                                if(curSCH instanceof Schedule && curSCH.id === openSch.id){
+                                    let has = props.user.openSchedules.filter(el => el.id === openSch.id)
+                                    if(has.length === 0) props.user.openSchedules.push(curSCH)
+                                }
+                            }
+                            setOpenSCH(props.user.openSchedules)
                         }
                     }
                 }
@@ -195,7 +216,8 @@ export const WorkSchedule: React.FC<WorkSch> = (props) => {
             const saved = JSON.parse(localStorage.getItem('user')!)
             props.user.login = saved.login
             props.user.password = saved.password
-            updateSchs(saved.currentSchedule)
+            props.user.openSchedules = []
+            updateSchs(saved.currentSchedule, saved.openSchedules)
             setGet(false)
         }
     })()
@@ -226,10 +248,20 @@ export const WorkSchedule: React.FC<WorkSch> = (props) => {
         closeOffersTrue()
     }
 
+    const deleteId = (id: number) => {
+        setOpenSCH(prev => {
+            let ans = [...prev]
+            ans = ans.filter(el => el.id !== id)
+            props.user.openSchedules = ans
+            localStorage.setItem('user', JSON.stringify(props.user))      
+            return ans
+        })  
+    }
+
     
     return (
         <div className="workScheduleMain">
-            <SideBar login={props.user.login} user={props.user}/>
+            <SideBar login={props.user.login} user={props.user} open={openSCH} deleteId={deleteId}/>
             
             {setUni && props.user.currentSchedule! instanceof ScheduleUni
              && (<ScheduleBlockSettingsUni onSettingsFalse={onSettingsFalse} sch={props.user.currentSchedule} mes={message} user={props.user}/>)}

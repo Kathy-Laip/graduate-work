@@ -59,6 +59,13 @@ def deleteCafedra(work_ID, nameCafedra):
     ans = connection.execute_query('delete from schedules.cafedra_or_section where work_id={} and name="{}"'.format(work_ID, nameCafedra))
     return ans
 
+def checkTheme(user, theme):
+    try: 
+        data = connection.get_data_from_table('select schedules.work_folder.theme from schedules.work_folder where schedules.work_folder.theme = "{}" and schedules.work_folder.user_id={};'.format(theme, user))
+        if(data is not None):
+            return data
+    except: return []
+
 def getDataUser(login):
     try: 
         data = connection.get_data_from_table('select password from users where login="{}"'.format(login))
