@@ -26,7 +26,7 @@ export const ScheduleBlock: React.FC<BlockSchedule> = (props) => {
             let has = props.user.openSchedules.filter(el => el.id === props.id)
             if(has.length === 0) props.user.openSchedules.push(props.user.currentSchedule)
         } 
-        
+        sessionStorage.removeItem('info')
         localStorage.setItem('user', JSON.stringify(props.user))
         
         navigate('/workBook/workSchedule')

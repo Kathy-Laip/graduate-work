@@ -10,7 +10,9 @@ type Menu ={
     sch: ScheduleUni,
     mes: Function,
     add: Function,
-    changeI: Function
+    changeI: Function,
+    changeRasp: Function,
+    rasp: boolean
 }
 
 const week = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота']
@@ -48,6 +50,8 @@ export const MenuSchUni: React.FC<Menu> = (props) => {
     const [isLoading, setIsLoading] = useState(true);
     const [get, setGet] = useState(true)
 
+    const [lesson, setLesson] = useState<Array<Array<string>>>([])
+
     const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         if(event.target.id === 'course'){
             setCourse(Number(event.target.value))
@@ -55,7 +59,9 @@ export const MenuSchUni: React.FC<Menu> = (props) => {
             setArrHours(Array.from({length: Number(Object.values(props.sch.settings!.work_times[props.sch.settings!.work_times.length - 1])[1].split(':')[0]) + 2 - Number(Object.values(props.sch.settings!.work_times[0])[0].split(':')[0])}, (_, ind) => Number(Object.values(props.sch.settings!.work_times[0])[0].split(':')[0]) + ind ))
             setCountGrouos(Object.values(props.sch.settings!.arr_courses[course]).filter(el => el[0] === event.target.value))
             props.changeI([course, event.target.value])
+            
             setDir(event.target.value)
+            // sessionStorage.setItem('info', JSON.stringify({'course': course, 'dir': event.target.value}))
         }
     }
 
@@ -67,20 +73,55 @@ export const MenuSchUni: React.FC<Menu> = (props) => {
             props.mes('Веберите направление!', false)
         }else{
             props.add()
-            setSch(true)
+            
+            setGet(true)
+            sessionStorage.removeItem('info')
+            sessionStorage.setItem('info', JSON.stringify({'course': course, 'dir': dir}))
+            
+            props.changeRasp()
         }
     }
 
     const updateSchs = () => {
+        
         let ans = props.sch.getClasses({'course': course, 'napr': dir})
+        // console.log()
         ans.then(answer => {
             if(answer.otv === 'OK'){
                 setIsLoading(true)
-                props.sch.listOfClasses = Object.values(answer.info)
+                setLesson(Object.values(answer.info))
+                
                 setIsLoading(false)
             }else if(answer.otv === 'empty'){
                 setIsLoading(true)
+                setLesson([])
                 props.mes('Занятий нет для этого направления! Добавьте новое занятие', false)
+                
+                setIsLoading(false)
+            }
+            else{
+                props.mes('Ошибка получения расписания! Попробуйте позже!', false)
+            }
+        })
+    }
+
+    const updateSchsSaved = (courseSaved: number, naprSaved: string) => {
+        console.log(courseSaved)
+        let ans = props.sch.getClasses({'course': courseSaved, 'napr': naprSaved})
+        ans.then(answer => {
+            if(answer.otv === 'OK'){
+                setIsLoading(true)
+                setLesson(Object.values(answer.info))
+                
+                
+                setIsLoading(false)
+            }else if(answer.otv === 'empty'){
+                setIsLoading(true)
+
+                setLesson([])
+                props.mes('Занятий нет для этого направления! Добавьте новое занятие', false)
+                
+                
                 setIsLoading(false)
             }
             else{
@@ -90,18 +131,35 @@ export const MenuSchUni: React.FC<Menu> = (props) => {
     }
 
     (async () => {
-        if(sch && get){
-            updateSchs()
+        const saved = JSON.parse(sessionStorage.getItem('info')!)
+        
+        if((saved || sch) && get){
+            setSch(true)
+            
+            if(saved !== null){
+                
+                setCourse(prev => prev = saved.course)
+                setDir(prev => prev = saved.dir)
+                updateSchsSaved(saved.course, saved.dir)
+                setArrHours(Array.from({length: Number(Object.values(props.sch.settings!.work_times[props.sch.settings!.work_times.length - 1])[1].split(':')[0]) + 2 - Number(Object.values(props.sch.settings!.work_times[0])[0].split(':')[0])}, (_, ind) => Number(Object.values(props.sch.settings!.work_times[0])[0].split(':')[0]) + ind ))
+                setCountGrouos(Object.values(props.sch.settings!.arr_courses[saved.course]).filter(el => el[0] === saved.dir))
+                props.changeI([saved.course, saved.dir])
+                
+
+            }else{
+                updateSchs()
+            }
             setMins(getMinutesLesson(Object.values(props.sch.settings!.work_times)[0], Object.values(props.sch.settings!.work_times)[0]))
+            props.changeRasp()
             setGet(false)
         }
     })()
 
-
+    // console.log(props.sch.listOfClasses)
     
     return (
         <>
-        {sch ? 
+        {sch && props.rasp ? 
         (
             <div>
                 <div className="sch">
@@ -132,7 +190,7 @@ export const MenuSchUni: React.FC<Menu> = (props) => {
                             </>
                         ))}
                         
-                        {props.sch.listOfClasses!.map(el => {
+                        {lesson.map(el => {
                             if(el[10] !== null && el[9] !== null && (el[7] === 'зачет' || el[7] === 'экзамен')){
                                 return coutGroups.map((gr, ind) => {if(gr[1] == el[10]) return (
                                     <Lesson key={ind} color={'var(--main-yellow)'} text={{'name': el[4], 'place': el[2], 'teach': el[3], 'period': el[7]}} top={typeof(el[0]) === 'string' ? getTop(arrHours, el[0]) : '0px'} left={72 + (week_small.indexOf(el[5])*coutGroups.length*180) + ind*180 +'px'} height={minss + 'px'} data={el[6]}/>
@@ -190,9 +248,6 @@ export const MenuSchUni: React.FC<Menu> = (props) => {
                             }
                         })}
                     </>}
-                </div>
-                <div>
-                    <button className="btn1 btnGreenGrand bdR5" id='saveChanges' >Сохранить изменения</button>
                 </div>
             </div>
         )

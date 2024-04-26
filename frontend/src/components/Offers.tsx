@@ -155,8 +155,11 @@ export const Offers: React.FC<Offs> = (props) => {
                     setFull([])
                     setHalf([])
                     setWeeks([])
+
+                    console.log(answer.data)
                     
                     setDataLess({'exam': '0'})
+                    setExam(answer.data)
                     setIsLoading(false)
                 }else if(answer.otv === 'error'){
                     props.mes(answer.mes, false)
@@ -276,7 +279,7 @@ export const Offers: React.FC<Offs> = (props) => {
                                                 <span>{el[2]}</span>
                                                 <span>Аудитория: {el[1]}</span>
                                                 <span>Время: {el[3][0][1]} - {el[3][0][2]}</span>
-                                                <span>{el[3][1]} неделя</span>
+                                                <span>{el[3][1][0]} - {el[3][1][1]} неделя</span>
                                             </label>
                                         </div>)) }
                                         </form>

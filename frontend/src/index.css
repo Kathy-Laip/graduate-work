@@ -322,11 +322,43 @@ input::placeholder{
   text-overflow: ellipsis;
 }
 
+@media (max-width: 1200px) {
+  .sideBar{
+    display: none;
+  }
+
+  .bodyWork,
+  .workBodyShedules,
+  .workMain,
+  .nav,
+  .workBodyShedules,
+  .workScheduleMain{
+    width: 100vw;
+    justify-content: space-around;
+  }
+
+  .bodyWork{
+    flex-direction: row;
+  }
+
+  .workMain{
+    margin: 0;
+  }
+
+}
+
+@media (min-width: 1300px){
+  .bodyWork{
+    flex-direction: column;
+  }
+}
+
 .bodyWork{
   display: flex;
   flex-wrap: wrap;
-  flex-direction: column;
+
   height: 100vh;
+  width: 80vw;
 }
 
 .nav{
@@ -356,7 +388,7 @@ input::placeholder{
   display: flex;
   flex-wrap: wrap;
   background-color: var(--main-orange);
-  padding: 0.5rem 0.8rem;
+  padding: 0.8rem;
 }
 
 .workBodyShedules{

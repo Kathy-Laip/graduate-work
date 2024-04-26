@@ -25,6 +25,7 @@ export const WorkSchUni: React.FC<WorkSch> = (props) => {
     const [teach, setTeach] = useState(false)
 
     const [add, setAdd] = useState(false)
+    const [rasp, setRasp] = useState(false)
 
     const onToggle = (flag:string) => {
         if(flag === 'sch'){
@@ -35,6 +36,8 @@ export const WorkSchUni: React.FC<WorkSch> = (props) => {
             setSch(true)
             setPlan(false)
             setTeach(false)
+            setRasp(false)
+            sessionStorage.removeItem('info')
         }
         else if(flag === 'plan'){
             document.getElementById('sch')!.style.backgroundColor = 'var(--main-orange)'
@@ -61,12 +64,15 @@ export const WorkSchUni: React.FC<WorkSch> = (props) => {
         setAdd(true)
     }
 
+    const changeRasp = () => {
+        setRasp(true)
+    }
     
     return (
         <div className="workSchedule bdR5">        
             <div className="navSchedule">
                 <div className="buttons">
-                    <div className="btnOrange menuPos bdr5UP" id='sch' onClick={() => onToggle('sch')}> Расписание</div>
+                    <div className="btnOrange menuPos bdr5UP" id='sch' onClick={() => onToggle('sch')}>Расписание</div>
                     <div className="btnYellow menuPos bdr5UP" id='plan' onClick={() => onToggle('plan')}>Учебный план</div>
                     <div className="btnGreen menuPos bdr5UP" id='teach' onClick={() => onToggle('teach')}>Преподаватели</div>  
                 </div>
@@ -79,7 +85,7 @@ export const WorkSchUni: React.FC<WorkSch> = (props) => {
                 </div>
             </div>
             <div className="menuAndSchedule">
-                {sch && props.user.currentSchedule instanceof ScheduleUni && (<MenuSchUni user={props.user} sch={props.user.currentSchedule} mes={props.mes} add={changeAdd} changeI={props.changeInfo}/>)}
+                {sch && props.user.currentSchedule instanceof ScheduleUni && (<MenuSchUni user={props.user} sch={props.user.currentSchedule} mes={props.mes} add={changeAdd} changeI={props.changeInfo} changeRasp={changeRasp} rasp={rasp}/>)}
                 {plan && (<MenuPlanUni user={props.user} addPlan={props.addPlan} editPlan={props.editPlan}/>)}
                 {teach && (<MenuTeachsUni user={props.user} addTeachs={props.addTeachs} editTeachs={props.editTeachs}/>)}
             </div>
