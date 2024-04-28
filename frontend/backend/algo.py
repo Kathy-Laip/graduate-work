@@ -244,7 +244,8 @@ def algo(work_id, info, type_inst):
                     arr.append(ans[0])
                         
                 ans2 = getTeach(dir_id, subj)
-                if(all(ans2)):
+                print(ans2)
+                if(len(ans2) > 0):
                     tech_id.append(ans2[0])
                 else: return {'otv': 'error', 'mes':'нет преподавателя для одного из направлений! пожалуйста, перепроверьте данные о преподавателях!'}
 
@@ -265,6 +266,9 @@ def algo(work_id, info, type_inst):
             hasLect = getHasLesson(dir_id, subj, work_id)
             if(len(hasLect) > 0):
                 return {'otv': 'error', 'mes':'для направлений уже существует занятие!'}
+
+        teach = getTeacher(tech_id[0][0])
+        teach = teach[0]
 
         infoWorkID = getDataInfo(work_id)
         start, end, acc_hour = infoWorkID[0]
@@ -342,14 +346,14 @@ def algo(work_id, info, type_inst):
                     if(count_else != 0.5 and count_else != 0):
                         count_les = math.ceil(count_else * weeks)
                         all_ava_place['weeks'] = weeksLessonLectWithSchs(schs, grafic_place, weeks, count_les)
-                    return {'otv':'OK','data': {'count': {'full': count_int, 'ost': count_else, 'weeks': weeks}, 'info':all_ava_place}}
+                    return {'otv':'OK','data': {'count': {'full': count_int, 'ost': count_else, 'weeks': weeks}, 'info':all_ava_place, 'teach': teach}}
 
                 if(count_weeks != -1 and count_times == -1):
                     if(count_weeks/weeks == 0.5):
                         all_ava_place['half'] = halflessonLectWithSchs(schs, grafic_place, schs_napr)
                     else:
                         all_ava_place['weeks'] = weeksLessonLectWithSchs(schs, grafic_place, weeks, count_weeks)
-                    return {'otv':'OK','data':{'count': {'countLess':count_weeks, 'weeks': weeks}, 'info': all_ava_place}}
+                    return {'otv':'OK','data':{'count': {'countLess':count_weeks, 'weeks': weeks}, 'info': all_ava_place, 'teach': teach}}
                 else: 
                     return {'otv': 'error', 'mes':'ошибка подсчета периодичности занятий, попробуйте еще раз позже!'}
             else:
@@ -390,6 +394,9 @@ def algo(work_id, info, type_inst):
                 for i in range(1, len(teach_arr)):
                     if(teach_arr[i][0] != teach_arr[i-1][0]):
                         return {'otv': 'error', 'mes':'не у всех групп один и тот же преподаватель, чтобы объединить занятия'}
+
+        teach = getTeacher(teach_arr[0][0])
+        teach = teach[0]
 
 
         course_id = getCourseID(info_groups['courseNumber'], work_id)
@@ -471,14 +478,14 @@ def algo(work_id, info, type_inst):
                     if(count_else != 0.5 and count_else != 0):
                         count_les = math.ceil(count_else * weeks)
                         all_ava_place['weeks'] = weeksLessonLectWithSchs(schs, grafic_place, weeks, count_les)
-                    return {'otv':'OK','data': {'count': {'full': count_int, 'ost': count_else, 'weeks': weeks}, 'info':all_ava_place}}
+                    return {'otv':'OK','data': {'count': {'full': count_int, 'ost': count_else, 'weeks': weeks}, 'info':all_ava_place, 'teach': teach}}
 
                 if(count_weeks != -1 and count_times == -1):
                     if(count_weeks/weeks == 0.5):
                         all_ava_place['half'] = halflessonLectWithSchs(schs, grafic_place, schs_napr)
                     else:
                         all_ava_place['weeks'] = weeksLessonLectWithSchs(schs, grafic_place, weeks, count_weeks)
-                    return {'otv':'OK','data':{'count': {'countLess':count_weeks, 'weeks': weeks}, 'info':all_ava_place}}
+                    return {'otv':'OK','data':{'count': {'countLess':count_weeks, 'weeks': weeks}, 'info':all_ava_place, 'teach': teach}}
                 else: 
                     return {'otv': 'error', 'mes':'ошибка подсчета периодичности занятий, попробуйте еще раз позже!'}
                 
@@ -522,6 +529,9 @@ def algo(work_id, info, type_inst):
                 for i in range(1, len(teach_arr)):
                     if(teach_arr[i][0] != teach_arr[i-1][0]):
                         return {'otv': 'error', 'mes':'не у всех групп один и тот же преподаватель, чтобы объединить занятия'}
+
+        teach = getTeacher(teach_arr[0][0])
+        teach = teach[0]
 
 
         course_id = getCourseID(info_groups['courseNumber'], work_id)
@@ -602,14 +612,14 @@ def algo(work_id, info, type_inst):
                     if(count_else != 0.5 and count_else != 0):
                         count_les = math.ceil(count_else * weeks)
                         all_ava_place['weeks'] = weeksLessonLectWithSchs(schs, grafic_place, weeks, count_les)
-                    return {'otv':'OK','data': {'count': {'full': count_int, 'ost': count_else, 'weeks': weeks}, 'info':all_ava_place}}
+                    return {'otv':'OK','data': {'count': {'full': count_int, 'ost': count_else, 'weeks': weeks}, 'info':all_ava_place, 'teach': teach}}
 
                 if(count_weeks != -1 and count_times == -1):
                     if(count_weeks/weeks == 0.5):
                         all_ava_place['half'] = halflessonLectWithSchs(schs, grafic_place, schs_napr)
                     else:
                         all_ava_place['weeks'] = weeksLessonLectWithSchs(schs, grafic_place, weeks, count_weeks)
-                    return {'otv':'OK','data':{'count': {'countLess':count_weeks, 'weeks': weeks}, 'info':all_ava_place}}
+                    return {'otv':'OK','data':{'count': {'countLess':count_weeks, 'weeks': weeks}, 'info':all_ava_place, 'teach': teach}}
                 else: 
                     return {'otv': 'error', 'mes':'ошибка подсчета периодичности занятий, попробуйте еще раз позже!'}
                 

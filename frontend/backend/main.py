@@ -952,7 +952,7 @@ def getSchUni():
  
     sch_new = []
     for i in range(len(sch)):
-        sch_new.append([sch[i][2], sch[i][3], sch[i][4], sch[i][5], sch[i][6], sch[i][7], sch[i][8], sch[i][9], sch[i][10], sch[i][11], sch[i][12]])
+        sch_new.append([sch[i][2], sch[i][3], sch[i][4], sch[i][5], sch[i][6], sch[i][7], sch[i][8], sch[i][9], sch[i][10], sch[i][11], sch[i][12], sch[i][0]])
 
     if(len(sch) == 0):
         return json.dumps({'otv': 'empty'})
@@ -1060,6 +1060,74 @@ def getLessonMinExamUni():
         return json.dumps({'otv': 'OK', 'data': ans['data']})
     else:
         return json.dumps({'otv': 'error', 'mes': ans['mes']})
+
+
+@app.route('/addLessonsUni', methods=['POST'])
+def addLessonsUni():
+    info = json.loads(request.get_data())
+    work_id = info['work_id']
+    lessons = info['data']['lessons']
+    type = info['data']['type']
+    teach = info['data']['teach']
+    dirs = info['data']['dirs']
+    subj = info['data']['subj']
+
+    if(type == 'lect'):
+        tech_id = getTeachId(teach)
+        napr = []
+        for i in range(len(dirs)):
+            course_id = getCourseID(dirs[i].split(' ')[0], work_id)
+            dir_id = getDirection(course_id, dirs[i].split(' ')[1])
+            napr.append(dir_id)
+        arr = []
+        for i in range(len(lessons)):
+            weeks = getWeekID(lessons[i][2])
+            for j in range(len(napr)):
+                if(len(lessons[i][3]) == 2):
+                    ans = insertLect(work_id, int(lessons[i][3][0][0]), int(lessons[i][0]), tech_id, napr[j], weeks, subj, lessons[i][3][1])
+                    arr.append(ans)
+                elif(len(lessons[i][3]) == 3):
+                    ans = insertLect(work_id, int(lessons[i][3][0]), int(lessons[i][0]), tech_id, napr[j], weeks, subj, 'каждую неделю')
+                    arr.append(ans)
+        if(all(arr)):
+            return json.dumps({'otv': 'OK'})
+        else: 
+            return json.dumps({'otv': 'error', 'mes': 'Не получилось разместить расписание, попробуйте позже...'})
+
+    elif(type == 'practic' or type == 'lab'):
+        tech_id = getTeachId(teach)
+        groups = []
+        course_id = getCourseID(dirs['courseNumber'], work_id)
+        dir_id = getDirection(course_id, dirs['napr'])
+        for i in range(len(dirs['groups'])):
+            groups.append(getClass(dir_id, dirs['groups'][i]))
+        arr = []
+        for i in range(len(lessons)):
+            weeks = getWeekID(lessons[i][2])
+            for j in range(len(groups)):
+                if(len(lessons[i][3]) == 2):
+                    ans = insertPrOrLab(work_id, int(lessons[i][3][0][0]), int(lessons[i][0]), tech_id, dir_id,groups[j], weeks, subj, lessons[i][3][1])
+                    arr.append(ans)
+                elif(len(lessons[i][3]) == 3):
+                    ans = insertPrOrLab(work_id, int(lessons[i][3][0]), int(lessons[i][0]), tech_id, dir_id, groups[j], weeks, subj, 'каждую неделю')
+                    arr.append(ans)
+        if(all(arr)):
+            return json.dumps({'otv': 'OK'})
+        else: 
+            return json.dumps({'otv': 'error', 'mes': 'Не получилось разместить расписание, попробуйте позже...'})
+
+
+@app.route('/deleteLessonUni', methods=['POST'])
+def deleteLessonUni():
+    info = json.loads(request.get_data())
+    id = info['id']
+
+    ans = deleteUniLess(id)
+    if(ans):
+        return json.dumps({'otv': 'OK'})
+    else: return json.dumps({'otv': 'error'})
+
+
 
 
 if __name__ == '__main__':

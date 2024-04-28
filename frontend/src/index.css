@@ -157,6 +157,11 @@ input::placeholder{
   width: 50%;
 }
 
+.infoLesson #close{
+  margin: 0.5rem;
+  cursor: pointer;
+}
+
 .themeClose #close{
   margin: 0;
   position: relative;
@@ -1009,6 +1014,32 @@ form{
   padding: 10px 15px 10px 15px;
 }
 
+.infoLesson{
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+
+  /* width: 10%; */
+
+  background-color: yellowgreen;
+
+  padding: 1rem;
+
+  z-index: 10;
+
+  right: 10px;
+}
+
+.infoLesson .closeCreate{
+  justify-content: end;
+}
+
+.infoLesson span{
+  width: 80%;
+  flex-wrap: wrap;
+}
+
 .dis_sp .tool-text{
   visibility: hidden;
   position: absolute;
@@ -1055,11 +1086,13 @@ form{
 }
 
 
-.theme #top {
+.theme #top,
+.infoLesson #top {
   left: 15%;
 }
 
-.theme #top::before {
+.theme #top::before,
+.infoLesson #top::before {
   left: 20%;
 }
 
@@ -1196,6 +1229,7 @@ form{
   flex-wrap: wrap;
 
   position: absolute;
+  cursor: pointer;
 
   overflow-y: hidden;
 
@@ -1204,6 +1238,7 @@ form{
   border: 1px solid rgba(0, 0, 0, 0.2);
 
 }
+
 
 .lesson span{
   width: 100%;
@@ -1298,6 +1333,7 @@ form{
   display: flex;
   
   flex-wrap: wrap;
+  
 
   /* padding: 0 0.5rem; */
 
@@ -1312,6 +1348,12 @@ form{
 
 .suggestions .countLessons .btn1{
   margin-bottom: 0.5rem;
+}
+
+#suggs{
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
 }
 
 #suggs form{
@@ -1351,3 +1393,14 @@ input[type='radio'] {
 .theme{
   width: 50%;
 }
+
+div #full,
+div #weeks,
+div #half,
+div #exam,
+div #minExam{
+  display: none;
+  flex-direction: column;
+  width: 100%;
+}
+

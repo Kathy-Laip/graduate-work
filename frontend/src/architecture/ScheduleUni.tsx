@@ -88,4 +88,14 @@ export class ScheduleUni extends Schedule{
         let ans = apiPos({'work_id': this.id, 'data': data}, '/getSubjectUni')
         return ans
     }
+
+    public addLessons(data: any){
+        let ans = apiPos({'work_id': this.id, 'data': data}, '/addLessonsUni')
+        return ans
+    }
+
+    public deleteLesson(id: number){
+        let ans = apiPos({'id': id}, '/deleteLessonUni')
+        return ans
+    }
 }

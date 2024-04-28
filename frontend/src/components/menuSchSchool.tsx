@@ -70,7 +70,7 @@ export const MenuSchSchool: React.FC<Menu> = (props) => {
                             ))}
                         </>
                     ))}
-                    <Lesson color={'var(--main-orange)'} top={145+'px'} left={71+'px'} height={(1.5*75)+'px'} text={{name: 'Алгоритмы и анализ сложности', place: 'Аудитория 808', teach: 'Васильев А.В'}}/>
+                    {/* <Lesson color={'var(--main-orange)'} top={145+'px'} left={71+'px'} height={(1.5*75)+'px'} text={{name: 'Алгоритмы и анализ сложности', place: 'Аудитория 808', teach: 'Васильев А.В'}}/> */}
                 </div>
                 <div>
                     <button className="btn1 btnBlue bdR5" id='saveChanges'>Сохранить изменения</button>
