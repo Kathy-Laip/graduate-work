@@ -1396,10 +1396,15 @@ input[type='radio'] {
 
 div #full,
 div #weeks,
-div #half,
+div #half{
+  display: none;
+  flex-direction: column;
+  width: 100%;
+}
+
 div #exam,
 div #minExam{
-  display: none;
+  display: flex;
   flex-direction: column;
   width: 100%;
 }

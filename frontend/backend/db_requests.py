@@ -19,6 +19,10 @@ def insertPrOrLab(work_id, grafic_id, place_id, teacher_id, dir_id, class_id, we
     ans = connection.execute_query('insert into schedules.schedule(work_id, grafic_id, place_id, teacher_id, direction_id, classes_id, week_day, name_sub, period) values({}, {}, {}, {}, {},{}, {}, "{}", "{}");'.format(work_id, grafic_id, place_id, teacher_id, dir_id, class_id,week_day, name, period))
     return ans
 
+def insertExamOrMinExam(work_id, grafic_id, place_id, teacher_id, dir_id, class_id, week_day, start_date, name, period):
+    ans = connection.execute_query('insert into schedules.schedule(work_id, grafic_id, place_id, teacher_id, direction_id, classes_id, week_day, start_date, name_sub, period) values({}, {}, {}, {}, {},{}, {}, "{}", "{}", "{}");'.format(work_id, grafic_id, place_id, teacher_id, dir_id, class_id,week_day, start_date, name, period))
+    return ans
+
 def deleteUniLess(id):
     ans = connection.execute_query('delete from schedules.schedule where sch_id={}'.format(id))
     return ans
@@ -162,6 +166,13 @@ def getCourseID(course_number, workID):
     except:
         return False
 
+def getDirIdNameCourse(name_course, work_id):
+    try: 
+        data = connection.get_data_from_table('select schedules.direction.direction_id from schedules.direction inner join schedules.courses on schedules.direction.course_id = schedules.courses.course_id where schedules.courses.work_id = {} and schedules.direction.name_course = {};'.format(work_id, name_course))
+        if(data is not None):
+            return data[0]
+    except: return []
+
 def getCourseCount(workID):
     try:
         id_course = connection.get_data_from_table('select course_id from courses where work_id={} '.format(workID))
@@ -297,6 +308,14 @@ def getScheUniDir(workID, dirID):
     except: 
         return []
 
+def getScheSchoolDir(workID, dirID):
+    try:
+        schedules = connection.get_data_from_table('SELECT 	DISTINCT schedules.schedule.sch_id, schedules.schedule.work_id, schedules.grafic.start, schedules.grafic.end, schedules.place.place_name, schedules.teacher.fio, schedules.schedule.name_sub, schedules.weeks.week_day, schedules.schedule.start_date, schedules.schedule.period, schedules.direction.name_course, schedules.classes.initial_class FROM schedules.schedule INNER JOIN schedules.grafic ON schedules.schedule.grafic_id = schedules.grafic.time_id INNER JOIN schedules.place ON schedule.place_id = schedules.place.place_id LEFT JOIN schedules.direction ON schedules.schedule.direction_id = schedules.direction.direction_id LEFT JOIN schedules.classes ON schedules.schedule.classes_id = schedules.classes.classes_id INNER JOIN schedules.teacher ON schedule.teacher_id = schedules.teacher.teacher_id INNER JOIN schedules.teacher_classes ON schedules.teacher.teacher_id = schedules.teacher_classes.id_teacher INNER JOIN schedules.weeks on schedules.weeks.id_week = schedules.schedule.week_day where schedules.schedule.work_id = {} and schedules.schedule.direction_id = {};'.format(workID, dirID))
+        if(schedules is not None):
+            return schedules
+    except: 
+        return []
+
 def getScheduleSchool(workID):
     try:
         schedules = connection.get_data_from_table('SELECT schedules.schedule.sch_id, schedules.schedule.work_id, schedules.grafic.start, schedules.grafic.end, schedules.place.place_name, schedules.teacher.fio, schedules.teacher_classes.name_sub, schedules.weeks.week_day, schedules.schedule.start_date FROM schedules.schedule INNER JOIN schedules.grafic ON schedules.schedule.grafic_id = schedules.grafic.time_id INNER JOIN schedules.place ON schedule.place_id = schedules.place.place_id INNER JOIN schedules.teacher ON schedule.teacher_id = schedules.teacher.teacher_id INNER JOIN schedules.teacher_classes ON schedules.teacher.teacher_id = schedules.teacher_classes.id_teacher INNER JOIN schedules.weeks on schedules.weeks.id_week = schedules.schedule.week_day where schedules.schedule.work_id = {};'.format(workID))
@@ -350,6 +369,13 @@ def getSubjLab(dir_id, sub):
 def getTeach(dir_id, sub):
     try:
         teach_id = connection.get_data_from_table('select schedules.teacher_classes.id_teacher from schedules.teacher_classes where schedules.teacher_classes.name_sub = "{}" and schedules.teacher_classes.direction_id = {};'.format(sub, dir_id)) 
+        if(teach_id is not None):
+            return teach_id
+    except: return False
+
+def getTeachClass(class_id, sub):
+    try:
+        teach_id = connection.get_data_from_table('select schedules.teacher_classes.id_teacher from schedules.teacher_classes where schedules.teacher_classes.name_sub = "{}" and schedules.teacher_classes.classes_id = {};'.format(sub, class_id)) 
         if(teach_id is not None):
             return teach_id
     except: return False

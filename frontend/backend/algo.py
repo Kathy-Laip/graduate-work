@@ -634,6 +634,9 @@ def algo(work_id, info, type_inst):
         dir_id = getDirection(course_id, info_groups['napr'])
         class_id = getClass(dir_id, info_groups['groups'])
 
+        teach_id = getTeach(dir_id, subj)
+        teacherFio = getTeacher(teach_id[0][0])
+
 
         weeks_day = ['понедельник', 'вторник', 'среда', 'четверг', 'пятница', 'суббота']
 
@@ -712,7 +715,7 @@ def algo(work_id, info, type_inst):
                             if(flag):
                                 mb_date_free.append(mb_date_time[i])
 
-                        return {'otv':'OK','data':mb_date_free}
+                        return {'otv':'OK','data':mb_date_free, 'teach': teacherFio[0]}
                     else:
                         return {'otv': 'error', 'mes':'ошибка получения расписания аудиторий'}
 
@@ -730,6 +733,9 @@ def algo(work_id, info, type_inst):
         course_id = getCourseID(info_groups['courseNumber'], work_id)
         dir_id = getDirection(course_id, info_groups['napr'])
         class_id = getClass(dir_id, info_groups['groups'])
+
+        teach_id = getTeachClass(class_id, subj)
+        teacherFio = getTeacher(teach_id[0][0])
 
         weeks_day = ['понедельник', 'вторник', 'среда', 'четверг', 'пятница', 'суббота']
 
@@ -814,7 +820,7 @@ def algo(work_id, info, type_inst):
                             if(flag):
                                 mb_date_free.append(mb_date_time[i])
 
-                        return {'otv':'OK','data':mb_date_free}
+                        return {'otv':'OK','data':mb_date_free, 'teach': teacherFio[0]}
                     else:
                         return {'otv': 'error', 'mes':'ошибка получения расписания аудиторий'}
 

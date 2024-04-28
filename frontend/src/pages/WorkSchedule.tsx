@@ -58,6 +58,9 @@ export const WorkSchedule: React.FC<WorkSch> = (props) => {
     const [info, setInfo] = useState<Array<string|number>>([])
     const [offsInfo, setOffsInfo] = useState<any>({})
 
+    const [infoSchool, setInfoSchool] = useState<Array<string|number>>([])
+    const [offsInfoSchool, setOffsInfoSchool] = useState<any>({})
+
     const [offs, setOffs] = useState(false)
 
     const [openSCH, setOpenSCH] = useState<(ScheduleUni|ScheduleSchool)[]>([])
@@ -242,6 +245,10 @@ export const WorkSchedule: React.FC<WorkSch> = (props) => {
         setInfo(data)
     }
 
+    const changeInfoSchool = (data: Array<string|number>) => {
+        setInfoSchool(data)
+    }
+
     const addOffers = (data: any) => {
         setOffsInfo(data)
         closeAddLesson()
@@ -297,7 +304,7 @@ export const WorkSchedule: React.FC<WorkSch> = (props) => {
                     {props.user.currentSchedule && props.user.currentSchedule !== 'ERROR_CREATE' && (props.user.currentSchedule!.type === 'uni' ?
                          (<WorkSchUni user={props.user} addPlan={addPlanUniTrue} editPlan={editPlanUniTrue} addTeachs={addTeachsUniTrue} editTeachs={editTeachsUniTrue} mes={message} addLessTrue={closeAddLessonTrue} changeInfo={changeInfo}/>)
                          :
-                         (<WorkSchSchool user={props.user} addPlan={addPlanSchoolTrue} editPlan={editPlanSchoolTrue} addTeachs={addTeachsSchoolTrue} editTeachs={editTeachsSchoolTrue}  mes={message} addLessTrue={closeAddLessonTrueSch}/>)
+                         (<WorkSchSchool user={props.user} addPlan={addPlanSchoolTrue} editPlan={editPlanSchoolTrue} addTeachs={addTeachsSchoolTrue} editTeachs={editTeachsSchoolTrue}  mes={message} addLessTrue={closeAddLessonTrueSch} changeInfo={changeInfoSchool}/>)
                     )
                     }
                 </div>

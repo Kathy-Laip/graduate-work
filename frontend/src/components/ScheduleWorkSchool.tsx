@@ -15,7 +15,8 @@ type WorkSch = {
     addTeachs: Function,
     editTeachs: Function,
     mes: Function,
-    addLessTrue: Function
+    addLessTrue: Function,
+    changeInfo: Function
 }
 
 export const WorkSchSchool: React.FC<WorkSch> = (props) => {
@@ -24,6 +25,7 @@ export const WorkSchSchool: React.FC<WorkSch> = (props) => {
     const [teach, setTeach] = useState(false)
 
     const [add, setAdd] = useState(false)
+    const [rasp, setRasp] = useState(false)
     
 
     const onToggle = (flag:string) => {
@@ -31,14 +33,18 @@ export const WorkSchSchool: React.FC<WorkSch> = (props) => {
             document.getElementById('sch')!.style.backgroundColor = 'ForestGreen'
             document.getElementById('plan')!.style.backgroundColor = 'var(--main-yellow)'
             document.getElementById('teach')!.style.backgroundColor = 'var(--main-blue-blue)'
+            setAdd(false)
             setSch(true)
             setPlan(false)
             setTeach(false)
+            setRasp(false)
+            sessionStorage.removeItem('info')
         }
         else if(flag === 'plan'){
             document.getElementById('sch')!.style.backgroundColor = 'var(--main-orange)'
             document.getElementById('plan')!.style.backgroundColor = 'ForestGreen'
             document.getElementById('teach')!.style.backgroundColor = 'var(--main-blue-blue)'
+            setAdd(false)
             setSch(false)
             setPlan(true)
             setTeach(false)
@@ -47,6 +53,7 @@ export const WorkSchSchool: React.FC<WorkSch> = (props) => {
             document.getElementById('sch')!.style.backgroundColor = 'var(--main-orange)'
             document.getElementById('plan')!.style.backgroundColor = 'var(--main-yellow)'
             document.getElementById('teach')!.style.backgroundColor = 'ForestGreen'
+            setAdd(false)
             setSch(false)
             setPlan(false)
             setTeach(true)
@@ -58,6 +65,9 @@ export const WorkSchSchool: React.FC<WorkSch> = (props) => {
         setAdd(true)
     }
 
+    const changeRasp = () => {
+        setRasp(true)
+    }
 
     
     return (
@@ -77,7 +87,7 @@ export const WorkSchSchool: React.FC<WorkSch> = (props) => {
                 </div>
             </div>
             <div className="menuAndSchedule">
-                {sch && props.user.currentSchedule instanceof ScheduleSchool && (<MenuSchSchool user={props.user} sch={props.user.currentSchedule} mes={props.mes} add={changeAdd}/>)}
+                {sch && props.user.currentSchedule instanceof ScheduleSchool && (<MenuSchSchool user={props.user} sch={props.user.currentSchedule} mes={props.mes} add={changeAdd} changeInfo={props.changeInfo}  changeRasp={changeRasp} rasp={rasp}/>)}
                 {plan && (<MenuPlanSchool user={props.user} addPlan={props.addPlan} editPlan={props.editPlan}/>)}
                 {teach && (<MenuTeachsSchool user={props.user} addTeachs={props.addTeachs} editTeachs={props.editTeachs}/>)}
             </div>

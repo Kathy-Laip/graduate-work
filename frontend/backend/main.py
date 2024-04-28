@@ -959,6 +959,25 @@ def getSchUni():
 
     return json.dumps({'otv': 'OK','info': sch_new})
 
+@app.route('/getScheduleSchool', methods=['POST'])
+def getScheduleSchool():
+    info = json.loads(request.get_data())
+    work_id = info['work_id']
+    course = info['data']['course']
+
+    dir_id = getDirIdNameCourse(course, work_id)
+
+    sch = getScheSchoolDir(work_id, dir_id[0])
+ 
+    sch_new = []
+    for i in range(len(sch)):
+        sch_new.append([sch[i][2], sch[i][3], sch[i][4], sch[i][5], sch[i][6], sch[i][7], sch[i][8], sch[i][9], sch[i][10], sch[i][11], sch[i][0]])
+
+    if(len(sch) == 0):
+        return json.dumps({'otv': 'empty'})
+
+    return json.dumps({'otv': 'OK','info': sch_new})
+
 @app.route('/getSubjectUni', methods=['POST'])
 def getSubjUni():
     info = json.loads(request.get_data())
@@ -1040,7 +1059,7 @@ def getLessonExamUni():
     if(ans['otv'] == 'OK'):
         for i in range(len(ans['data'])):
             ans['data'][i][0] = ans['data'][i][0].strftime("%Y-%m-%d")
-        return json.dumps({'otv': 'OK', 'data': ans['data']})
+        return json.dumps({'otv': 'OK', 'data': ans['data'], 'teach': ans['teach']})
     else:
         return json.dumps({'otv': 'error', 'mes': ans['mes']})
 
@@ -1057,7 +1076,8 @@ def getLessonMinExamUni():
     if(ans['otv'] == 'OK'):
         for i in range(len(ans['data'])):
             ans['data'][i][0] = ans['data'][i][0].strftime("%Y-%m-%d")
-        return json.dumps({'otv': 'OK', 'data': ans['data']})
+        # print(ans['data'], ans['teach'])
+        return json.dumps({'otv': 'OK', 'data': ans['data'], 'teach': ans['teach']})
     else:
         return json.dumps({'otv': 'error', 'mes': ans['mes']})
 
@@ -1126,6 +1146,54 @@ def deleteLessonUni():
     if(ans):
         return json.dumps({'otv': 'OK'})
     else: return json.dumps({'otv': 'error'})
+
+@app.route('/deleteLessonSchool', methods=['POST'])
+def deleteLessonSchool():
+    info = json.loads(request.get_data())
+    id = info['id']
+
+    ans = deleteUniLess(id)
+    if(ans):
+        return json.dumps({'otv': 'OK'})
+    else: return json.dumps({'otv': 'error'})
+
+@app.route('/addExamOrMin', methods=['POST'])
+def addExamOrMin():
+    info = json.loads(request.get_data())
+    print(info)
+
+    work_id = info['work_id']
+    groups = info['data']['info']['napr']
+    subj = info['data']['info']['subj']
+    typeLess = info['data']['type'][0]
+    lessAdd = info['data']['add']
+    teach = info['data']['teach']
+
+    teach_id = getTeachId(teach)
+    course_id = getCourseID(groups['courseNumber'], work_id)
+    dir_id = getDirection(course_id, groups['napr'])
+    class_id = getClass(dir_id, groups['groups'])
+    week_id = getWeekID(lessAdd[3])
+
+    if(typeLess == 'exam'):
+        ans = insertExamOrMinExam(work_id, int(lessAdd[4][0]), int(lessAdd[1]), teach_id, dir_id, class_id, week_id, lessAdd[0], subj, 'экзамен')
+        if(ans):
+            return json.dumps({'otv': 'OK'})
+        else: return json.dumps({'otv': 'error'})
+
+    elif(typeLess == 'minExam'):
+        ans = insertExamOrMinExam(work_id, int(lessAdd[4][0]), int(lessAdd[1]), teach_id, dir_id, class_id, week_id, lessAdd[0], subj, 'зачет')
+        if(ans):
+            return json.dumps({'otv': 'OK'})
+        else: return json.dumps({'otv': 'error'})
+
+
+
+    # {'data': {'info': {'type': 'exam', 'napr': {'courseNumber': 2, 'napr': 'ФИИТ', 'groups': '09-231'}, 'subj': 'Технологии и методы программирования'}, 
+    # 'type': ['exam', 1], 
+    # 'add': ['2024-05-31', '588', '216', 'пятница', ['314', '10:10', '11:40']]}}
+
+    # return json.dumps({'otv': 'OK'})
 
 
 

@@ -18,6 +18,8 @@ export const Offers: React.FC<Offs> = (props) => {
     const [typeLess, setTypeLess] = useState<Array<Array<string|number>>>([])
     const [selectedLessons, setSelectedLessons] = useState<Array<string|number>>([''])
 
+    const [selectedExam, setSelectedExam] = useState<Array<string|number>>([''])
+
     const [full, setFull] = useState([])
     const [half, setHalf] = useState([])
     const [weeks, setWeeks] = useState([])
@@ -30,6 +32,7 @@ export const Offers: React.FC<Offs> = (props) => {
     useEffect(() => {
         if(typeof(selectedLessons[1]) === 'number') swCur(typeLess[selectedLessons[1] - 1])
     }, [selectedLessons])
+    
 
     const swCur = (el: Array<string|number>) => {
         console.log(el)
@@ -231,6 +234,8 @@ export const Offers: React.FC<Offs> = (props) => {
                     
                     setDataLess({'exam': '0'})
                     setExam(answer.data)
+                    setSelectedExam(['exam', -1])
+                    setTeach(answer.teach)
                     setIsLoading(false)
                 }else if(answer.otv === 'error'){
                     props.mes(answer.mes, false)
@@ -248,6 +253,8 @@ export const Offers: React.FC<Offs> = (props) => {
                     
                     setDataLess({'minExam': '0'})
                     setMinExam(answer.data)
+                    setSelectedExam(['minExam', -1])
+                    setTeach(answer.teach)
                     setIsLoading(false)
                 }else if(answer.otv === 'error'){
                     props.mes(answer.mes, false)
@@ -284,6 +291,15 @@ export const Offers: React.FC<Offs> = (props) => {
             return ans
         })
     }
+
+    const changeRadioExam = (ind: number) => {
+        setSelectedExam(prev => {
+            let ans = [...prev]
+            ans[1] = ind
+            return ans
+        })
+    }
+
 
     const addLessons = () => {
         let ans = true
@@ -334,9 +350,36 @@ export const Offers: React.FC<Offs> = (props) => {
         }
     }
 
-    // console.log(typeLess,selectedLessons)
+    const addExamOrMinExam = () => {
+        if(selectedExam[1] === -1) props.mes('Пожалуйста, выберите время экзамена!', false)
+        else{
+            if(selectedExam[0] === 'exam'){
+                let ans = props.sch.addExamOrMin({'info': props.data, 'type': selectedExam, 'add': exam[selectedExam[1] as number], 'teach': teach})
+                ans.then(answer => {
+                    if(answer.otv === 'OK'){
+                        
+                        props.mes('Экзамен успешно добавлен!', true)
+                    }else{
+                        props.mes('Что-то пошло не так, попробуйте позже...', false)
+                    }
+                })
+            }
+            if(selectedExam[0] === 'minExam'){
+                let ans = props.sch.addExamOrMin({'info': props.data, 'type': selectedExam, 'add': minExam[selectedExam[1] as number], 'teach': teach})
+                ans.then(answer => {
+                    if(answer.otv === 'OK'){
+                        
+                        props.mes('Зачет успешно добавлен!', true)
+                    }else{
+                        props.mes('Что-то пошло не так, попробуйте позже...', false)
+                    }
+                })
+            }
+        }
+    }
 
-    
+    console.log(teach)
+
     
     return (
         <>
@@ -379,8 +422,8 @@ export const Offers: React.FC<Offs> = (props) => {
                                         else if(el[0] == 'weeks') return (<div className='btn1 btnBlue bdR5' id={`${ind}`}onClick={() => selectLess(el)} >Занятие с особой периодичностью</div>)
                                         } 
                                     )}
-                                    {exam.length > 0 && (<div className='btn1 btnBlue bdR5' id='exam' >Экзамен</div>)}
-                                    {minExam.length > 0 && (<div className='btn1 btnBlue bdR5' id='exam' >Зачет</div>)}
+                                    {selectedExam[0] === 'exam' && (<div className='btn1 btnBlue bdR5' id='exam' >Экзамен</div>)}
+                                    {selectedExam[0] === 'minExam' && (<div className='btn1 btnBlue bdR5' id='exam' >Зачет</div>)}
                                 </div>
                                 <div id='suggs'>
                                         <div id='full'>
@@ -425,35 +468,45 @@ export const Offers: React.FC<Offs> = (props) => {
                                                 </div>)) }
                                                 </form>
                                         </div>
-                                        <div id='exam'>
-                                            <form>
-                                                {exam?.map((el, ind) => (<div className='checkboxSugs bdR5 btnYellow'>
-                                                    <input type='radio' name='exam' id={`${ind}`}/>
-                                                    <label htmlFor={`${ind}`}>
-                                                        <span>Дата: {el[0]}</span>
-                                                        <span>Аудитория: {el[2]}</span>
-                                                        <span>Время: {el[4][1]} - {el[4][2]}</span>
-                                                        <span>{el[3]}</span>
-                                                    </label>
+                                        {selectedExam[0] === 'exam' && (
+                                            <div id='exam'>
+                                                <form>
+                                                    {exam?.map((el, ind) => (<div className='checkboxSugs bdR5 btnYellow'>
+                                                        <input type='radio' name='exam' id={`${ind}`} onClick={() => changeRadioExam(ind)}/>
+                                                        <label htmlFor={`${ind}`}>
+                                                            <span>Дата: {el[0]}</span>
+                                                            <span>Аудитория: {el[2]}</span>
+                                                            <span>Время: {el[4][1]} - {el[4][2]}</span>
+                                                            <span>{teach}</span>
+                                                            <span>{el[3]}</span>
+                                                        </label>
+                                                    </div>)) }
+                                                </form>
+                                            </div>
+                                        )
+                                        }
+                                        {selectedExam[0] === 'minExam' && (
+
+                                            <div id='minExam'>
+                                                <form>
+                                                    {minExam?.map((el, ind) => (<div className='checkboxSugs bdR5 btnYellow'>
+                                                        <input type='radio' name='minExam' id={`${ind}`} onClick={() => changeRadioExam(ind)}/>
+                                                        <label htmlFor={`${ind}`}>
+                                                            <span>Дата: {el[0]}</span>
+                                                            <span>Аудитория: {el[2]}</span>
+                                                            <span>Время: {el[4][1]} - {el[4][2]}</span>
+                                                            <span>{teach}</span>
+                                                            <span>{el[3]}</span>
+                                                        </label>
                                                 </div>)) }
-                                            </form>
-                                        </div>
-                                        <div id='minExam'>
-                                             <form>
-                                                {minExam?.map((el, ind) => (<div className='checkboxSugs bdR5 btnYellow'>
-                                                    <input type='radio' name='minExam' id={`${ind}`}/>
-                                                    <label htmlFor={`${ind}`}>
-                                                        <span>Дата: {el[0]}</span>
-                                                        <span>Аудитория: {el[2]}</span>
-                                                        <span>Время: {el[4][1]} - {el[4][2]}</span>
-                                                        <span>{el[3]}</span>
-                                                    </label>
-                                            </div>)) }
-                                            </form>
-                                        </div>
+                                                </form>
+                                            </div>
+                                        )
+                                        }
                                 </div>
                                 <div className='onebtn'>
-                                    <button className="btn1 btnPink bdR5" onClick={() => addLessons()}><span>Добавить занятия!</span></button>
+                                    {typeLess.length > 0 && (<button className="btn1 btnPink bdR5" onClick={() => addLessons()}><span>Добавить занятия!</span></button>)}
+                                    {(selectedExam[0] === 'exam' || selectedExam[0] === 'minExam') && (<button className="btn1 btnPink bdR5" onClick={() => addExamOrMinExam()}><span>Добавить занятия!</span></button>)}
                                 </div>
                             </div>
                         )}

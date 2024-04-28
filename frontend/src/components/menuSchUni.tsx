@@ -191,7 +191,9 @@ export const MenuSchUni: React.FC<Menu> = (props) => {
                         ))}
                         
                         {lesson.map(el => {
-                            if(el[10] !== null && el[9] !== null && (el[7] === 'зачет' || el[7] === 'экзамен')){
+                            console.log(el)
+                            if(el[7] === 'зачет' || el[7] === 'экзамен'){
+                                console.log(el)
                                 return coutGroups.map((gr, ind) => {if(gr[1] == el[10]) return (
                                     <Lesson mes={props.mes} sch={props.sch} key={ind} color={'var(--main-yellow)'} text={{'name': el[4], 'place': el[2], 'teach': el[3], 'period': el[7]}} top={typeof(el[0]) === 'string' ? getTop(arrHours, el[0]) : '0px'} left={72 + (week_small.indexOf(el[5])*coutGroups.length*180) + ind*180 +'px'} height={minss + 'px'} data={el[6]} leftInt={72 + (week_small.indexOf(el[5])*coutGroups.length*180) + ind*180} id={Number(el[11])} infoDop={[el[0], el[1], el[7]]}/>
                                 )})

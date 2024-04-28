@@ -56,5 +56,15 @@ export class ScheduleSchool extends Schedule{
         return ans
     }
 
+    public getClasses(data: any) {
+        let ans = apiPos({'work_id': this.id, 'data': data}, '/getScheduleSchool')
+        return ans
+    }
+
+    public deleteLesson(id: number){
+        let ans = apiPos({'id': id}, '/deleteLessonSchool')
+        return ans
+    }
+
     public addClass(classes: string, name_sub:string){}
 }
