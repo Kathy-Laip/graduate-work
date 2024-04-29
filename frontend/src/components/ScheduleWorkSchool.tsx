@@ -79,7 +79,7 @@ export const WorkSchSchool: React.FC<WorkSch> = (props) => {
                     <div className="btnGreen menuPos bdr5UP" id='teach' onClick={() => onToggle('teach')}>Учителя</div>
                 </div>
                 <div className="saveOrAdd">
-                    {add ? (
+                    {rasp ? (
                         <button className="btn1 bdR5 btnBlue" onClick={() => props.addLessTrue()}>Добавить занятие</button>
                     ):(
                         <button className="btn1 bdR5 btnBlue">Скачать расписание</button>

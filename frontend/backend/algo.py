@@ -852,34 +852,36 @@ def algoSchool(work_id, info):
         if(dir[i][2] == course):
             dir_id = dir[i][1]
     if(dir_id == ''):
-        return 'ошибка получения направления, перепроверьте даннные о параллелях'
+        return {'otv': 'error', 'mes':'ошибка получения направления, перепроверьте даннные о параллелях'}
     class_ID = getClass(dir_id, initial_class)
     if class_ID == False:
-        return 'ошибка получения класса, перепроверьте данные о классх'
+        return {'otv': 'error', 'mes':'ошибка получения класса, перепроверьте данные о классх'}
     
     subj_info = getSubjectSchool(class_ID, subj)
     if(len(subj_info) == 0):
-        return 'для данного класса нет в учебном плане введенного вами предмета'
+        return {'otv': 'error', 'mes':'для данного класса нет в учебном плане введенного вами предмета'}
+    count = subj_info[0][1]
 
     # sch_has = getHasLessonGroup(class_ID, subj, work_id)
     # if(len(sch_has) > 0):
     #     return 'для данного класса уже сущевтует занятие!'
 
     teacher_id = getTeacherSchool(class_ID, subj)
+    print(teacher_id, class_ID)
     if(len(teacher_id) == 0):
-        return 'для данного класса нет преподавателя для проведения занятия'
+        return {'otv': 'error', 'mes':'для данного класса нет преподавателя для проведения занятия'}
     
     teacher_id = teacher_id[0]
 
     fio_teach = getTeacherName(teacher_id)
     if(len(fio_teach) == 0):
-        return 'для данного класса нет преподавателя для проведения занятия'
+        return {'otv': 'error', 'mes':'для данного класса нет преподавателя для проведения занятия'}
     fio_teach = fio_teach[0]
 
     grafic = getGrafic(work_id)
     place = getPlaceTeacher(fio_teach)
     if(len(place) == 0):
-        return 'у учителя нет кабинета для проведения занятия, проверьте данные'
+        return {'otv': 'error', 'mes':'у учителя нет кабинета для проведения занятия, проверьте данные'}
 
     sch_napr = getSchClassSchool(work_id, class_ID)
     teach_sch = getSchTeacherSchool(work_id, teacher_id)
@@ -911,6 +913,6 @@ def algoSchool(work_id, info):
 
 
 
-    return sch_full
+    return {'otv':'OK', 'data': sch_full, 'teach': fio_teach, 'count': count}
 
 

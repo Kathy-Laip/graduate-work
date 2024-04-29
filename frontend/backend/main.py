@@ -998,6 +998,25 @@ def getSubjUni():
     
     return json.dumps({'otv': 'OK', 'data': subs})
 
+@app.route('/getSubjectSchool', methods=['POST'])
+def getSubjSchool():
+    info = json.loads(request.get_data())
+    work_id = info['work_id']
+    course = info['data']['course']
+
+    dir_id = getDirIdNameCourse(course, work_id)
+
+
+    subj = getPlanSchoolDir(dir_id[0])
+    subs = []
+    for i in range(len(subj)):
+        subs.append([subj[i][0], subj[i][1]])
+    
+    if(len(subj) == 0):
+        return json.dumps({'otv': 'empty'})
+    
+    return json.dumps({'otv': 'OK', 'data': subs})
+
 @app.route('/addLessonLectUni', methods=['POST'])
 def addLessonLectUni():
     info = json.loads(request.get_data())
@@ -1014,6 +1033,23 @@ def addLessonLectUni():
     if(ans['otv'] == 'OK'):
 
         return json.dumps({'otv': 'OK', 'data': ans['data']})
+    else:
+        return json.dumps({'otv': 'error', 'mes': ans['mes']})
+
+@app.route('/getLessonSchool', methods=['POST'])
+def getLessonSchool():
+    info = json.loads(request.get_data())
+    print(info)
+    
+    work_id = info['work_id']
+    subj = info['data']['subj']
+    napr = info['data']['napr']
+
+
+    ans = algoSchool(work_id, {'courseNum': napr.split(' ')[0], 'initial_class': napr.split(' ')[1], 'subj': subj})
+    if(ans['otv'] == 'OK'):
+
+        return json.dumps({'otv': 'OK', 'data': ans['data'], 'teach': ans['teach'], 'count': ans['count']})
     else:
         return json.dumps({'otv': 'error', 'mes': ans['mes']})
 
@@ -1135,6 +1171,39 @@ def addLessonsUni():
             return json.dumps({'otv': 'OK'})
         else: 
             return json.dumps({'otv': 'error', 'mes': 'Не получилось разместить расписание, попробуйте позже...'})
+
+
+@app.route('/addLessonsSchool', methods=['POST'])
+def addLessonsSchool():
+    info = json.loads(request.get_data())
+    # {'wotk_id': 71, 
+    # 'data': {'lessons': [['559', '312', 'понедельник', '307', '9:25', '10:10'], 
+    # ['559', '312', 'понедельник', '309', '11:25', '12:10']], 
+    # 'teach': 'Львова М. Ф.', 
+    # 'dirs': '8 А', 
+    # 'subj': 'Литература'}}
+
+    work_id = info['work_id']
+    less = info['data']['lessons']
+    teach = info['data']['teach']
+    napr = info['data']['dirs']
+    subj = info['data']['subj']
+
+    dir_id = getDirIdNameCourse(napr.split(' ')[0], work_id)
+    class_id = getClass(dir_id[0], napr.split(' ')[1])
+    teach_id = getTeachId(teach)
+    
+    arr = []
+    for i in range(len(less)):
+        week_id = getWeekID(less[i][2])
+        print(work_id, int(less[i][3]), int(less[i][0]), teach_id, dir_id[0], class_id, week_id, subj)
+        
+        ans = insertLessSchool(work_id, int(less[i][3]), int(less[i][0]), teach_id, dir_id[0], class_id, week_id, subj, 'каждую неделю')
+        arr.append(ans)
+    print(ans)
+    if(all(arr)):
+        return json.dumps({'otv': 'OK'})
+    else: return json.dumps({'otv': 'error', 'mes': 'Ошибка добавления занятий, попробуйте позже!'})
 
 
 @app.route('/deleteLessonUni', methods=['POST'])

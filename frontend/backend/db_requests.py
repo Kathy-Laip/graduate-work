@@ -23,6 +23,10 @@ def insertExamOrMinExam(work_id, grafic_id, place_id, teacher_id, dir_id, class_
     ans = connection.execute_query('insert into schedules.schedule(work_id, grafic_id, place_id, teacher_id, direction_id, classes_id, week_day, start_date, name_sub, period) values({}, {}, {}, {}, {},{}, {}, "{}", "{}", "{}");'.format(work_id, grafic_id, place_id, teacher_id, dir_id, class_id,week_day, start_date, name, period))
     return ans
 
+def insertLessSchool(work_id, grafic_id, place_id, teacher_id, dir_id, class_id, week_day, name, period):
+    ans = connection.execute_query('insert into schedules.schedule(work_id, grafic_id, place_id, teacher_id, direction_id, classes_id, week_day, name_sub, period) values({}, {}, {}, {}, {},{}, {}, "{}", "{}");'.format(work_id, grafic_id, place_id, teacher_id, dir_id, class_id,week_day, name, period))
+    return ans
+
 def deleteUniLess(id):
     ans = connection.execute_query('delete from schedules.schedule where sch_id={}'.format(id))
     return ans
@@ -343,6 +347,13 @@ def getPlanDir(dir_id):
         plan_sub = connection.get_data_from_table('select schedules.plan_direction.name_sub from schedules.plan_direction where schedules.plan_direction.direction_id = {};'.format(dir_id))
         if(plan_sub is not None):
             return plan_sub
+    except: return []
+
+def getPlanSchoolDir(dir_id):
+    try: 
+        plan = connection.get_data_from_table('select schedules.classes.initial_class, schedules.plan_direction.name_sub from schedules.plan_direction  inner join schedules.classes on schedules.plan_direction.class_id = schedules.classes.classes_id where schedules.classes.direction_id = {};'.format(dir_id))
+        if(plan is not None):
+            return plan
     except: return []
     
 def getSubjLect(dir_id, sub):

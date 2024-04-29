@@ -25,6 +25,7 @@ import {Schedule} from '../architecture/Schedule'
 import { AddLesonUni } from "../components/AddLessonUni";
 import { AddLesonSchool } from "../components/AddLessonSchool";
 import { Offers } from "../components/Offers";
+import { OffersSchool } from "../components/OffersSchool";
 
 type WorkSch = {
     user: User
@@ -62,6 +63,7 @@ export const WorkSchedule: React.FC<WorkSch> = (props) => {
     const [offsInfoSchool, setOffsInfoSchool] = useState<any>({})
 
     const [offs, setOffs] = useState(false)
+    const [offsSchool, setOffsSchool] = useState(false)
 
     const [openSCH, setOpenSCH] = useState<(ScheduleUni|ScheduleSchool)[]>([])
 
@@ -140,12 +142,20 @@ export const WorkSchedule: React.FC<WorkSch> = (props) => {
         setAddLessUni(false)
     }
 
+    const closeAddLessonTrueSchool = () => {
+        setAddLessSchool(true)
+    }
+
+    const closeAddLessonSchool = () => {
+        setAddLessSchool(false)
+    }
+
     const closeAddLessonTrueSch = () => {
-        setAddLessUni(true)
+        setAddLessSchool(true)
     }
 
     const closeAddLessonSch = () => {
-        setAddLessUni(false)
+        setAddLessSchool(false)
     }
 
     const closeOffersTrue = () => {
@@ -154,6 +164,14 @@ export const WorkSchedule: React.FC<WorkSch> = (props) => {
 
     const closeOffersFalse = () => {
         setOffs(false)
+    }
+
+    const closeOffersTrueSchool = () => {
+        setOffsSchool(true)
+    }
+
+    const closeOffersFalseSchool = () => {
+        setOffsSchool(false)
     }
 
 
@@ -249,6 +267,12 @@ export const WorkSchedule: React.FC<WorkSch> = (props) => {
         setInfoSchool(data)
     }
 
+    const addOffersSchool = (data: any) => {
+        setOffsInfoSchool(data)
+        closeAddLessonSchool()
+        closeOffersTrueSchool()
+    }
+
     const addOffers = (data: any) => {
         setOffsInfo(data)
         closeAddLesson()
@@ -310,9 +334,10 @@ export const WorkSchedule: React.FC<WorkSch> = (props) => {
                 </div>
             </div>
             {props.user.currentSchedule! instanceof ScheduleUni && addLessUni && (<AddLesonUni close={closeAddLesson} info={info} sch={props.user.currentSchedule} add={addOffers} mes={message}/>)}
-            {props.user.currentSchedule! instanceof ScheduleSchool && addLessUni && (<AddLesonSchool close={closeAddLessonSch}/>)}
+            {props.user.currentSchedule! instanceof ScheduleSchool && addLessSchool && (<AddLesonSchool close={closeAddLessonSch} info={infoSchool} sch={props.user.currentSchedule} add={addOffersSchool} mes={message}/>)}
 
             {props.user.currentSchedule! instanceof ScheduleUni && offs && (<Offers close={closeOffersFalse} data={offsInfo} sch={props.user.currentSchedule} mes={message}/>)}
+            {props.user.currentSchedule! instanceof ScheduleSchool && offsSchool && (<OffersSchool close={closeOffersFalseSchool} data={offsInfoSchool} sch={props.user.currentSchedule} mes={message}/>)}
             <Message mess={mes} update={upd}/>
             {/* <MessageConfirmYN mess={mes} update={upd} change={changeYON}/> */}
         </div>

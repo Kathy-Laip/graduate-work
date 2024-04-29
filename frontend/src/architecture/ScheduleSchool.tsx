@@ -66,5 +66,19 @@ export class ScheduleSchool extends Schedule{
         return ans
     }
 
-    public addClass(classes: string, name_sub:string){}
+    public getSubject(data: any){
+        let ans = apiPos({'work_id': this.id, 'data': data}, '/getSubjectSchool')
+        return ans
+    }
+
+    public addClass(data:any){
+        let ans = apiPos({'work_id': this.id, 'data': data}, '/getLessonSchool')
+        return ans
+
+    }
+
+    public addLessons(data: any){
+        let ans = apiPos({'work_id': this.id, 'data': data}, '/addLessonsSchool')
+        return ans
+    }
 }
