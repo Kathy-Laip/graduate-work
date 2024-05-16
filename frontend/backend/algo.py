@@ -71,19 +71,30 @@ def is_room_half_available(room, schedule):
 def is_time_room_half_slot_available(room, schedule):
     # ['257', '1211', 'суббота', array(['203', '12:10', '13:40'], dtype='<U21', 'нечет'] room 
     # ['201' '63' 'вторник' 'каждую неделю'] sch
-    week, period = room[2], room[3][1]
+    # if(room[2] == 'понедельник'):
+    #     print(room)
+    #     print(schedule)
+    week, period = room[2], room[3][0][1]
+    time = room[3][0][0]
     count = 0
     for item in schedule:
-        if(period == 'чет'):
-            if item[1] == week and item[3] == 'нечет':
-                count += 0
-            elif item[1] == week and item[3] != period:
-                count += 1
-        elif(period == 'нечет'):
-            if item[1] == week and item[3] == 'чет':
-                count += 0
-            elif item[1] == week and item[3] != period:
-                count += 1
+        # print(item[0], time, item[2], week)
+        if(item[0] == time and item[2] == week and period != 'каждую неделю' and item[3] == period):
+            # print('ok')
+            return False
+        if(item[0] == time and item[2] == week and item[3] == 'каждую неделю'):
+            return False
+        else:
+            if(period == 'чет'):
+                if item[1] == week and item[3] == 'нечет':
+                    count += 0
+                elif item[1] == week and item[3] != period:
+                    count += 1
+            elif(period == 'нечет'):
+                if item[1] == week and item[3] == 'чет':
+                    count += 0
+                elif item[1] == week and item[3] != period:
+                    count += 1
     return count < 5
 
 def checkInt(arr, k):
@@ -153,13 +164,16 @@ def halflessonLectWithSchs(schs, grafic_place, schs_napr):
             global_places.append([grafic_place[i][0], grafic_place[i][1], grafic_place[i][2], [grafic_place[i][3], 'нечет']])
             global_places.append([grafic_place[i][0], grafic_place[i][1], grafic_place[i][2], [grafic_place[i][3], 'чет']])
     
+    
     for i in range(len(global_places)):
         flag = True
         for j in range(len(schs_napr)):
             if(len(schs_napr[j]) != 0 and flag == True):
                 if is_time_room_half_slot_available(global_places[i], schs_napr[j]) == False:
                     flag = False
+        # print(flag)
         if(flag):
+            # print(global_places[i])
             available_places.append(global_places[i])
     return available_places
 
@@ -235,6 +249,7 @@ def algo(work_id, info, type_inst):
         for i in range(len(info_groups)):
             course_id = getCourseID(info_groups[i]['courseNumber'], work_id)
             dir_id = getDirection(course_id, info_groups[i]['napr'])
+            # print(info_groups[i]['napr'])
             if(dir_id == False): return {'otv': 'error', 'mes': 'нет информации про все направления, перепроверьте всю информацию о направлениях!'}
             else:
                 ans = getSubjLect(dir_id, subj)
@@ -244,7 +259,7 @@ def algo(work_id, info, type_inst):
                     arr.append(ans[0])
                         
                 ans2 = getTeach(dir_id, subj)
-                print(ans2)
+                # print(ans2)
                 if(len(ans2) > 0):
                     tech_id.append(ans2[0])
                 else: return {'otv': 'error', 'mes':'нет преподавателя для одного из направлений! пожалуйста, перепроверьте данные о преподавателях!'}
@@ -299,6 +314,8 @@ def algo(work_id, info, type_inst):
             dir_id = getDirection(course_id, info_groups[i]['napr'])
             getclass = getClasses(dir_id)
             count_seat += getclass[0][0]
+
+        # print(count_lessons, count_times)
         
         
         places = getPlaces(work_id, typeLess, count_seat)
@@ -307,8 +324,8 @@ def algo(work_id, info, type_inst):
         elif(len(places) > 0):
             all_ava_place = {}
             schs = getSch(work_id)
-
-            if(schs != False):
+            # print(schs)
+            if(len(schs) >= 0):
                 schs_napr = []
 
                 for i in range(len(info_groups)):
@@ -403,7 +420,7 @@ def algo(work_id, info, type_inst):
         dir_id = getDirection(course_id, info_groups['napr'])
         hasLect = []
         for i in range(len(arr_class)):
-            ans = getHasLessonGroup(arr_class[i], subj, work_id)
+            ans = getHasLessonGroup(arr_class[i], subj, work_id, 3)
             if(len(ans) > 0):
                 hasLect.append(ans)
         if(len(hasLect) > 0):
@@ -443,7 +460,7 @@ def algo(work_id, info, type_inst):
             all_ava_place = {}
             schs = getSch(work_id)
 
-            if(schs != False):
+            if(len(schs) >= 0):
                 schs_napr = []
 
                 course_id = getCourseID(info_groups['courseNumber'], work_id)
@@ -538,7 +555,7 @@ def algo(work_id, info, type_inst):
         dir_id = getDirection(course_id, info_groups['napr'])
         hasLect = []
         for i in range(len(arr_class)):
-            ans = getHasLessonGroup(arr_class[i], subj, work_id)
+            ans = getHasLessonGroup(arr_class[i], subj, work_id, 2)
             if(len(ans) > 0):
                 hasLect.append(ans)
         if(len(hasLect) > 0):
@@ -578,7 +595,7 @@ def algo(work_id, info, type_inst):
             all_ava_place = {}
             schs = getSch(work_id)
 
-            if(schs != False):
+            if(len(schs) >= 0):
                 schs_napr = []
 
                 course_id = getCourseID(info_groups['courseNumber'], work_id)
@@ -844,7 +861,7 @@ def algoSchool(work_id, info):
     subj = info['subj']
     course = str(info['courseNum'])
     initial_class = info['initial_class']
-    weeks_name = ['понедельник','вторник','среда','четверг','пятнциа','суббота']
+    weeks_name = ['понедельник','вторник','среда','четверг','пятница','суббота']
 
     dir = getDataCourseDirs(work_id)
     dir_id = ''
@@ -867,7 +884,7 @@ def algoSchool(work_id, info):
     #     return 'для данного класса уже сущевтует занятие!'
 
     teacher_id = getTeacherSchool(class_ID, subj)
-    print(teacher_id, class_ID)
+    # print(teacher_id, class_ID)
     if(len(teacher_id) == 0):
         return {'otv': 'error', 'mes':'для данного класса нет преподавателя для проведения занятия'}
     

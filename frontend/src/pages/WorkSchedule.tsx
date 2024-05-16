@@ -26,6 +26,7 @@ import { AddLesonUni } from "../components/AddLessonUni";
 import { AddLesonSchool } from "../components/AddLessonSchool";
 import { Offers } from "../components/Offers";
 import { OffersSchool } from "../components/OffersSchool";
+import { SaveSchUni } from "../components/SaveSchUni";
 
 type WorkSch = {
     user: User
@@ -52,6 +53,8 @@ export const WorkSchedule: React.FC<WorkSch> = (props) => {
 
     const [addLessUni, setAddLessUni] = useState(false)
     const [addLessSchool, setAddLessSchool] = useState(false)
+
+    const [saveUni, setSaveUni] = useState(false)
 
     const [mes, setMes] = useState<string>('')
     const [upd, setUpd] = useState<boolean>(false)
@@ -132,6 +135,14 @@ export const WorkSchedule: React.FC<WorkSch> = (props) => {
     }
     const editTeachsSchoolFalse = () => {
         setEditTeachsSchool(false)
+    }
+
+    const closeSaveTrue = () => {
+        setSaveUni(true)
+    }
+
+    const closeSave = () => {
+        setSaveUni(false)
     }
 
     const closeAddLessonTrue = () => {
@@ -253,7 +264,7 @@ export const WorkSchedule: React.FC<WorkSch> = (props) => {
         document.body.removeChild(link);
     }
 
-    const message = (mes:string, up:boolean) => {
+    const message = (mes:string, up:boolean=false) => {
         setMes(mes)
         setUpd(up)
         switchBlock('newMessage')
@@ -274,6 +285,7 @@ export const WorkSchedule: React.FC<WorkSch> = (props) => {
     }
 
     const addOffers = (data: any) => {
+        // console.log(data)
         setOffsInfo(data)
         closeAddLesson()
         closeOffersTrue()
@@ -326,7 +338,7 @@ export const WorkSchedule: React.FC<WorkSch> = (props) => {
                 </div>
                 <div className="workBodyShedules">
                     {props.user.currentSchedule && props.user.currentSchedule !== 'ERROR_CREATE' && (props.user.currentSchedule!.type === 'uni' ?
-                         (<WorkSchUni user={props.user} addPlan={addPlanUniTrue} editPlan={editPlanUniTrue} addTeachs={addTeachsUniTrue} editTeachs={editTeachsUniTrue} mes={message} addLessTrue={closeAddLessonTrue} changeInfo={changeInfo}/>)
+                         (<WorkSchUni user={props.user} addPlan={addPlanUniTrue} editPlan={editPlanUniTrue} addTeachs={addTeachsUniTrue} editTeachs={editTeachsUniTrue} mes={message} addLessTrue={closeAddLessonTrue} changeInfo={changeInfo} saveSch={closeSaveTrue}/>)
                          :
                          (<WorkSchSchool user={props.user} addPlan={addPlanSchoolTrue} editPlan={editPlanSchoolTrue} addTeachs={addTeachsSchoolTrue} editTeachs={editTeachsSchoolTrue}  mes={message} addLessTrue={closeAddLessonTrueSch} changeInfo={changeInfoSchool}/>)
                     )
@@ -338,6 +350,8 @@ export const WorkSchedule: React.FC<WorkSch> = (props) => {
 
             {props.user.currentSchedule! instanceof ScheduleUni && offs && (<Offers close={closeOffersFalse} data={offsInfo} sch={props.user.currentSchedule} mes={message}/>)}
             {props.user.currentSchedule! instanceof ScheduleSchool && offsSchool && (<OffersSchool close={closeOffersFalseSchool} data={offsInfoSchool} sch={props.user.currentSchedule} mes={message}/>)}
+            
+            {props.user.currentSchedule! instanceof ScheduleUni && saveUni && (<SaveSchUni close={closeSave} infoSch={props.user.currentSchedule!} mes={message}/>)}
             <Message mess={mes} update={upd}/>
             {/* <MessageConfirmYN mess={mes} update={upd} change={changeYON}/> */}
         </div>

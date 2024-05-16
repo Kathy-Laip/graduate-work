@@ -89,6 +89,7 @@ export const MenuSchUni: React.FC<Menu> = (props) => {
         ans.then(answer => {
             if(answer.otv === 'OK'){
                 setIsLoading(true)
+                console.log(answer.info)
                 setLesson(Object.values(answer.info))
                 
                 setIsLoading(false)
@@ -111,6 +112,7 @@ export const MenuSchUni: React.FC<Menu> = (props) => {
         ans.then(answer => {
             if(answer.otv === 'OK'){
                 setIsLoading(true)
+                console.log(answer.info)
                 setLesson(Object.values(answer.info))
                 
                 
@@ -191,15 +193,17 @@ export const MenuSchUni: React.FC<Menu> = (props) => {
                         ))}
                         
                         {lesson.map(el => {
-                            console.log(el)
+                            // console.log(el)
                             if(el[7] === 'зачет' || el[7] === 'экзамен'){
                                 console.log(el)
-                                return coutGroups.map((gr, ind) => {if(gr[1] == el[10]) return (
+                                return coutGroups.map((gr, ind) => {
+                                    console.log(gr[1])
+                                    if(gr[1] == el[10]) return (
                                     <Lesson mes={props.mes} sch={props.sch} key={ind} color={'var(--main-yellow)'} text={{'name': el[4], 'place': el[2], 'teach': el[3], 'period': el[7]}} top={typeof(el[0]) === 'string' ? getTop(arrHours, el[0]) : '0px'} left={72 + (week_small.indexOf(el[5])*coutGroups.length*180) + ind*180 +'px'} height={minss + 'px'} data={el[6]} leftInt={72 + (week_small.indexOf(el[5])*coutGroups.length*180) + ind*180} id={Number(el[11])} infoDop={[el[0], el[1], el[7]]}/>
                                 )})
                             }
                             else if(el[10] === null && el[9] !== null && el[8] == 'lect'){
-                                if(el[7] == 'чет'){ // 89
+                                if(el[7] == 'чет' ){ // 89
                                     return coutGroups.map((gr, ind) => (
                                         <Lesson mes={props.mes} sch={props.sch} key={ind} color={'var(--main-blue)'} text={{'name': el[4], 'place': el[2], 'teach': el[3], 'period': el[7]}} top={typeof(el[0]) === 'string' ? getTop(arrHours, el[0]) : '0px'} left={72 + (week_small.indexOf(el[5])*coutGroups.length*180) + ind*180 +'px'} height={minss + 'px'} width={'89px'} leftInt={72 + (week_small.indexOf(el[5])*coutGroups.length*180) + ind*180 - 89} id={Number(el[11])} infoDop={[el[0], el[1], 'лекция']}/>
                                     ))
@@ -209,42 +213,50 @@ export const MenuSchUni: React.FC<Menu> = (props) => {
                                         <Lesson mes={props.mes} sch={props.sch} key={ind} color={'var(--main-blue)'} text={{'name': el[4], 'place': el[2], 'teach': el[3], 'period': el[7]}} top={typeof(el[0]) === 'string' ? getTop(arrHours, el[0]) : '0px'} left={72 + (week_small.indexOf(el[5])*coutGroups.length*180) + ind*180 + 89 +'px'} height={minss + 'px'} width={'89px'} leftInt={72 + (week_small.indexOf(el[5])*coutGroups.length*180) + ind*180} id={Number(el[11])} infoDop={[el[0], el[1], 'лекция']}/>
                                     ))
                                 } else{
-                                    return coutGroups.map((gr, ind) => (
+                                    return coutGroups.map((gr, ind) => {
+                                        console.log(gr)
+                                        return (
                                         <Lesson mes={props.mes} sch={props.sch} key={ind} color={'var(--main-blue)'} text={{'name': el[4], 'place': el[2], 'teach': el[3], 'period': el[7]}} top={typeof(el[0]) === 'string' ? getTop(arrHours, el[0]) : '0px'} left={72 + (week_small.indexOf(el[5])*coutGroups.length*180) + ind*180 +'px'} height={minss + 'px'} leftInt={72 + (week_small.indexOf(el[5])*coutGroups.length*180) + ind*180} id={Number(el[11])} infoDop={[el[0], el[1], 'лекция']}/>
-                                    ))
+                                    )})
 
                                 }
                             }
                             else if(el[10] !== null && el[9] !== null && el[8] == 'lab'){
                                 if(el[7] == 'чет'){ // 89
-                                    return coutGroups.map((gr, ind) => (
-                                        <Lesson mes={props.mes} sch={props.sch} key={ind} color={'var(--main-orange)'} text={{'name': el[4], 'place': el[2], 'teach': el[3], 'period': el[7]}} top={typeof(el[0]) === 'string' ? getTop(arrHours, el[0]) : '0px'} left={72 + (week_small.indexOf(el[5])*coutGroups.length*180) + ind*180 +'px'} height={minss + 'px'} width={'89px'} leftInt={72 + (week_small.indexOf(el[5])*coutGroups.length*180) + ind*180 - 89} id={Number(el[11])} infoDop={[el[0], el[1], 'лабораторная практика']}/>
-                                    ))
+                                    return coutGroups.map((gr, ind) => {
+                                        if(gr[1] === el[10]){
+                                        return <Lesson mes={props.mes} sch={props.sch} key={ind} color={'var(--main-orange)'} text={{'name': el[4], 'place': el[2], 'teach': el[3], 'period': el[7]}} top={typeof(el[0]) === 'string' ? getTop(arrHours, el[0]) : '0px'} left={72 + (week_small.indexOf(el[5])*coutGroups.length*180) + ind*180 +'px'} height={minss + 'px'} width={'89px'} leftInt={72 + (week_small.indexOf(el[5])*coutGroups.length*180) + ind*180 - 89} id={Number(el[11])} infoDop={[el[0], el[1], 'лабораторная практика']}/>
+                                }})
                                 }
                                 else if(el[7] == 'нечет'){ // 89
-                                    return coutGroups.map((gr, ind) => (
-                                        <Lesson mes={props.mes} sch={props.sch} key={ind} color={'var(--main-orange)'} text={{'name': el[4], 'place': el[2], 'teach': el[3], 'period': el[7]}} top={typeof(el[0]) === 'string' ? getTop(arrHours, el[0]) : '0px'} left={72 + (week_small.indexOf(el[5])*coutGroups.length*180) + ind*180 + 89 +'px'} height={minss + 'px'} width={'89px'} leftInt={72 + (week_small.indexOf(el[5])*coutGroups.length*180) + ind*180} id={Number(el[11])} infoDop={[el[0], el[1], 'лабораторная практика']}/>
-                                    ))
+                                    return coutGroups.map((gr, ind) => {
+                                        if(gr[1] === el[10]){
+                                        return <Lesson mes={props.mes} sch={props.sch} key={ind} color={'var(--main-orange)'} text={{'name': el[4], 'place': el[2], 'teach': el[3], 'period': el[7]}} top={typeof(el[0]) === 'string' ? getTop(arrHours, el[0]) : '0px'} left={72 + (week_small.indexOf(el[5])*coutGroups.length*180) + ind*180 + 89 +'px'} height={minss + 'px'} width={'89px'} leftInt={72 + (week_small.indexOf(el[5])*coutGroups.length*180) + ind*180} id={Number(el[11])} infoDop={[el[0], el[1], 'лабораторная практика']}/>
+                                        }})
                                 } else{
-                                    return coutGroups.map((gr, ind) => {if(gr[1] == el[10]) return (
-                                        <Lesson mes={props.mes} sch={props.sch} key={ind} color={'var(--main-orange)'} text={{'name': el[4], 'place': el[2], 'teach': el[3], 'period': el[7]}} top={typeof(el[0]) === 'string' ? getTop(arrHours, el[0]) : '0px'} left={72 + (week_small.indexOf(el[5])*coutGroups.length*180) + ind*180 +'px'} height={minss + 'px'} leftInt={72 + (week_small.indexOf(el[5])*coutGroups.length*180) + ind*180} id={Number(el[11])} infoDop={[el[0], el[1], 'лабораторная практика']}/>
-                                    )})
+                                    return coutGroups.map((gr, ind) => {
+                                        if(gr[1] === el[10]){
+                                        return <Lesson mes={props.mes} sch={props.sch} key={ind} color={'var(--main-orange)'} text={{'name': el[4], 'place': el[2], 'teach': el[3], 'period': el[7]}} top={typeof(el[0]) === 'string' ? getTop(arrHours, el[0]) : '0px'} left={72 + (week_small.indexOf(el[5])*coutGroups.length*180) + ind*180 +'px'} height={minss + 'px'} leftInt={72 + (week_small.indexOf(el[5])*coutGroups.length*180) + ind*180} id={Number(el[11])} infoDop={[el[0], el[1], 'лабораторная практика']}/>
+                                    }})
                                 }
                             }
                             else if(el[10] !== null && el[9] !== null && el[8] == 'practic'){
                                 if(el[7] == 'чет'){ // 89
-                                    return coutGroups.map((gr, ind) => (
-                                        <Lesson mes={props.mes} sch={props.sch} key={ind} color={'var(--main-yellow)'} text={{'name': el[4], 'place': el[2], 'teach': el[3], 'period': el[7]}} top={typeof(el[0]) === 'string' ? getTop(arrHours, el[0]) : '0px'} left={72 + (week_small.indexOf(el[5])*coutGroups.length*180) + ind*180 +'px'} height={minss + 'px'} width={'89px'} leftInt={72 + (week_small.indexOf(el[5])*coutGroups.length*180) + ind*180 - 89} id={Number(el[11])} infoDop={[el[0], el[1], 'практика']}/>
-                                    ))
+                                    return coutGroups.map((gr, ind) => {
+                                        if(gr[1] === el[10]){
+                                        return <Lesson mes={props.mes} sch={props.sch} key={ind} color={'var(--main-yellow)'} text={{'name': el[4], 'place': el[2], 'teach': el[3], 'period': el[7]}} top={typeof(el[0]) === 'string' ? getTop(arrHours, el[0]) : '0px'} left={72 + (week_small.indexOf(el[5])*coutGroups.length*180) + ind*180 +'px'} height={minss + 'px'} width={'89px'} leftInt={72 + (week_small.indexOf(el[5])*coutGroups.length*180) + ind*180 - 89} id={Number(el[11])} infoDop={[el[0], el[1], 'практика']}/>
+                                    }})
                                 }
                                 else if(el[7] == 'нечет'){ // 89
-                                    return coutGroups.map((gr, ind) => (
-                                        <Lesson mes={props.mes} sch={props.sch} key={ind} color={'var(--main-yellow)'} text={{'name': el[4], 'place': el[2], 'teach': el[3], 'period': el[7]}} top={typeof(el[0]) === 'string' ? getTop(arrHours, el[0]) : '0px'} left={72 + (week_small.indexOf(el[5])*coutGroups.length*180) + ind*180 + 89 +'px'} height={minss + 'px'} width={'89px'} leftInt={72 + (week_small.indexOf(el[5])*coutGroups.length*180) + ind*180} id={Number(el[11])} infoDop={[el[0], el[1], 'практика']}/>
-                                    ))
+                                    return coutGroups.map((gr, ind) => {
+                                        if(gr[1] === el[10]){
+                                        return <Lesson mes={props.mes} sch={props.sch} key={ind} color={'var(--main-yellow)'} text={{'name': el[4], 'place': el[2], 'teach': el[3], 'period': el[7]}} top={typeof(el[0]) === 'string' ? getTop(arrHours, el[0]) : '0px'} left={72 + (week_small.indexOf(el[5])*coutGroups.length*180) + ind*180 + 89 +'px'} height={minss + 'px'} width={'89px'} leftInt={72 + (week_small.indexOf(el[5])*coutGroups.length*180) + ind*180} id={Number(el[11])} infoDop={[el[0], el[1], 'практика']}/>
+                                    }})
                                 }else{
-                                    return coutGroups.map((gr, ind) => {if(gr[1] == el[10]) return (
-                                        <Lesson mes={props.mes} sch={props.sch} key={ind} color={'var(--main-yellow)'} text={{'name': el[4], 'place': el[2], 'teach': el[3], 'period': el[7]}} top={typeof(el[0]) === 'string' ? getTop(arrHours, el[0]) : '0px'} left={72 + (week_small.indexOf(el[5])*coutGroups.length*180) + ind*180 +'px'} height={minss + 'px'} leftInt={72 + (week_small.indexOf(el[5])*coutGroups.length*180) + ind*180} id={Number(el[11])} infoDop={[el[0], el[1], ' практика']}/>
-                                    )})
+                                    return coutGroups.map((gr, ind) => {
+                                        if(gr[1] == el[10]) {
+                                        return <Lesson mes={props.mes} sch={props.sch} key={ind} color={'var(--main-yellow)'} text={{'name': el[4], 'place': el[2], 'teach': el[3], 'period': el[7]}} top={typeof(el[0]) === 'string' ? getTop(arrHours, el[0]) : '0px'} left={72 + (week_small.indexOf(el[5])*coutGroups.length*180) + ind*180 +'px'} height={minss + 'px'} leftInt={72 + (week_small.indexOf(el[5])*coutGroups.length*180) + ind*180} id={Number(el[11])} infoDop={[el[0], el[1], ' практика']}/>
+                                    }})
 
                                 }
                             }

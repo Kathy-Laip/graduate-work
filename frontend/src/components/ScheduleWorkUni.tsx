@@ -16,7 +16,8 @@ type WorkSch = {
     editTeachs: Function,
     mes: Function,
     addLessTrue: Function,
-    changeInfo: Function
+    changeInfo: Function,
+    saveSch: Function
 }
 
 export const WorkSchUni: React.FC<WorkSch> = (props) => {
@@ -80,7 +81,7 @@ export const WorkSchUni: React.FC<WorkSch> = (props) => {
                     {rasp ? (
                         <button className="btn1 bdR5 btnBlue" onClick={() => props.addLessTrue()}>Добавить занятие</button>
                     ):(
-                        <button className="btn1 bdR5 btnBlue">Скачать расписание</button>
+                        <button className="btn1 bdR5 btnBlue" onClick={() => props.saveSch()}>Скачать расписание</button>
                     )}
                 </div>
             </div>

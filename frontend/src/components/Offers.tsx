@@ -89,6 +89,7 @@ export const Offers: React.FC<Offs> = (props) => {
 
     const getLesson = () => {
         if(props.data.type === 'lect'){
+            
             let ans = props.sch.addClassLect(props.data)
             ans.then(answer => {
                 if(answer.otv === 'OK'){
@@ -263,8 +264,10 @@ export const Offers: React.FC<Offs> = (props) => {
         }
     }
 
+
     (async () => {
         if(get){
+            // console.log(props.data)
             getLesson()
 
             setGet(false)
@@ -378,7 +381,7 @@ export const Offers: React.FC<Offs> = (props) => {
         }
     }
 
-    console.log(teach)
+    
 
     
     return (

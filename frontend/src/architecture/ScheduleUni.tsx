@@ -9,11 +9,6 @@ export class ScheduleUni extends Schedule{
         super(id, name, type, createDate, settings)
         this.settings = settings
     }
-    public currentCoorse?: number
-    public currentDir?: string
-
-    public study_plan?: IPlanUni[]
-    public teachers?: ITeachUni[]
 
     public saveSettingsSchedule(flag: string, semestr: number, accHour: number, grafic: any, audit: any, start: string, end: string, courses: any){
         if(flag === 'first'){
@@ -101,6 +96,11 @@ export class ScheduleUni extends Schedule{
 
     public addExamOrMin(data: any){
         let ans = apiPos({'work_id': this.id, 'data': data}, '/addExamOrMin')
+        return ans
+    }
+
+    public saveDir(data: any){
+        let ans = apiPos({'work_id': this.id, 'theme': this.name, 'data': data}, '/saveUniDir')
         return ans
     }
 }

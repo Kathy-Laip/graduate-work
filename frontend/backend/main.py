@@ -5,6 +5,9 @@ import json
 from algo import *
 import pandas as pd
 import datetime
+import timeit
+from functools import partial
+import matplotlib.pyplot as plt
 
 
 app = Flask(__name__)
@@ -944,7 +947,7 @@ def getSchUni():
     work_id = info['work_id']
     course = info['data']['course']
     name_napr = info['data']['napr']
-
+    
     course = getCourseID(course, work_id)
     dirID = getDirection(course, name_napr)
 
@@ -953,6 +956,7 @@ def getSchUni():
     sch_new = []
     for i in range(len(sch)):
         sch_new.append([sch[i][2], sch[i][3], sch[i][4], sch[i][5], sch[i][6], sch[i][7], sch[i][8], sch[i][9], sch[i][10], sch[i][11], sch[i][12], sch[i][0]])
+    # print(course, dirID, sch)
 
     if(len(sch) == 0):
         return json.dumps({'otv': 'empty'})
@@ -1028,7 +1032,8 @@ def addLessonLectUni():
 
     for i in range(len(napr)):
         gr = napr[i].split(' ')
-        groups.append({'courseNumber': int(gr[0]), 'napr': gr[1]})
+        
+        groups.append({'courseNumber': int(gr[0]), 'napr': ' '.join(gr[1:])})
     ans = algo(work_id, {'type': 'lect', 'groups': groups, 'sub': subj}, 'uni')
     if(ans['otv'] == 'OK'):
 
@@ -1046,7 +1051,7 @@ def getLessonSchool():
     napr = info['data']['napr']
 
 
-    ans = algoSchool(work_id, {'courseNum': napr.split(' ')[0], 'initial_class': napr.split(' ')[1], 'subj': subj})
+    ans = algoSchool(work_id, {'courseNum': napr.split(' ')[0], 'initial_class': ' '.join(napr.split(' ')[1:]), 'subj': subj})
     if(ans['otv'] == 'OK'):
 
         return json.dumps({'otv': 'OK', 'data': ans['data'], 'teach': ans['teach'], 'count': ans['count']})
@@ -1132,9 +1137,10 @@ def addLessonsUni():
         tech_id = getTeachId(teach)
         napr = []
         for i in range(len(dirs)):
-            course_id = getCourseID(dirs[i].split(' ')[0], work_id)
-            dir_id = getDirection(course_id, dirs[i].split(' ')[1])
+            course_id = getCourseID(int(dirs[i].split(' ')[0]), work_id)
+            dir_id = getDirection(course_id, ' '.join(dirs[i].split(' ')[1:]))
             napr.append(dir_id)
+            # print(course_id, work_id, dir_id, ' '.join(dirs[i].split(' ')[1]), dirs[i].split(' ')[1:])
         arr = []
         for i in range(len(lessons)):
             weeks = getWeekID(lessons[i][2])
@@ -1196,11 +1202,11 @@ def addLessonsSchool():
     arr = []
     for i in range(len(less)):
         week_id = getWeekID(less[i][2])
-        print(work_id, int(less[i][3]), int(less[i][0]), teach_id, dir_id[0], class_id, week_id, subj)
+        # print(work_id, int(less[i][3]), int(less[i][0]), teach_id, dir_id[0], class_id, week_id, subj)
         
         ans = insertLessSchool(work_id, int(less[i][3]), int(less[i][0]), teach_id, dir_id[0], class_id, week_id, subj, 'каждую неделю')
         arr.append(ans)
-    print(ans)
+    # print(ans)
     if(all(arr)):
         return json.dumps({'otv': 'OK'})
     else: return json.dumps({'otv': 'error', 'mes': 'Ошибка добавления занятий, попробуйте позже!'})
@@ -1264,12 +1270,45 @@ def addExamOrMin():
 
     # return json.dumps({'otv': 'OK'})
 
+@app.route('/saveUniDir', methods=['POST'])
+def saveUniDir():
+    info = json.loads(request.get_data())
+    work_id = info['work_id']
+    theme = info['theme']
+    data = info['data']
+    # {course: course, curDir: curDir}
+
+    course_id = getCourseID(data['course'], work_id)
+    dir_id = getDirection(course_id, data['curDir'])
+
+    sch = getSchDirSave(dir_id, course_id)
+    
+
+    if(len(sch) != 0):
+        sch_n = []
+        for i in range(len(sch)):
+            sch_r = []
+            for j in range(len(sch[i])):
+                sch_r.append(sch[i][j])
+            sch_n.append(sch_r)
+        
+        return json.dumps({'otv': 'ok', 'data': sch_n})
+    else:
+        return json.dumps({'otv': 'error', 'mes': 'Возможно пустое рапсисание или ошибка! Попропбуйте позже'})
 
 
+
+# функция для измерения выполнения запроса или генерации данных
+def time_func(name_function, n, *args):
+    # time = timeit.repeat(partial(name_function, *args), number=1000, repeat=5) 
+    # возваращет реультат несокльких замеров по number раз
+    time = timeit.timeit(partial(name_function, *args), number=n)
+    return time/n
 
 if __name__ == '__main__':
+    # print('test')
     app.run(debug=True, host="127.0.0.1", port="5000")
-    # work_id = 76
+    # work_id = 73
     # info ={'type': 'lect', 'groups': [{'courseNumber': 2, 'napr': 'ФИИТ'}, {'courseNumber': 3, 'napr': 'ИБ'}], 'sub': 'Математическая логика и теория алгоритмов'}
     # ans = algo(work_id, info, 'uni')
     # if('full' in ans):
@@ -1317,67 +1356,132 @@ if __name__ == '__main__':
 
     # pass
     #----------------------------------- университет -----------------------------------
-    # # новый пользователь
-    # #print(insertNewUser('ya.shl@yandex.ru', 'kathy_laip123'))
+    # новый пользователь
+    # print(insertNewUser('ya.shl@yandex.ru', 'kathy_laip123'))
     # userID = getUser('ya.shl@yandex.ru', 'kathy_laip123')
 
-    # # добавление нового проекта
+    # добавление нового проекта
     # typeID = getType('университет')
-    # # print(addProject(userID, 'Расписание КФУ ИВМИИТ 2023-2024 2 семестр', '2023-01-19', typeID))
+    # print(addProject(userID, 'Расписание КФУ ИВМИИТ 2023-2024 2 семестр', '2023-01-19', typeID))
 
-    # #настройка расписания
+    #настройка расписания
     # workID = getWorkID('Расписание КФУ ИВМИИТ 2023-2024 2 семестр', userID)
-    # # print(addProjectSettings(1,40, '2023-02-09', '2023-05-31', workID))
-    # times = [{'start': '8:30', 'end': '10:10'}, {'start': '10:20', 'end': '11:50'}, {'start': '12:00', 'end': '13:10'}, {'start': '13:30', 'end': '14:10'}, {'start': '14:30', 'end': '15:10'}]
-    # # for i in range(len(times)):
-    # #     print(addTimesGrafic(times[i]['start'], times[i]['end'], workID))
-    # # for i in range(1, 3):
-    # #     print(addCourses(i, workID))
+    # print(addProjectSettings(1,40, '2023-02-09', '2023-05-31', workID))
+    # times = [{'start': '8:30', 'end': '10:00'}, {'start': '10:20', 'end': '11:50'}, {'start': '12:00', 'end': '13:10'}, {'start': '13:30', 'end': '14:10'}, {'start': '14:30', 'end': '15:10'}]
+    # for i in range(len(times)):
+    #     print(addTimesGrafic(times[i]['start'], times[i]['end'], workID))
+    # for i in range(1, 3):
+    #     print(addCourses(i, workID))
     
-    # # добавление информации про курсы
+    # добавление информации про курсы
     # course_ID = getCourseID(1, workID)
-    # # print(addDirection(course_ID, 'ФИИТ'))
-    # # print(addDirection(course_ID, 'ПИ'))
-    # # print(addDirection(course_ID, 'ПМИ'))
-    # # print(addDirection(course_ID, 'ИСТ'))
+    # print(addDirection(course_ID, 'ФИИТ'))
+    # print(addDirection(course_ID, 'ПИ'))
+    # print(addDirection(course_ID, 'ПМИ'))
+    # print(addDirection(course_ID, 'ИСТ'))
 
     # # добавление информации про направления
     # dir_ID = getDirection(course_ID, 'ПИ')
-    # # print(addClass(dir_ID, '09-051', 20))
-    # # print(addClass(dir_ID, '09-052', 30))
+    # print(addClass(dir_ID, '09-051', 20))
+    # print(addClass(dir_ID, '09-052', 30))
 
-    # # добавление информации про учебный план
-    # # print(addPlanUni(dir_ID, 'Программная инженерия', "+", "+", 36, 18, 0))
-    # # print(addPlanUni(dir_ID, 'Базы данных', "+", "+", 36, 36, 0))
-    # # print(addPlanUni(dir_ID, 'Дискретная математика', "+", "+", 36, 18, 0))
-    # # print(addPlanUni(dir_ID, 'Анализ сложных систем', "+", "+", 36, 36, 0))
-    # # print(addPlanUni(dir_ID, 'Математический анализ', "+", "+", 36, 54, 0))
-    # # print(addPlanUni(dir_ID, 'Информационная безопасность', "+", "+", 36, 36, 0))
-    # # print(addPlanUni(dir_ID, 'Информационные технологии', "+", "+", 36, 18, 0))
+    # def create():
+    #     typeID = getType('университет')
+    #     addProject(userID, 'Расписание КФУ ИВМИИТ 2023-2024 2 семестр', '2023-01-19', typeID)
+    #     workID = getWorkID('Расписание КФУ ИВМИИТ 2023-2024 2 семестр', userID)
+    #     addProjectSettings(1,40, '2023-02-09', '2023-05-31', workID)
+    #     times = [{'start': '8:30', 'end': '10:00'}, {'start': '10:20', 'end': '11:50'}, {'start': '12:00', 'end': '13:10'}, {'start': '13:30', 'end': '14:10'}, {'start': '14:30', 'end': '15:10'}]
+    #     for i in range(len(times)):
+    #         print(addTimesGrafic(times[i]['start'], times[i]['end'], workID))
+    #     for i in range(1, 3):
+    #         print(addCourses(i, workID))
+    #     course_ID = getCourseID(1, workID)
+    #     addDirection(course_ID, 'ФИИТ')
+    #     addDirection(course_ID, 'ПИ')
+    #     addDirection(course_ID, 'ПМИ')
+    #     addDirection(course_ID, 'ИСТ')
+    #     dir_ID = getDirection(course_ID, 'ПИ')
+    #     addClass(dir_ID, '09-051', 20)
+    #     addClass(dir_ID, '09-052', 30)
+    #     for i in range(1, 11):
+    #         addPlanUni(dir_ID, 'Программная инженерия', "+", "+", 36, 18, 0)
+    #     addCafedra('КСАИТ', workID)
+    #     class_ID = getClass(dir_ID, '09-051')
+    #     cafedra_ID = getCafedraID('КСАИТ', workID)
+    #     for i in range(1, 15):
+    #         addTeacher('Андрианова Анастасия Александровна', cafedra_ID)
+    #     teacher_ID = getTeacherID('Андрианова Анастасия Александровна', cafedra_ID)
+    #     addTeacherClassesDir(teacher_ID, dir_ID, 'Программная инженерия')
+    #     addTeacherClassesClass(teacher_ID, class_ID, 'Программная инженерия')
+    #     type_place_ID = getTypePlaceID('practic')
+    #     week_ID = getWeekID('вторник')
+    #     for i in range(1, 50):
+    #         addPlaceUni(workID, '802', week_ID, type_place_ID, 35, '8:00', '16:00')
 
-    # # добавление информации про кафедры
-    # # print(addCafedra('КСАИТ', workID))
+    
+
+        
+    # count, times = [], []
+    # for i in range(10, 101, 10):
+    #     # create()
+    #     workID = getWorkID('Расписание КФУ ИВМИИТ 2023-2024 2 семестр', userID)
+    #     typeID = getType('университет')
+    #     times.append(time_func(addProject, i, userID, 'Расписание КФУ ИВМИИТ 2023-2024 2 семестр', '2023-01-19', typeID))
+    #     count.append(i)
+    # plt.title('добавление информации о расписании: ')
+    # plt.xlabel('количество добавлений')
+    # plt.ylabel('время в секундах')
+    # plt.plot(count, times)
+    # plt.show()
+
+    # info = {'type': 'lab', 'groups': {'courseNumber': 2, 'napr': 'ФИИТ', 'groups': ['09-231']}, 'sub': 'Лабораторный практикум по технологиям программирования'}
+    # print(algo(work_id, info, 'uni'))
+    # count, times = [], []
+    # for i in range(10, 101, 10):
+    #     # create()
+    #     times.append(time_func(algo, i, work_id, info, 'uni'))
+    #     count.append(i)
+    # plt.title('лабораторные занятия: ')
+    # plt.xlabel('количество запросов')
+    # plt.ylabel('время в секундах')
+    # plt.plot(count, times)
+    # plt.show()
+
+
+
+
+    # добавление информации про учебный план
+    # print(addPlanUni(dir_ID, 'Программная инженерия', "+", "+", 36, 18, 0))
+    # print(addPlanUni(dir_ID, 'Базы данных', "+", "+", 36, 36, 0))
+    # print(addPlanUni(dir_ID, 'Дискретная математика', "+", "+", 36, 18, 0))
+    # print(addPlanUni(dir_ID, 'Анализ сложных систем', "+", "+", 36, 36, 0))
+    # print(addPlanUni(dir_ID, 'Математический анализ', "+", "+", 36, 54, 0))
+    # print(addPlanUni(dir_ID, 'Информационная безопасность', "+", "+", 36, 36, 0))
+    # print(addPlanUni(dir_ID, 'Информационные технологии', "+", "+", 36, 18, 0))
+
+    # добавление информации про кафедры
+    # print(addCafedra('КСАИТ', workID))
 
     # class_ID = getClass(dir_ID, '09-051')
     # cafedra_ID = getCafedraID('КСАИТ', workID)
 
 
-    # # print(addTeacher('Андрианова Анастасия Александровна', cafedra_ID))
-    # # print(addTeacher('Васильев Александр Валерьевич', cafedra_ID))
-    # # print(addTeacher('Асхатов Радик Мухаметгалеевич', cafedra_ID))
-    # # print(addTeacher('Еникеева Разиль Радикович', cafedra_ID))
+    # print(addTeacher('Андрианова Анастасия Александровна', cafedra_ID))
+    # print(addTeacher('Васильев Александр Валерьевич', cafedra_ID))
+    # print(addTeacher('Асхатов Радик Мухаметгалеевич', cafedra_ID))
+    # print(addTeacher('Еникеева Разиль Радикович', cafedra_ID))
 
 
     # teacher_ID = getTeacherID('Андрианова Анастасия Александровна', cafedra_ID)
-    # # print(addTeacherClassesDir(teacher_ID, dir_ID, 'Программная инженерия'))
-    # # print(addTeacherClassesClass(teacher_ID, class_ID, 'Программная инженерия'))
+    # print(addTeacherClassesDir(teacher_ID, dir_ID, 'Программная инженерия'))
+    # print(addTeacherClassesClass(teacher_ID, class_ID, 'Программная инженерия'))
  
     # type_place_ID = getTypePlaceID('practic')
     # week_ID = getWeekID('вторник')
-    # # print(addPlaceUni(workID, '1010', week_ID, type_place_ID, 40, '8:00', '16:00'))
-    # # print(addPlaceUni(workID, '1012', week_ID, type_place_ID, 30, '8:00', '16:00'))
-    # # print(addPlaceUni(workID, '1206', week_ID, type_place_ID, 35, '8:00', '16:00'))
-    # # print(addPlaceUni(workID, '802', week_ID, type_place_ID, 35, '8:00', '16:00'))
+    # print(addPlaceUni(workID, '1010', week_ID, type_place_ID, 40, '8:00', '16:00'))
+    # print(addPlaceUni(workID, '1012', week_ID, type_place_ID, 30, '8:00', '16:00'))
+    # print(addPlaceUni(workID, '1206', week_ID, type_place_ID, 35, '8:00', '16:00'))
+    # print(addPlaceUni(workID, '802', week_ID, type_place_ID, 35, '8:00', '16:00'))
 
     # grafic_arr = getGrafic(workID)
     # grafic_ID = grafic_arr[0][0]
@@ -1453,4 +1557,3 @@ if __name__ == '__main__':
     # week_ID = getWeekID('вторник')
     # teach_schoolID = getTeacherID('Ибрагимова Лейсан Раисовная', cafedra_schoolID)
     # addScheduleSchool(work_schoolID, grafic_schoolID, teach_schoolID, class_schoolID, week_ID)
-

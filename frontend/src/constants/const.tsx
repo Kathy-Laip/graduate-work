@@ -1,4 +1,5 @@
 import {read, utils} from 'xlsx';
+import * as XLSX from 'xlsx';
 import { President } from '../interfaces/interface';
 
 export const circles = [
@@ -99,3 +100,88 @@ export const handleUpload = async (selectedFile: File) => { // функция з
         reader.readAsBinaryString(selectedFile);
     })
 };
+
+function adjustCellSize(matrix: Array<Array<string>>) {
+    let maxColWidths = new Array(matrix[0].length).fill(0);
+
+    // Находим максимальные ширины для каждого столбца
+    for (let row of matrix) {
+        for (let i = 0; i < row.length; i++) {
+            if (row[i].length > maxColWidths[i]) {
+                maxColWidths[i] = row[i].length;
+            }
+        }
+    }
+
+    // Устанавливаем ширину каждой ячейки равной максимальной ширине для столбца
+    for (let row of matrix) {
+        for (let i = 0; i < row.length; i++) {
+            row[i] = row[i].padEnd(maxColWidths[i]);
+        }
+    }
+
+    return matrix;
+}
+
+function createDataMatrixOneDir(times: Array<string>, data: any, course: Array<string>){
+    let weeks = ['понедельник', 'вторник', 'среда', 'четверг', 'пятница', 'суббота']
+
+    let matrix = []
+    let mat = ['']
+    for(let week of weeks){
+        mat.push(week)
+        for(let i = 0; i < course.length - 1; i++) mat.push('')
+    }
+    matrix.push(mat)
+    for(let i = 0; i < times.length; i++){
+        let mat = [times[i][0] + '-' + times[i][1]]
+        mat.concat(Array.from({length: matrix[0].length}, () => ''))
+        matrix.push(mat)
+    }
+
+    times = times.map(el => el[0])
+
+    // ['8:30', '10:00', '216', 'Михайлов В.Ю.', 'Математическая логика и теория алгоритмов', 'понедельник', null, 'каждую неделю', 'lect', '02.03.02 ФИИТ 2022', null, 72]
+    for(let i = 0; i < data.length; i++){
+        let row = times.indexOf(data[i][0])
+        let col = matrix[0].indexOf(data[i][5])
+
+        if(data[i][8] === 'lect'){
+            matrix[row+1][col] = `${data[i][4]}\n ${data[i][3]} Аудитория: ${data[i][2]} ${data[i][7]} лекция`
+            matrix[row+1][col+1] = `${data[i][4]} ${data[i][3]} Аудитория: ${data[i][2]} ${data[i][7]} лекция`
+
+        }
+    }
+
+    // matrix = adjustCellSize(matrix)
+    return matrix
+    
+}
+
+export function createAndWriteXLSXFile(data: Array<Array<string>>, set: string, times: any, course: Array<string>) {
+    // Создаем пустую книгу
+    const wb = XLSX.utils.book_new();
+    
+    // Создаем новый лист
+    const ws = XLSX.utils.aoa_to_sheet([]);
+    
+    // Добавляем лист в книгу
+    XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+    times = Object.values(times)
+
+    // Данные, которые вы хотите записать в файл
+    let dt = [['']]
+    if(set === 'one'){
+        dt = createDataMatrixOneDir(times, data, course)
+    }
+    // Записываем данные в лист
+    const columnWidths = [10, 20, 30];
+
+    // Определяем высоту строк
+    const rowHeights = [5, 10, 15];
+    XLSX.utils.sheet_add_json(ws, dt, {origin: -1,
+        skipHeader: true});
+
+    // Сохраняем книгу в файл
+    XLSX.writeFile(wb, "Расписание.xlsx");
+}

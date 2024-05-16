@@ -11,6 +11,14 @@ connection = Connection(my_db)
 
 # ans = connection.execute_query('update work_folder set period={}, start_time="{}", end_time="{}", acc_hour={} where work_id={}'.format(period, start, end, acc_hour, workID))
 
+def getSchDirSave(direction_id, course_id):
+    try: 
+        ans = connection.get_data_from_table('SELECT DISTINCT schedules.grafic.start, schedules.grafic.end, schedules.place.place_name, schedules.teacher.fio, schedules.schedule.name_sub, schedules.weeks.week_day, schedules.schedule.start_date, schedules.schedule.period, schedules.type_place.type_pl, schedules.direction.name_course, schedules.classes.initial_class FROM schedules.schedule INNER JOIN schedules.grafic ON schedules.schedule.grafic_id = schedules.grafic.time_id INNER JOIN schedules.place ON schedule.place_id = schedules.place.place_id INNER JOIN schedules.type_place ON schedules.place.type_place = schedules.type_place.id_type_place LEFT JOIN schedules.direction ON schedules.schedule.direction_id = schedules.direction.direction_id LEFT JOIN schedules.courses ON schedules.direction.course_id = schedules.courses.course_id LEFT JOIN schedules.classes ON schedules.schedule.classes_id = schedules.classes.classes_id INNER JOIN schedules.teacher ON schedule.teacher_id = schedules.teacher.teacher_id INNER JOIN schedules.weeks on schedules.weeks.id_week = schedules.schedule.week_day where schedules.schedule.direction_id = {} and schedules.courses.course_id = {};'.format(direction_id, course_id))
+        if(ans is not None):
+            return ans
+    except:
+        return []
+
 def insertLect(work_id, grafic_id, place_id, teacher_id, dir_id, week_day, name, period):
     ans = connection.execute_query('insert into schedules.schedule(work_id, grafic_id, place_id, teacher_id, direction_id, week_day, name_sub, period) values({}, {}, {}, {}, {},{}, "{}", "{}");'.format(work_id, grafic_id, place_id, teacher_id, dir_id,week_day, name, period))
     return ans
@@ -294,7 +302,7 @@ def getPlaces(work_id, type, count_seat):
         if(audit is not None):
             return audit
     except:
-        return False
+        return []
 
 def getPlacesExam(work_id, count_seat):
     try: 
@@ -306,7 +314,7 @@ def getPlacesExam(work_id, count_seat):
 
 def getScheUniDir(workID, dirID):
     try:
-        schedules = connection.get_data_from_table('SELECT 	DISTINCT schedules.schedule.sch_id, schedules.schedule.work_id, schedules.grafic.start, schedules.grafic.end, schedules.place.place_name, schedules.teacher.fio, schedules.schedule.name_sub, schedules.weeks.week_day, schedules.schedule.start_date, schedules.schedule.period, schedules.type_place.type_pl, schedules.direction.name_course, schedules.classes.initial_class FROM schedules.schedule INNER JOIN schedules.grafic ON schedules.schedule.grafic_id = schedules.grafic.time_id INNER JOIN schedules.place ON schedule.place_id = schedules.place.place_id INNER JOIN schedules.type_place ON schedules.place.type_place = schedules.type_place.id_type_place LEFT JOIN schedules.direction ON schedules.schedule.direction_id = schedules.direction.direction_id LEFT JOIN schedules.classes ON schedules.schedule.classes_id = schedules.classes.classes_id INNER JOIN schedules.teacher ON schedule.teacher_id = schedules.teacher.teacher_id INNER JOIN schedules.teacher_classes ON schedules.teacher.teacher_id = schedules.teacher_classes.id_teacher INNER JOIN schedules.weeks on schedules.weeks.id_week = schedules.schedule.week_day where schedules.schedule.work_id = {} and schedules.schedule.direction_id = {};'.format(workID, dirID))
+        schedules = connection.get_data_from_table('SELECT 	DISTINCT schedules.schedule.sch_id, schedules.schedule.work_id, schedules.grafic.start, schedules.grafic.end, schedules.place.place_name, schedules.teacher.fio, schedules.schedule.name_sub, schedules.weeks.week_day, schedules.schedule.start_date, schedules.schedule.period, schedules.type_place.type_pl, schedules.direction.name_course, schedules.classes.initial_class FROM schedules.schedule INNER JOIN schedules.grafic ON schedules.schedule.grafic_id = schedules.grafic.time_id INNER JOIN schedules.place ON schedule.place_id = schedules.place.place_id INNER JOIN schedules.type_place ON schedules.place.type_place = schedules.type_place.id_type_place LEFT JOIN schedules.direction ON schedules.schedule.direction_id = schedules.direction.direction_id LEFT JOIN schedules.classes ON schedules.schedule.classes_id = schedules.classes.classes_id INNER JOIN schedules.teacher ON schedule.teacher_id = schedules.teacher.teacher_id INNER JOIN schedules.weeks on schedules.weeks.id_week = schedules.schedule.week_day where schedules.schedule.work_id = {} and schedules.schedule.direction_id = {};'.format(workID, dirID))
         if(schedules is not None):
             return schedules
     except: 
@@ -407,14 +415,14 @@ def getDataInfo(work_id):
 
 def getHasLesson(class_id, sub, work_id):
     try:
-        data = connection.get_data_from_table('select schedules.schedule.sch_id from schedules.schedule where schedules.schedule.name_sub = "{}" and schedules.schedule.direction_id = {} and schedules.schedule.work_id={};'.format(sub, class_id, work_id))
+        data = connection.get_data_from_table('select schedules.schedule.sch_id from schedules.schedule inner join schedules.place on schedules.schedule.place_id = schedules.place.place_id where schedules.schedule.name_sub = "{}" and schedules.schedule.direction_id = {} and schedules.schedule.work_id= {} and schedules.place.type_place = 1;'.format(sub, class_id, work_id))
         if(data is not None):
             return data
     except: return False
 
-def getHasLessonGroup(dir_id, sub, work_id):
+def getHasLessonGroup(dir_id, sub, work_id, type):
     try:
-        data = connection.get_data_from_table('select schedules.schedule.sch_id from schedules.schedule where schedules.schedule.name_sub = "{}" and schedules.schedule.classes_id = {} and schedules.schedule.work_id={};'.format(sub, dir_id, work_id))
+        data = connection.get_data_from_table('select schedules.schedule.sch_id from schedules.schedule inner join schedules.place on schedules.schedule.place_id = schedules.place.place_id where schedules.schedule.name_sub = "{}" and schedules.schedule.classes_id = {} and schedules.schedule.work_id= {} and schedules.place.type_place = {};'.format(sub, dir_id, work_id, type))
         if(data is not None):
             return data
     except: return []
@@ -424,7 +432,7 @@ def getSch(work_id):
         data = connection.get_data_from_table('select schedules.schedule.grafic_id, schedules.schedule.place_id, schedules.weeks.week_day, schedules.schedule.period from schedules.schedule inner join schedules.weeks on schedules.weeks.id_week = schedules.schedule.week_day where schedules.schedule.work_id={};'.format(work_id))
         if(data is not None):
             return data
-    except: return False
+    except: return []
 
 def getSchDate(work_id):
     try:

@@ -148,6 +148,7 @@ export const AddLesonUni: React.FC<AddLess> = (props) => {
                         let sets = new Set(dirs)
                         if(sets.size !== count) props.mes('Пожалуйста, выберите разные направления для добавления занятия!', false)
                         else{
+                            // console.log(dirs)
                             props.add({type: 'lect', napr: dirs, subj: selectSub})
                         }
                     }

@@ -72,5 +72,4 @@ export class User{
         this.openSchedules = this.openSchedules.filter(el => el.id !== id)
     }
 
-    public uploasSchedule(){}
 }

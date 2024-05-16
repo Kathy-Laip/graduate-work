@@ -195,9 +195,7 @@ export const MenuSchSchool: React.FC<Menu> = (props) => {
                         })
                     })}
                 </div>
-                <div>
-                    <button className="btn1 btnBlue bdR5" id='saveChanges'>Сохранить изменения</button>
-                </div>
+
             </div>
         )
         : props.sch.settings?.arr_courses ? (

@@ -10,10 +10,6 @@ export class ScheduleSchool extends Schedule{
         this.settings = settings
     }
 
-    public currentDir?: number
-
-    public study_plan?: IPlanSchool[]
-    public teachers?: ITeachSchool[]
 
     public saveSettingsSchedule(flag: string, semestr: number, accHour: number, grafic: any, audit: any, start: string, end: string, courses: any){
         if(flag === 'first'){
