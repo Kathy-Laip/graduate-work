@@ -38,9 +38,18 @@ export const SaveSchUni: React.FC<SaveSch> = (props) => {
 
     const saveClick = () => {
         if(setCourse === ''){
-            props.mes('Выберите количество ккурсов на направлении!')
+            props.mes('Выберите количество курсов на направлении!')
         }else if(setCourse === 'all') {
-            console.log('all')
+            let ans = props.infoSch.saveAll()
+            ans.then(answer => {
+                if(answer.otv == 'ok'){
+                    // {course: 4, dir_name: '09.03.02 ИСТ 2020', sch: Array(0)}
+                    createAndWriteXLSXFile(answer.data, 'allCourses', props.infoSch.settings!.work_times, props.infoSch.settings!.arr_courses)
+                }
+                else if(answer.otv === 'error'){
+                    props.mes(answer.mes)
+                }
+            })
         }
         else if(course == 0 && setCourse === '1'){
             props.mes('Выберите курс!')
@@ -57,6 +66,18 @@ export const SaveSchUni: React.FC<SaveSch> = (props) => {
                     props.mes(answer.mes)
                 }
             })
+        }else if(curDir === 'all'){
+            
+            let ans = props.infoSch.saveDirs({course: course, curDir: curDir})
+            ans.then(answer => {
+                if(answer.otv === 'ok'){
+                    // console.log(answer.data)
+                    createAndWriteXLSXFile(answer.data, 'all', props.infoSch.settings!.work_times, Object.values(props.infoSch.settings!.arr_courses[course]))
+
+                }else if(answer.otv === 'error'){
+                    props.mes(answer.mes)
+                }
+            })    
         }
     }
 
@@ -93,10 +114,10 @@ export const SaveSchUni: React.FC<SaveSch> = (props) => {
                 ):(
                     <></>
                 )}
-                <div className='onebtn'>
+            </div>
+            <div className='onebtn'>
                     <button className="btn1 bdR5 btnPink" onClick={saveClick}><span>Скачать расписание</span></button>
                 </div>
-            </div>
         </div>
         </div>
     )

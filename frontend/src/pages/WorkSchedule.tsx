@@ -27,6 +27,7 @@ import { AddLesonSchool } from "../components/AddLessonSchool";
 import { Offers } from "../components/Offers";
 import { OffersSchool } from "../components/OffersSchool";
 import { SaveSchUni } from "../components/SaveSchUni";
+import { SaveSchSchool } from "../components/SaveSchSchool";
 
 type WorkSch = {
     user: User
@@ -55,6 +56,7 @@ export const WorkSchedule: React.FC<WorkSch> = (props) => {
     const [addLessSchool, setAddLessSchool] = useState(false)
 
     const [saveUni, setSaveUni] = useState(false)
+    const [saveSchool, setSaveSchool] = useState(false)
 
     const [mes, setMes] = useState<string>('')
     const [upd, setUpd] = useState<boolean>(false)
@@ -143,6 +145,14 @@ export const WorkSchedule: React.FC<WorkSch> = (props) => {
 
     const closeSave = () => {
         setSaveUni(false)
+    }
+
+    const closeSaveSchoolTrue = () => {
+        setSaveSchool(true)
+    }
+
+    const closeSaveSchool = () => {
+        setSaveSchool(false)
     }
 
     const closeAddLessonTrue = () => {
@@ -340,7 +350,7 @@ export const WorkSchedule: React.FC<WorkSch> = (props) => {
                     {props.user.currentSchedule && props.user.currentSchedule !== 'ERROR_CREATE' && (props.user.currentSchedule!.type === 'uni' ?
                          (<WorkSchUni user={props.user} addPlan={addPlanUniTrue} editPlan={editPlanUniTrue} addTeachs={addTeachsUniTrue} editTeachs={editTeachsUniTrue} mes={message} addLessTrue={closeAddLessonTrue} changeInfo={changeInfo} saveSch={closeSaveTrue}/>)
                          :
-                         (<WorkSchSchool user={props.user} addPlan={addPlanSchoolTrue} editPlan={editPlanSchoolTrue} addTeachs={addTeachsSchoolTrue} editTeachs={editTeachsSchoolTrue}  mes={message} addLessTrue={closeAddLessonTrueSch} changeInfo={changeInfoSchool}/>)
+                         (<WorkSchSchool user={props.user} addPlan={addPlanSchoolTrue} editPlan={editPlanSchoolTrue} addTeachs={addTeachsSchoolTrue} editTeachs={editTeachsSchoolTrue}  mes={message} addLessTrue={closeAddLessonTrueSch} changeInfo={changeInfoSchool} saveSch={closeSaveSchoolTrue}/>)
                     )
                     }
                 </div>
@@ -352,6 +362,7 @@ export const WorkSchedule: React.FC<WorkSch> = (props) => {
             {props.user.currentSchedule! instanceof ScheduleSchool && offsSchool && (<OffersSchool close={closeOffersFalseSchool} data={offsInfoSchool} sch={props.user.currentSchedule} mes={message}/>)}
             
             {props.user.currentSchedule! instanceof ScheduleUni && saveUni && (<SaveSchUni close={closeSave} infoSch={props.user.currentSchedule!} mes={message}/>)}
+            {props.user.currentSchedule! instanceof ScheduleSchool && saveSchool && (<SaveSchSchool close={closeSaveSchool} infoSch={props.user.currentSchedule!} mes={message}/>)}
             <Message mess={mes} update={upd}/>
             {/* <MessageConfirmYN mess={mes} update={upd} change={changeYON}/> */}
         </div>

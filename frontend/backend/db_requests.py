@@ -178,6 +178,14 @@ def getCourseID(course_number, workID):
     except:
         return False
 
+def getCourses(workID):
+    try: 
+        id_courses = connection.get_data_from_table('select course_id, course_number from courses where work_id={}'.format(workID))
+        if id_courses is not None:
+            return id_courses
+    except:
+        return []
+
 def getDirIdNameCourse(name_course, work_id):
     try: 
         data = connection.get_data_from_table('select schedules.direction.direction_id from schedules.direction inner join schedules.courses on schedules.direction.course_id = schedules.courses.course_id where schedules.courses.work_id = {} and schedules.direction.name_course = {};'.format(work_id, name_course))
@@ -198,6 +206,14 @@ def getDirection(courseID, name):
         id_dir = connection.get_data_from_table('select direction_id from direction where course_id={} and name_course="{}"'.format(courseID, name))
         if(id_dir is not None):
             return id_dir[0][0]
+    except:
+        return False
+
+def getDirs(courseID):
+    try: 
+        dirs = connection.get_data_from_table('select direction_id, name_course from direction where course_id={}'.format(courseID))
+        if(dirs is not None):
+            return dirs
     except:
         return False
 
@@ -318,6 +334,14 @@ def getScheUniDir(workID, dirID):
         if(schedules is not None):
             return schedules
     except: 
+        return []
+
+def getSchDirSchoolSave(dirID):
+    try:
+        sch = connection.get_data_from_table('SELECT DISTINCT schedules.grafic.start, schedules.grafic.end, schedules.place.place_name, schedules.teacher.fio, schedules.schedule.name_sub, schedules.weeks.week_day, schedules.direction.name_course,  schedules.classes.initial_class FROM schedules.schedule  INNER JOIN schedules.grafic ON schedules.schedule.grafic_id = schedules.grafic.time_id  INNER JOIN schedules.place ON schedule.place_id = schedules.place.place_id  LEFT JOIN schedules.direction ON schedules.schedule.direction_id = schedules.direction.direction_id  LEFT JOIN schedules.courses ON schedules.direction.course_id = schedules.courses.course_id  LEFT JOIN schedules.classes ON schedules.schedule.classes_id = schedules.classes.classes_id  INNER JOIN schedules.teacher ON schedule.teacher_id = schedules.teacher.teacher_id  INNER JOIN schedules.weeks on schedules.weeks.id_week = schedules.schedule.week_day  where schedules.schedule.direction_id = {};'.format(dirID))
+        if(sch is not None):
+            return sch
+    except:
         return []
 
 def getScheSchoolDir(workID, dirID):

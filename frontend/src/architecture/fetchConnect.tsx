@@ -9,6 +9,7 @@ export default async function apiPos(obj: object, url: string){
         return result
     }
     catch{
+        
         alert('Ошибка сервера!')
     }
 }

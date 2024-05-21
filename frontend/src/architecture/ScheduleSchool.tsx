@@ -77,4 +77,9 @@ export class ScheduleSchool extends Schedule{
         let ans = apiPos({'work_id': this.id, 'data': data}, '/addLessonsSchool')
         return ans
     }
+
+    public saveSch(data: any){
+        let ans = apiPos({'work_id': this.id, 'data': data}, '/saveSchSchool')
+        return ans
+    }
 }

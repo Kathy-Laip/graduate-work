@@ -1296,6 +1296,85 @@ def saveUniDir():
     else:
         return json.dumps({'otv': 'error', 'mes': 'Возможно пустое рапсисание или ошибка! Попропбуйте позже'})
 
+@app.route('/saveUniDirs', methods=['POST'])
+def saveUniDirs():
+    info = json.loads(request.get_data())
+    work_id = info['work_id']
+    theme = info['theme']
+    data = info['data']
+    print('hi')
+
+    course_id = getCourseID(data['course'], work_id)
+    dirs = getDirs(course_id)
+    
+    schs = []
+    for i in range(len(dirs)):
+        
+        sch = getSchDirSave(dirs[i][0], course_id)
+        print(dirs[i][1])
+        sch_n = []
+        for k in range(len(sch)):
+            sch_r = []
+            for j in range(len(sch[k])):
+                sch_r.append(sch[k][j])
+            sch_n.append(sch_r)
+        print(sch_n)
+        schs.append({'dir_name': dirs[i][1], 'sch': sch_n})
+    print(schs)
+    
+    return json.dumps({'otv': 'ok', 'data': schs})   
+
+@app.route('/saveAllUni', methods=['POST'])
+def saveAllUni():
+    info = json.loads(request.get_data())
+    work_id = info['work_id']
+
+    courses = getCourses(work_id)
+    infoDirs = []
+    
+    if(len(courses) == 0): return json.dumps({'otv': 'error', 'mes': 'Ошибка получения информации о курсах! Попробуйте позже'})
+    for i in range(len(courses)):
+        dirs = getDirs(courses[i][0])
+        infoDirs.append({'numCourse': courses[i], 'dirs': dirs})
+
+    schs = []
+    
+    
+    for i in range(len(infoDirs)):
+        for j in range((len(infoDirs[i]['dirs']))):
+            dir_id = getDirection(int(infoDirs[i]['numCourse'][0]), infoDirs[i]['dirs'][j][1])
+            sch = getSchDirSave(dir_id, int(infoDirs[i]['numCourse'][0]))
+            
+            sch_n = []
+            for k in range(len(sch)):
+                sch_r = []
+                for l in range(len(sch[k])):
+                    sch_r.append(sch[k][l])
+                sch_n.append(sch_r)
+            
+            schs.append({'course': int(infoDirs[i]['numCourse'][1]), 'dir_name': infoDirs[i]['dirs'][j][1], 'sch': sch_n})
+    return json.dumps({'otv': 'ok', 'data': schs})
+
+
+@app.route('/saveSchSchool', methods=['POST'])
+def saveSchSchool():
+    info = json.loads(request.get_data())
+    work_id = info['work_id']
+    data = info['data']
+
+    dir_id = getDirIdNameCourse(data['course'], work_id)
+    sch = getSchDirSchoolSave(dir_id[0])
+    sch_n = []
+    for i in range(len(sch)):
+        sch_r = []
+        for j in range(len(sch[i])):
+            sch_r.append(sch[i][j])
+        sch_n.append(sch_r)
+    
+    return json.dumps({'otv': 'ok', 'data': sch_n})
+
+
+
 
 
 # функция для измерения выполнения запроса или генерации данных

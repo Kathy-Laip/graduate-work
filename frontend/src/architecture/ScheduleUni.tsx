@@ -103,4 +103,15 @@ export class ScheduleUni extends Schedule{
         let ans = apiPos({'work_id': this.id, 'theme': this.name, 'data': data}, '/saveUniDir')
         return ans
     }
+
+    public saveDirs(data: any){
+        let ans = apiPos({'work_id': this.id, 'theme': this.name, 'data': data}, '/saveUniDirs')
+        return ans
+    }
+
+
+    public saveAll(){
+        let ans = apiPos({'work_id': this.id}, '/saveAllUni')
+        return ans
+    }
 }
